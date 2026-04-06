@@ -1,132 +1,138 @@
 <template>
     <NotificationList ref="toastRef" />
 
-    <div class="container-fluid py-4">
-        <div class="row">
-            <!-- Left Column -->
-            <div class="col-md-8">
-                <!-- Payment History -->
-                <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-
-                    <!-- Header -->
-                    <div class="card-header text-center text-white fw-bold"
-                        style="background: linear-gradient(90deg, #4edce2, #2cb5b8);">
-                        <h5 class="mb-0">📜 Payment History</h5>
+    <div class="container-fluid py-4 bg-light-gray min-vh-100">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 rounded-5 overflow-hidden">
+                    <div class="card-header bg-solid-blue p-4 border-0">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h4 class="mb-0 text-white fw-black">
+                                <i class="bi bi-receipt-cutoff me-2"></i>Payment History
+                            </h4>
+                            <span class="badge bg-white text-primary rounded-pill px-3 py-2 fw-bold">
+                                {{ allHistory.length }} Records
+                            </span>
+                        </div>
                     </div>
 
-                    <div class="card-body p-4" style="background: #f9fdfd;">
-                        <!-- Scrollable Wrapper -->
-                        <div style="max-height: 600px; overflow-y: auto;">
+                    <div class="card-body p-4 bg-white">
+                        <div class="history-scroll-container px-2">
 
-                            <!-- Payment Item -->
-                            <div class="border rounded-3 p-3 mb-3 shadow-sm bg-white d-flex align-items-center justify-content-between hover-effect"
-                                v-for="(history, index) in allHistory" :key="index"
-                                style="transition: all 0.2s ease; border: 1px solid #d9f3f4;">
+                            <div v-for="(history, index) in allHistory" :key="index"
+                                class="payment-item-card mb-3 p-3 d-flex align-items-center justify-content-between">
 
-                                <!-- Left Side (Tenant & Room Info) -->
-                                <div class="flex-grow-1">
-                                    <p class="mb-1 fw-semibold text-dark">
-                                        {{ history.firstname }}
-                                        <span v-if="history.type === 'Booking'">Booking Payment</span>
-                                        <span v-else-if="history.type === 'Reservation'">Reservation Payment</span>
-                                        <span v-else-if="history.type === 'Extension Payment'">Extension Payment</span>
-                                        <span v-else>{{ history.type }}</span>
-                                        #{{ history.reservation?.room?.roomID || history.booking?.room?.roomID ||
-                                        history.approved_tenant?.room?.roomID || 'N/A' }}
-                                    </p>
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-circle me-3"
+                                        :class="history.paymentType === 'online' ? 'bg-soft-blue' : 'bg-soft-orange'">
+                                        <i class="bi"
+                                            :class="history.paymentType === 'online' ? 'bi-globe text-primary' : 'bi-house-door text-orange'"></i>
+                                    </div>
 
-                                    <p class="mb-0 text-muted small">
-                                        Payment Date: <strong>{{ formatDate(history.created_at) }}</strong>
-                                    </p>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold text-dark text-capitalize">
+                                            {{ history.type }} Payment
+                                            <small class="text-muted fw-normal ms-1">#{{
+                                                history.reservation?.room?.roomID || history.booking?.room?.roomID ||
+                                                'N/A' }}</small>
+                                        </h6>
+                                        <p class="mb-0 text-muted small">
+                                            <i class="bi bi-clock me-1"></i>{{ formatDate(history.created_at) }}
+                                        </p>
+                                    </div>
                                 </div>
 
-                                <!-- Amount -->
-                                <div class="text-success fw-bold mx-3" v-if="history.amount">
-                                    ₱{{ formatAmount(history.amount) }}
+                                <div class="text-end d-flex align-items-center gap-4">
+                                    <div class="amount-display">
+                                        <small class="text-muted d-block" style="font-size: 0.7rem;">Amount Paid</small>
+                                        <span class="fw-black text-success fs-5">₱{{ formatAmount(history.amount)
+                                            }}</span>
+                                    </div>
+                                    <div class="badge-method">
+                                        <span class="badge-custom"
+                                            :class="history.paymentType === 'online' ? 'online' : 'onsite'">
+                                            {{ history.paymentType || 'N/A' }}
+                                        </span>
+                                    </div>
                                 </div>
-
-                                <!-- Payment Method -->
-                                <div class="text-end">
-                                    <span class="badge rounded-pill px-3 py-2" :class="{
-                                        'bg-success text-white': history.paymentType === 'online',
-                                        'bg-primary text-white': history.paymentType === 'onsite',
-                                        'bg-secondary text-white': !history.paymentType
-                                    }">
-                                        {{ history.paymentType || 'N/A' }}
-                                    </span>
-                                </div>
-                               
                             </div>
-                            <!-- End Payment Item -->
+                            <div v-if="allHistory.length === 0" class="text-center py-5">
+                                <i class="bi bi-inbox text-muted display-4"></i>
+                                <p class="text-muted mt-2">No payment history found for this selection.</p>
+                            </div>
 
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column -->
-            <div class="col-md-4">
-                <!-- Payment Summary -->
-                <div class="card shadow-lg border-0 rounded-4 overflow-hidden"
-                    style="background: linear-gradient(135deg, #e6fafa, #ffffff);">
-
-                    <!-- Header -->
-                    <div class="card-header text-center text-white fw-bold"
-                        style="background: linear-gradient(90deg, #4edce2, #2cb5b8);">
-                        <h6 class="mb-0">💰 Payment Summary</h6>
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 rounded-5 sticky-top" style="top: 2rem;">
+                    <div class="card-header bg-solid-orange p-4 border-0">
+                        <h5 class="mb-0 text-white fw-black text-center">
+                            <i class="bi bi-graph-up-arrow me-2"></i>Payment Summary
+                        </h5>
                     </div>
 
-                    <!-- Body -->
-                    <div class="card-body p-4">
-
-                        <!-- Date Picker -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Choose Date:</label>
-                            <input type="date" v-model="chooseDate" @change="paymentHistory()"
-                                class="form-control rounded-3 shadow-sm">
-                        </div>
-
-                        <!-- Current Bill -->
-                        <p class="fw-semibold text-secondary mb-2">📌 Current Bill:</p>
-                        <div class="progress mb-3 rounded-pill" style="height: 20px;">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated fw-bold"
-                                role="progressbar" :style="{ width: percent + '%' }">
-                                {{ Math.round(percent) }}%
+                    <div class="card-body p-4 bg-white">
+                        <div class="filter-section mb-4">
+                            <label class="form-label fw-bold text-dark small text-uppercase">Select History Date</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i class="bi bi-calendar3"></i></span>
+                                <input type="date" v-model="chooseDate" @change="paymentHistory()"
+                                    class="form-control bg-light border-0 py-2 rounded-end shadow-none">
                             </div>
                         </div>
 
-                        <!-- Total Amount -->
-                        <p class="fw-semibold text-dark mb-4">
-                            Total Amount This Month:
-                            <span class="text-success fs-5">₱{{ formatAmount(totalAmount) }}</span>
-                        </p>
-
-                        <!-- Payment Methods -->
-                        <p class="fw-semibold text-secondary mb-2">💳 Payment Method:</p>
-                        <div class="form-check border rounded-3 px-3 py-2 shadow-sm mb-2" style="cursor:pointer;">
-                            <input class="form-check-input" type="radio" v-model="paymentMethod" value="online"
-                                id="gcash" @change="paymentHistory()">
-                            <label class="form-check-label fw-semibold ms-2" for="gcash">online</label>
-
-                        </div>
-                        <div class="form-check border rounded-3 px-3 py-2 shadow-sm mb-2" style="cursor:pointer;">
-                            <input class="form-check-input" type="radio" v-model="paymentMethod" value="onsite"
-                                id="onsite" @change="paymentHistory()">
-                            <label class="form-check-label fw-semibold ms-2" for="onsite">Onsite</label>
-
+                        <div class="summary-stat mb-4">
+                            <div class="d-flex justify-content-between align-items-end mb-2">
+                                <label class="fw-bold text-dark small text-uppercase">Payment Progress</label>
+                                <span class="fw-black text-primary">{{ Math.round(percent) }}%</span>
+                            </div>
+                            <div class="progress rounded-pill shadow-inner"
+                                style="height: 12px; background-color: #e9ecef;">
+                                <div class="progress-bar bg-solid-blue progress-bar-striped progress-bar-animated"
+                                    role="progressbar" :style="{ width: percent + '%' }">
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Optional Future Add-ons -->
-                        <!-- 
-            <div class="form-check border rounded-3 px-3 py-2 shadow-sm">
-                <input class="form-check-input" type="radio" v-model="paymentMethod" value="paypal" id="paypal">
-                <label class="form-check-label fw-semibold ms-2" for="paypal">PayPal</label>
-            </div>
-            -->
+                        <div class="total-amount-card p-3 rounded-4 mb-4 text-center">
+                            <small class="text-uppercase fw-bold text-muted" style="letter-spacing: 1px;">Monthly
+                                Total</small>
+                            <h2 class="fw-black text-dark mb-0">₱{{ formatAmount(totalAmount) }}</h2>
+                        </div>
+
+                        <label class="form-label fw-bold text-dark small text-uppercase mb-3">Filter By Method</label>
+                        <div class="method-selector d-flex flex-column gap-2">
+                            <label class="method-option p-3 rounded-4 border"
+                                :class="{ 'active': paymentMethod === 'online' }">
+                                <input class="d-none" type="radio" v-model="paymentMethod" value="online"
+                                    @change="paymentHistory()">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-phone-vibrate fs-4 me-3"></i>
+                                    <span class="fw-bold">Online Payment</span>
+                                    <i v-if="paymentMethod === 'online'"
+                                        class="bi bi-check-circle-fill ms-auto text-primary"></i>
+                                </div>
+                            </label>
+
+                            <label class="method-option p-3 rounded-4 border"
+                                :class="{ 'active': paymentMethod === 'onsite' }">
+                                <input class="d-none" type="radio" v-model="paymentMethod" value="onsite"
+                                    @change="paymentHistory()">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-cash-stack fs-4 me-3"></i>
+                                    <span class="fw-bold">Onsite Payment</span>
+                                    <i v-if="paymentMethod === 'onsite'"
+                                        class="bi bi-check-circle-fill ms-auto text-primary"></i>
+                                </div>
+                            </label>
+                        </div>
+
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </template>
@@ -260,3 +266,4 @@ export default {
     }
 }
 </script>
+<style scoped src="/resources/css/tenant/payment.css"></style>

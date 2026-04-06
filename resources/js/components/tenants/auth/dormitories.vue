@@ -5,134 +5,75 @@
 
     <div class="container-fluid py-4 bg-light min-vh-100 d-flex flex-column flex-lg-row gap-4">
         <!-- AI Question Sidebar -->
-        <aside class="ai-aside bg-white p-4 shadow-lg rounded-4 mx-auto d-flex flex-column"
-            style="max-width: 500px; max-height: 150vh; overflow-y: auto;">
-            <div class="container text-center flex-shrink-0">
-                <h4 class="mb-4 fw-bold text-primary">💬 Looking for Rooms or Dorms? Ask AI!</h4>
-
-
-                <!-- Input -->
-                <div class="input-group input-group-lg mb-4 shadow-sm rounded-pill overflow-hidden border">
-                    <input v-model="question" type="text" class="form-control border-0"
-                        placeholder="Type your question here..." @keyup.enter="aiQuestion" />
-                    <button @click="aiQuestion" class="btn btn-primary px-4 rounded-pill">
-                        Ask
-                    </button>
-                </div>
-            </div>
-
-
-            <!-- Dorm Recommendations -->
-            <div class="flex-grow-1" style="overflow-y: auto; padding-right: 5px;">
-                <div class="card border-0 shadow-sm mb-4 ai-response">
-                    <div class="card-body p-4">
-                        💬 AI Response
-                        <p class="mb-0 text-muted" style="white-space: pre-wrap; line-height: 1.5;">
-                            {{ chatresponse || 'No response yet. Type your question above and hit Ask!' }}
-                        </p>
-                    </div>
-                </div>
-                <h5 class="card-title text-start mb-3 fw-semibold">AI Suggestions: Rooms & Dorms</h5>
-
-
-                <div v-if="dormReccomend.length > 0" class="row g-3 justify-content-center">
-                    <div v-for="(dorm, idx) in dormReccomend" :key="idx" class="col-12">
-                        <div class="card dorm-card mb-4 shadow-sm rounded-4 overflow-hidden">
-                            <div class="card-body p-3">
-                                <h5 class="card-title fw-bold mb-2">{{ dorm.dormName }}</h5>
-                                <p class="mb-1 text-muted"><i class="fas fa-user text-primary me-2"></i>{{
-                                    dorm.occupancyType }}</p>
-                                <p class="mb-2 text-muted"><i class="fas fa-map-marker-alt text-primary me-2"></i>{{
-                                    dorm.address }}</p>
-
-
-                                <!-- Rooms -->
-                                <div v-if="dorm.rooms && dorm.rooms.length" class="rooms-scroll mb-2 border-top pt-2">
-                                    <div v-for="(room, rIdx) in dorm.rooms" :key="rIdx" class="mb-2 pb-2 border-bottom">
-                                        <p class="text-muted mb-1">
-                                            Room #: {{ room.roomNumber }} | Type: {{ room.type }}
-                                        </p>
-                                        <p class="text-muted mb-1">
-                                            Price: ₱{{ room.price }} | Availability: {{ room.availability }}
-                                        </p>
-                                        <div v-if="room.features && room.features.length" class="mb-2">
-                                            <strong class="d-block mb-1">Features:</strong>
-                                            <div class="d-flex flex-wrap gap-1">
-                                                <span v-for="(feature, index) in room.features" :key="index"
-                                                    class="badge bg-info text-dark rounded-pill">
-                                                    {{ feature }}
-                                                </span>
-                                            </div>
-                                        </div>
-
-
-
-
-
-
-                                    </div>
-                                </div>
-
-
-                                <a class="btn-custom w-100 rounded-pill mt-3" @click="viewDormsDetails(dorm?.dormID)">
-                                    View Details
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <p v-else class="text-muted mb-0">No dorms or rooms available.</p>
-            </div>
-        </aside>
-
-
-
-
         <!-- Main Content -->
         <div class="flex-grow-1" style="overflow-x: hidden;">
-            <div class="container-fluid mt-3">
-                <h2 class="mb-4 text-primary fw-semibold text-center">
-                    Find Your Ideal Dorm in Mandaue and Lapu-Lapu City
-                </h2>
+            <div class="container-fluid mt-5 mb-2">
+                <div class="header-content text-center animate__animated animate__fadeIn">
+                    <span class="badge rounded-pill bg-blue-soft text-dash-blue mb-2 px-3 py-2">
+                        <i class="bi bi-house-heart-fill me-1"></i> Verified Stays
+                    </span>
+
+                    <h2 class="display-6 fw-bold mb-3">
+                        Find Your Ideal Dorm in <span class="text-dash-orange">Surigao City</span>
+                    </h2>
+
+                    <div class="d-flex justify-content-center">
+                        <div class="title-divider"></div>
+                    </div>
+
+                    <p class="text-muted mt-3 lead-sm">
+                        Browse through the best and most affordable dormitories across the city.
+                    </p>
+                </div>
             </div>
 
 
             <!-- Most Watched Dorms Horizontal Scroll -->
-            <section class="text-primary mb-4">
-                <h5 class="mb-3 fw-bold">Most Watched Dormitories</h5>
-                <div style="overflow-x: auto; white-space: nowrap; padding-bottom: 1rem;"
-                    class="shadow-sm rounded-4 bg-light p-3">
+            <section class="most-watched-section mb-5 px-2">
+                <div class="d-flex justify-content-between align-items-center mb-3 px-1">
+                    <h5 class="fw-bold text-dash-blue mb-0">
+                        <i class="bi bi-fire text-dash-orange me-2"></i>Most Watched Dormitories
+                    </h5>
 
+                    <div
+                        class="swipe-indicator d-flex align-items-center gap-2 text-muted animate__animated animate__pulse animate__infinite">
+                        <span class="x-small fw-medium italic">Swipe to view more</span>
+                        <div class="swipe-icon">
+                            <i class="bi bi-arrow-right x-small"></i>
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="d-flex flex-row gap-3" style="width: max-content;">
-                        <div class="card dorm-card shadow-sm border-0 rounded-4 overflow-hidden"
-                            v-for="(dorm, index) in mostwatchdorm" :key="index"
-                            style="width: 20rem; flex-shrink: 0; transition: transform 0.2s ease, box-shadow 0.2s ease;">
-                            <div class="position-relative">
-                                <img :src="dorm?.images?.mainImage || dorm?.mainImage || 'https://via.placeholder.com/320x200'"
-                                    class="card-img-top" :alt="dorm.dormName"
-                                    style="height: 200px; object-fit: cover;" />
-                                <span
-                                    class="position-absolute top-0 end-0 m-2 badge bg-warning text-dark rounded-pill shadow-sm px-3 py-2">
-                                    <i class="bi bi-eye-fill me-1"></i>{{ dorm.views || 0 }}
-                                </span>
+                <div class="horizontal-scroll-wrapper shadow-sm rounded-4 bg-white p-3">
+                    <div class="d-flex flex-row gap-4 scroll-content">
+
+                        <div class="card watched-dorm-card border-0 rounded-4 overflow-hidden shadow-sm"
+                            v-for="(dorm, index) in mostwatchdorm" :key="index" @click="viewDormsDetails(dorm.dormID)">
+
+                            <div class="position-relative card-image-wrap">
+                                <img :src="dorm?.images?.mainImage || dorm?.mainImage || '/images/default-dorm.webp'"
+                                    class="card-img-top" :alt="dorm.dormName" />
+
+                                <div class="view-count-badge">
+                                    <i class="bi bi-eye-fill me-1"></i> {{ dorm.views || 0 }}
+                                </div>
                             </div>
-                            <div class="card-body d-flex flex-column" style="height: 150px;">
-                                <h5 class="card-title text-primary fw-bold text-truncate">{{ dorm.dormName }}</h5>
-                                <p class="card-text text-muted small mb-2 text-truncate">
-                                    <i class="bi bi-geo-alt-fill text-danger me-1"></i>
-                                    {{ dorm.address || 'No description available.' }}
+
+                            <div class="card-body p-3 d-flex flex-column">
+                                <h6 class="card-title fw-bold text-dark text-truncate mb-1">{{ dorm.dormName }}</h6>
+                                <p class="card-text text-muted x-small mb-3 text-truncate">
+                                    <i class="bi bi-geo-alt-fill text-dash-orange me-1"></i>
+                                    {{ dorm.address || 'Surigao City' }}
                                 </p>
+
                                 <div class="mt-auto">
-                                    <button class="btn-custom rounded-pill w-100"
-                                        @click="viewDormsDetails(dorm.dormID)">
-                                        <i class="bi bi-box-arrow-up-right me-1"></i> View Details
+                                    <button class="btn btn-dash-blue-sm w-100 rounded-pill">
+                                        View Details
                                     </button>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </section>
@@ -142,268 +83,214 @@
 
 
             <!-- Filters -->
-            <div class="py-4">
-
-
-                <!-- Filter Header -->
-                <div class="mb-4 p-4 rounded-3 shadow-sm bg-light text-start">
+            <div class="py-4 px-2">
+                <div
+                    class="filter-header mb-4 p-4 rounded-4 shadow-sm bg-white border-start border-primary border-5 text-start">
                     <div class="d-flex align-items-center gap-3">
-                        <!-- Optional Icon -->
-                        <i class="bi bi-house-door-fill fs-1 text-primary"></i>
-
-
+                        <div class="icon-box bg-primary-soft p-3 rounded-3">
+                            <i class="bi bi-house-heart-fill fs-2 text-primary"></i>
+                        </div>
                         <div>
-                            <h4 class="fw-bold mb-1" style="font-size: 1.75rem;">Find Dormitory Houses</h4>
-                            <p class="text-muted mb-0" style="font-size: 0.95rem;">
-                                Filter by city, price range, occupancy type, amenities, rating, and more
+                            <h4 class="fw-bold mb-0 text-dark">Find Dormitory Houses</h4>
+                            <p class="text-muted small mb-0">Discover your next home in Surigao City with smart filters
                             </p>
                         </div>
                     </div>
                 </div>
-                <div class="input-group mb-4 w-100 shadow-sm rounded-pill overflow-hidden border">
-                    <span class="input-group-text bg-white border-0">
-                        <i class="bi bi-search text-primary"></i>
-                    </span>
-                    <input type="text" class="form-control border-0 shadow-none" placeholder="Search Locations"
-                        aria-label="Search Locations" v-model="searchQuery" @input="debouncedSearch" />
+
+                <div class="search-wrapper mb-4">
+                    <div
+                        class="input-group shadow-sm rounded-pill overflow-hidden border-2 border-primary-soft px-3 bg-white">
+                        <span class="input-group-text bg-transparent border-0">
+                            <i class="bi bi-search text-primary fs-5"></i>
+                        </span>
+                        <input type="text" class="form-control border-0 shadow-none py-3"
+                            placeholder="Search by location, street, or dorm name..." v-model="searchQuery"
+                            @input="debouncedSearch" />
+                    </div>
                 </div>
 
-
-
-
-                <!-- Filters -->
-                <div class="d-flex flex-wrap justify-content-start gap-2 mb-4">
-
-
-                    <!-- City Buttons -->
-                    <button class="btn py-2 rounded-pill fw-semibold"
-                        :class="selectedButtons === 'All' ? 'btn-primary text-white' : 'btn-outline-primary'"
+                <div class="d-flex flex-wrap gap-2 mb-4 justify-content-center justify-content-md-start">
+                    <button class="btn btn-filter-pill" :class="selectedButtons === 'All' ? 'active' : ''"
                         @click="btnAllFilter">
-                        All ({{ numberdorms }})
+                        <i class="bi bi-grid-fill me-1"></i> All ({{ numberdorms }})
                     </button>
 
-
-                    <button class="btn px-4 py-2 rounded-pill fw-semibold"
-                        :class="selectedButtons === 'Lapu-Lapu' ? 'btn-primary text-white' : 'btn-outline-primary'"
-                        @click="btnCityFilter('Lapu-Lapu')">
-                        Lapu-Lapu City ({{ lapulapu_dorms }})
+                    <button class="btn btn-filter-pill" :class="selectedButtons === 'Surigao' ? 'active' : ''"
+                        @click="btnCityFilter('Surigao')">
+                        Surigao City ({{ surigao_dorms || 0 }})
                     </button>
+                </div>
 
+                <div class="filter-grid-container p-3 rounded-4 bg-light border shadow-sm">
+                    <p class="fw-bold text-muted small text-uppercase mb-3 px-2"><i
+                            class="bi bi-sliders me-2"></i>Advanced Filters</p>
 
-                    <button class="btn px-4 py-2 rounded-pill fw-semibold"
-                        :class="selectedButtons === 'Mandaue' ? 'btn-primary text-white' : 'btn-outline-primary'"
-                        @click="btnCityFilter('Mandaue')">
-                        Mandaue City ({{ mandaue_dorms }})
-                    </button>
+                    <div class="row g-3">
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="form-floating custom-floating">
+                                <select class="form-select border-0 shadow-none" v-model="selectedPriceRange"
+                                    @change="dropdownPriceRecommendations">
+                                    <option value="all">All Prices</option>
+                                    <option value="0-500">₱0 - ₱500</option>
+                                    <option value="501-1000">₱501 - ₱1000</option>
+                                    <option value="1001-1500">₱1001 - ₱1500</option>
+                                    <option value="1501+">₱1501 & up</option>
+                                </select>
+                                <label><i class="bi bi-tag-fill me-1"></i>Price Range</label>
+                            </div>
+                        </div>
 
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="form-floating custom-floating">
+                                <select class="form-select border-0 shadow-none" v-model="selectedOccupancyType"
+                                    @change="dropdownGenderRecommdations">
+                                    <option value="all">All Types</option>
+                                    <option value="Male">Male Only</option>
+                                    <option value="Female">Female Only</option>
+                                    <option value="Mixed">Mixed/Co-ed</option>
+                                </select>
+                                <label><i class="bi bi-people-fill me-1"></i>Occupancy</label>
+                            </div>
+                        </div>
 
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="form-floating custom-floating">
+                                <select class="form-select border-0 shadow-none" v-model="selectedAmenity"
+                                    @change="dropdownAmenities">
+                                    <option value="">Select Amenity</option>
+                                    <option v-for="amenity in amenitiesList" :key="amenity.id" :value="amenity.id">
+                                        {{ amenity.aminityName }}
+                                    </option>
+                                </select>
+                                <label><i class="bi bi-wifi me-1"></i>Amenities</label>
+                            </div>
+                        </div>
 
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="form-floating custom-floating">
+                                <select v-model="selectedAvailability" class="form-select border-0 shadow-none"
+                                    @change="getAvailability">
+                                    <option value="all">All Status</option>
+                                    <option value="Available">Available Only</option>
+                                    <option value="Not Available">Fully Booked</option>
+                                </select>
+                                <label><i class="bi bi-calendar-check me-1"></i>Availability</label>
+                            </div>
+                        </div>
 
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="form-floating custom-floating">
+                                <select class="form-select border-0 shadow-none" v-model="selectedRating"
+                                    @change="dropdownRate">
+                                    <option value="all">Any Rating</option>
+                                    <option value="5">★★★★★ (5 Stars)</option>
+                                    <option value="4">★★★★☆ (4+ Stars)</option>
+                                    <option value="3">★★★☆☆ (3+ Stars)</option>
+                                </select>
+                                <label><i class="bi bi-star-fill me-1"></i>Min. Rating</label>
+                            </div>
+                        </div>
 
-
-                    <!-- Price Range -->
-                    <div class="form-floating" style="min-width: 180px;">
-                        <select class="form-select shadow-sm rounded-3" v-model="selectedPriceRange"
-                            @change="dropdownPriceRecommendations">
-                            <option disabled value="">Select Price Range</option>
-                            <option value="all">All Prices</option>
-                            <option value="0-500">₱0 - ₱500</option>
-                            <option value="501-1000">₱501 - ₱1000</option>
-                            <option value="1001-1500">₱1001 - ₱1500</option>
-                            <option value="1501+">₱1501 and above</option>
-                        </select>
-                        <label>Price Range (per room)</label>
-                    </div>
-
-
-                    <!-- Occupancy Type -->
-                    <div class="form-floating" style="min-width: 180px;">
-                        <select class="form-select shadow-sm rounded-3" v-model="selectedOccupancyType"
-                            @change="dropdownGenderRecommdations">
-                            <option disabled value="">Select Occupancy Type</option>
-                            <option value="all">All Types</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Mixed">Mixed</option>
-                        </select>
-                        <label>Occupancy Type</label>
-                    </div>
-
-
-                    <!-- Amenities -->
-                    <div class="form-floating" style="min-width: 180px;">
-                        <select class="form-select shadow-sm rounded-3" v-model="selectedAmenity"
-                            @change="dropdownAmenities">
-                            <option disabled value="">Select Amenity</option>
-                            <option v-for="amenity in amenitiesList" :key="amenity.id" :value="amenity.id">
-                                {{ amenity.aminityName }}
-                            </option>
-                        </select>
-                        <label>Amenities</label>
-                    </div>
-                    <!-- Rating -->
-                    <div class="form-floating" style="min-width: 180px;">
-                        <select class="form-select shadow-sm rounded-3" v-model="selectedRating" @change="dropdownRate">
-                            <option disabled value="">Select Rating</option>
-                            <option value="all">All Ratings</option>
-                            <option value="5">★★★★★ (5 Stars)</option>
-                            <option value="4">★★★★☆ (4 Stars & up)</option>
-                            <option value="3">★★★☆☆ (3 Stars & up)</option>
-                            <option value="2">★★☆☆☆ (2 Stars & up)</option>
-                            <option value="1">★☆☆☆☆ (1 Star & up)</option>
-                        </select>
-                        <label>Minimum Rating</label>
-                    </div>
-
-
-                    <!-- Sort By -->
-                    <div class="form-floating" style="min-width: 180px;">
-                        <select class="form-select shadow-sm rounded-3" v-model="sortBy" @change="sortDateDropDown">
-                            <option disabled value="">Dormitories by Date</option>
-                            <option value="new-old">Newest to Oldest</option>
-                            <option value="old-new">Oldest to Newest</option>
-                        </select>
-                        <label>Sort Dormitories by Date</label>
-                    </div>
-                    <div class="form-floating" style="min-width: 180px;">
-                        <select v-model="selectedAvailability" class="form-select" @change="getAvailability">
-                            <option disabled value="">Select Availability</option>
-                            <option value="all">All</option>
-                            <option value="Available">Available Only</option>
-                            <option value="Not Available">Not Available</option>
-                        </select>
-                        <label>Availability</label>
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="form-floating custom-floating">
+                                <select class="form-select border-0 shadow-none" v-model="sortBy"
+                                    @change="sortDateDropDown">
+                                    <option value="new-old">Newest Listing</option>
+                                    <option value="old-new">Oldest Listing</option>
+                                </select>
+                                <label><i class="bi bi-sort-down me-1"></i>Sort By Date</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
 
             <!-- Dorm Listings Grid -->
-            <div class="row g-4">
+            <div class="container-fluid px-4">
+                <div class="row g-4 mb-5">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 animate__animated animate__fadeInUp"
+                        v-for="(dorm, dormID) in dormitories" :key="dormID">
 
+                        <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden dorm-main-card">
+                            <div class="position-relative">
+                                <img :src="dorm?.images?.mainImage || dorm?.mainImage || '/images/default-dorm.webp'"
+                                    class="card-img-top" :alt="dorm.dormName"
+                                    style="height: 200px; object-fit: cover;" />
 
+                                <div class="position-absolute top-0 start-0 m-2">
+                                    <span class="badge rounded-pill shadow-sm px-3 py-2"
+                                        :class="dorm.availability === 'Available' ? 'bg-success' : 'bg-secondary'">
+                                        <i class="bi me-1"
+                                            :class="dorm.availability === 'Available' ? 'bi-check-circle-fill' : 'bi-dash-circle-fill'"></i>
+                                        {{ dorm.availability }}
+                                    </span>
+                                </div>
 
-
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3" v-for="(dorm, dormID) in dormitories" :key="dormID">
-                    <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden d-flex flex-column">
-                        <div class="image-wrapper position-relative rounded-3 overflow-hidden shadow-sm">
-                            <!-- Dorm Image -->
-                            <img :src="dorm?.images?.mainImage || dorm?.mainImage" class="w-100" :alt="dorm.dormName"
-                                style="object-fit: cover; height: 180px;" />
-
-
-                            <!-- Dorm Ratings overlay -->
-                            <div v-if="boolrate"
-                                class="position-absolute top-0 end-0 bg-dark bg-opacity-50 text-warning px-2 py-1 rounded-start">
-                                <i class="bi bi-star-fill me-1"></i> {{ dorm.rating_percentage }}%
-                            </div>
-                        </div>
-
-
-
-
-
-
-                        <div class="card-body d-flex flex-column justify-content-between flex-grow-1">
-
-
-                            <div>
-                                <h5 class="card-title text-dark fw-bold">{{ dorm.dormName }}</h5>
-                                <span class="badge w-25 d-flex align-items-center gap-1 shadow-sm"
-                                    :class="dorm.availability === 'Available' ? 'bg-success' : 'bg-secondary'">
-                                    <i
-                                        :class="dorm.availability === 'Available' ? 'bi bi-check-circle-fill' : 'bi bi-dash-circle-fill'"></i>
-                                    {{ dorm.availability }}
-                                </span>
-                                <p class="text-muted small mb-1">
-                                    <i class="bi bi-person-fill"></i> {{ dorm.occupancyType }}
-                                </p>
-                                <p class="text-muted small mb-0">
-                                    <i class="bi bi-geo-alt-fill"></i> {{ dorm.address }}
-                                </p>
-                                <div v-if="rooms.length > 0" class="mt-3 p-2 border-top">
-                                    <strong>Room Details:</strong>
-                                    <div class="small text-muted">
-                                        <p class="mb-1"><i class="bi bi-cash-stack"></i> Price: {{ dorm.price }}</p>
-                                        <p class="mb-1"><i class="bi bi-gender-ambiguous"></i> Gender: {{
-                                            dorm.genderPreference }}</p>
-                                        <p class="mb-1"><i class="bi bi-house-door-fill"></i> Type: {{ dorm.roomType }}
-                                        </p>
-                                        <p class="mb-1"><i class="bi bi-furniture-fill"></i> Furnishing: {{
-                                            dorm.furnishing_status }}</p>
-                                        <p class="mb-0"><i class="bi bi-check-circle"></i> Availability: {{
-                                            dorm.availability }}</p>
+                                <div v-if="boolrate" class="position-absolute bottom-0 end-0 m-2">
+                                    <div class="glass-rating px-2 py-1 rounded-3 text-white small">
+                                        <i class="bi bi-star-fill text-warning me-1"></i> {{ dorm.rating_percentage }}%
                                     </div>
                                 </div>
-                                <div v-if="amenitieslength === true" class="mt-3 p-2 border-top">
-                                    <strong>Amenities:</strong>
-                                    <div class="small text-muted" style="max-height: 100px; overflow-y: auto;">
-                                        <p class="mb-1" v-for="amenity in dorm.amenities" :key="amenity.id">
-                                            <i class="bi bi-check-circle"></i> {{ amenity.aminityName }}
-                                        </p>
+                            </div>
+
+                            <div class="card-body d-flex flex-column p-4">
+                                <div class="mb-3">
+                                    <h5 class="fw-bold text-dark mb-1 text-truncate">{{ dorm.dormName }}</h5>
+                                    <p class="text-muted small mb-0 text-truncate">
+                                        <i class="bi bi-geo-alt-fill text-dash-orange me-1"></i> {{ dorm.address }}
+                                    </p>
+                                </div>
+
+                                <div
+                                    class="d-flex justify-content-between align-items-center mb-4 bg-light p-2 rounded-3">
+                                    <div class="text-center flex-fill border-end">
+                                        <small class="d-block text-muted x-small">TYPE</small>
+                                        <span class="fw-bold small text-dash-blue">{{ dorm.occupancyType }}</span>
+                                    </div>
+                                    <div class="text-center flex-fill">
+                                        <small class="d-block text-muted x-small">STARTING AT</small>
+                                        <span class="fw-bold small text-success">₱{{ dorm.price }}</span>
                                     </div>
                                 </div>
 
-
-
-
-
-
-
-
-
-
-                            </div>
-                            <div class="mt-4 d-flex justify-content-center">
-                                <button class="btn-custom rounded-pill px-4 w-100"
-                                    @click="viewDormsDetails(dorm.dormID)">
-                                    View Details
-                                </button>
+                                <div class="mt-auto">
+                                    <button class="btn btn-dash-blue rounded-pill w-100 py-2 shadow-sm fw-bold"
+                                        @click="viewDormsDetails(dorm.dormID)">
+                                        Explore Details <i class="bi bi-arrow-right ms-1"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center shadow-sm rounded-3 bg-white p-2 gap-1">
 
-
-                        <!-- Previous Button -->
+                <nav aria-label="Page navigation" class="mt-5">
+                    <ul class="pagination justify-content-center gap-2">
                         <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                            <a class="page-link text-primary fw-semibold bg-light rounded" href="#"
+                            <a class="page-link border-0 shadow-sm rounded-circle p-pagination" href="#"
                                 @click.prevent="goToPage(currentPage - 1)">
-                                &laquo; Previous
+                                <i class="bi bi-chevron-left"></i>
                             </a>
                         </li>
 
-
-                        <!-- Page Numbers -->
-                        <li class="page-item" v-for="page in totalPages" :key="page"
-                            :class="{ active: currentPage === page }">
-                            <a class="page-link px-3 py-2"
-                                :class="currentPage === page ? 'bg-primary text-white rounded shadow-sm' : 'bg-light text-dark rounded hover:bg-primary hover:text-white transition'"
+                        <li class="page-item" v-for="page in totalPages" :key="page">
+                            <a class="page-link border-0 shadow-sm rounded-4 px-3 py-2 fw-bold"
+                                :class="currentPage === page ? 'bg-dash-blue text-white' : 'bg-white text-dark'"
                                 href="#" @click.prevent="goToPage(page)">
                                 {{ page }}
                             </a>
                         </li>
 
-
-                        <!-- Next Button -->
                         <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-                            <a class="page-link text-primary fw-semibold bg-light rounded" href="#"
+                            <a class="page-link border-0 shadow-sm rounded-circle p-pagination" href="#"
                                 @click.prevent="goToPage(currentPage + 1)">
-                                Next &raquo;
+                                <i class="bi bi-chevron-right"></i>
                             </a>
                         </li>
-
-
                     </ul>
                 </nav>
-
-
-
-
-
-
             </div>
 
 
@@ -989,8 +876,5 @@ export default {
         });
     },
 };
-
-
-
-
 </script>
+<style scoped src="../../../../css/tenant/dormitory.css"></style>

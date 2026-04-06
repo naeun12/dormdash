@@ -38,7 +38,7 @@ class homepageController extends Controller
         if (!$tenant) {
             return redirect()->route('tenant-login')->with('error', 'Landlord not found.');
         }
-        return view('tenant.auth.homepage',['title' => 'Homepage  - Dormhub',
+        return view('tenant.auth.homepage',['title' => 'Homepage  - DormDash',
         'tenant_id',$tenant,'cssPath' => asset('css/tenantpage/auth/home.css')
         ,'notifications' => $notifications,
              'unread_count' => $unreadCount,]);

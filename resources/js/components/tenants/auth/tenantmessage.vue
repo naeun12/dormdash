@@ -1,93 +1,72 @@
 <template>
-
-    <div class="container-fluid vh-150 d-flex flex-column bg-light">
-        <div class="row flex-grow-1 h-100 overflow-hidden">
-            <!-- Sidebar -->
+    <div class="chat-wrapper vh-100 d-flex flex-column bg-light">
+        <div class="row flex-grow-1 g-0 overflow-hidden">
             <div class="col-md-3 bg-white border-end shadow-sm d-flex flex-column">
-                <div class="p-3">
-                    <h5 class="fw-bold text-primary mb-3">Inbox</h5>
-                    <div class="list-group bg-transparent overflow-auto" style="max-height: 80vh;">
-                        <a v-for="convo in conversations" :key="convo.conversation_id" href="#"
-                            class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-2 px-3 shadow-sm rounded mb-2 transition"
-                            :class="isActiveConversation(convo.conversation_id) ? 'bg-primary text-white' : 'bg-light text-dark'"
-                            @click.prevent="selectConversation(convo)" style="border: none; cursor: pointer;">
-                            <!-- Profile + red dot wrapper -->
-                            <div class="position-relative">
-                                <img :src="convo.receiver_profile ? `/${convo.receiver_profile}` : '/default-profile.png'"
-                                    class="rounded-circle border"
-                                    style="width: 48px; height: 48px; object-fit: cover;" />
+                <div class="p-3 sidebar-header">
+                    <h5 class="fw-bold text-white mb-0">Inbox</h5>
+                </div>
+                <div class="list-group list-group-flush overflow-auto flex-grow-1 p-2">
+                    <a v-for="convo in conversations" :key="convo.conversation_id" href="#"
+                        class="convo-item list-group-item list-group-item-action d-flex align-items-center gap-3 py-3 px-3 mb-2 rounded-3 transition"
+                        :class="{ 'active-convo': isActiveConversation(convo.conversation_id) }"
+                        @click.prevent="selectConversation(convo)">
 
-                                <!-- Red dot for unread -->
-                                <span v-if="convo.is_read === 0"
-                                    class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"
-                                    style="width: 10px; height: 10px;"></span>
+                        <div class="position-relative">
+                            <img :src="convo.receiver_profile ? `/${convo.receiver_profile}` : '/default-profile.png'"
+                                class="rounded-circle border border-2 profile-pic" />
+                            <span v-if="convo.is_read === 0" class="orange-dot"></span>
+                        </div>
 
-                            </div>
-
-                            <!-- Conversation details -->
-                            <div class="flex-grow-1 ms-2">
-                                <h6 class="mb-0 fw-semibold text-truncate">{{ convo.receiver_name }}</h6>
-                                <small
-                                    :class="isActiveConversation(convo.conversation_id) ? 'text-white-50' : 'text-muted'"
-                                    class="text-truncate d-block">
-                                    {{ convo.last_message }}
-                                </small>
-                            </div>
-                        </a>
-
-                    </div>
+                        <div class="flex-grow-1 overflow-hidden">
+                            <h6 class="mb-0 fw-bold name-label">{{ convo.receiver_name }}</h6>
+                            <small class="last-msg-text text-truncate d-block">{{ convo.last_message }}</small>
+                        </div>
+                    </a>
                 </div>
             </div>
 
-            <!-- Chat Area -->
-            <div class="col-md-9 d-flex flex-column p-3 bg-light">
-                <!-- Header -->
-                <div class="d-flex align-items-center bg-white shadow-sm rounded p-3 mb-3 border">
+            <div class="col-md-9 d-flex flex-column p-0 chat-bg-pattern">
+                <div class="d-flex align-items-center bg-white shadow-sm p-3 border-bottom border-primary-subtle">
                     <img :src="activeLandlord.profilePicUrl ? '/' + activeLandlord.profilePicUrl : '/default-profile.png'"
-                        class="rounded-circle me-3 border" style="width: 50px; height: 50px; object-fit: cover;" />
+                        class="rounded-circle me-3 border border-2 border-primary"
+                        style="width: 45px; height: 45px; object-fit: cover;" />
                     <div>
                         <h6 class="mb-0 fw-bold text-dark">
                             {{ activeLandlord.firstname ? activeLandlord.firstname + ' ' + activeLandlord.lastname :
-                                'Loading...' }}
+                            'Loading...' }}
                         </h6>
-                        <small class="text-muted">Landlord</small>
+                        <small class="text-primary fw-semibold"><i
+                                class="bi bi-patch-check-fill me-1"></i>Landlord</small>
                     </div>
                 </div>
 
-                <!-- Chat Messages -->
-                <!-- Chat Messages -->
-                <div ref="chatContainer" class="p-3 bg-white shadow-sm rounded border flex-grow-1 mb-3 overflow-auto"
-                    style="height: 600px;">
-                    <div v-for="msg in messages" :key="msg.id" class="d-flex mb-3"
-                        :class="msg.senderID === currentUserID ? 'justify-content-end text-end' : 'justify-content-start text-start'">
-                        <div class="d-flex align-items-end w-100"
-                            :class="msg.senderID === currentUserID ? 'flex-row-reverse' : ''">
-                            <div :class="msg.senderID === currentUserID ? 'bg-primary text-white' : 'bg-light text-dark'"
-                                class="rounded p-3 shadow-sm" style="max-width: 60%;">
-                                <p class="mb-1">{{ msg.message }}</p>
-                                <small class="text-secondary-50">
-                                    {{ formatRole(msg.senderRole) }} • {{ formatTime(msg.sentAt) }}
-                                </small>
+                <div ref="chatContainer" class="p-4 flex-grow-1 overflow-auto d-flex flex-column gap-3">
+                    <div v-for="msg in messages" :key="msg.id" class="d-flex w-100"
+                        :class="msg.senderID === currentUserID ? 'justify-content-end' : 'justify-content-start'">
+
+                        <div :class="msg.senderID === currentUserID ? 'bubble-sent' : 'bubble-received'"
+                            class="message-bubble shadow-sm">
+                            <p class="mb-1">{{ msg.message }}</p>
+                            <div class="bubble-time">
+                                {{ formatRole(msg.senderRole) }} • {{ formatTime(msg.sentAt) }}
                             </div>
                         </div>
                     </div>
-
                 </div>
 
-
-                <!-- Message Input -->
-                <div class="input-group shadow-sm">
-                    <input type="text" v-model="message" class="form-control rounded-start"
-                        placeholder="Type a message..." />
-                    <button type="button" class="btn btn-primary rounded-end px-4" @click="pushMessage">
-                        <i class="bi bi-send-fill"></i> Send
-                    </button>
+                <div class="p-3 bg-white border-top">
+                    <div class="input-group custom-input-group shadow-sm">
+                        <input type="text" v-model="message" class="form-control border-0 px-4"
+                            placeholder="Type a message..." @keyup.enter="pushMessage" />
+                        <button class="btn btn-orange-send px-4" @click="pushMessage">
+                            <i class="bi bi-send-fill me-2"></i>SEND
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </template>
-
 
 <script>
 import axios from 'axios';
@@ -242,28 +221,5 @@ export default {
 };
 
 </script>
+<style scoped src="/resources/css/tenant/message.css"></style>
 
-<style scoped>
-.list-group-item.active {
-    background-color: #e7f1ff;
-    border-left: 4px solid #0d6efd;
-    font-weight: 500;
-}
-
-.transition {
-    transition: background-color 0.2s ease-in-out;
-}
-
-::-webkit-scrollbar {
-    width: 6px;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: #adb5bd;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background-color: #868e96;
-}
-</style>

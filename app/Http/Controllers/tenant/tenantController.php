@@ -23,14 +23,14 @@ class tenantController extends Controller
 {
     public function login()
     {
-        $title = 'Login - Dormhub';
+        $title = 'Login - DormDash';
         return view('tenant.accountprocess.login', compact('title'));
 
     }
 
     public function register()
     {
-        $title = 'Register - Dormhub';
+        $title = 'Register - DormDash';
         return view('tenant.accountprocess.register', compact('title'));
     }
     public function registerTenant(Request $request)

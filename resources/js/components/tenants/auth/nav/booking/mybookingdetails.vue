@@ -4,181 +4,142 @@
     <Modalconfirmation ref="modal" />
     <NotificationList ref="toastRef" />
 
-    <div class="container-fluid  p-3">
-        <div class="row shadow rounded overflow-hidden " style="border: 3px solid #4edce2;">
-            <!-- Left Section -->
-            <div class="col-md-4 text-black text-center py-4" style="background-color: #4edce2;">
-                <!-- Image Container -->
-                <div class="card-img-top d-flex align-items-center justify-content-center"
-                    style="height: 200px; overflow: hidden;">
-                    <img v-if="booking.pictureID" :src="booking.pictureID" alt="Profile Image" class="rounded"
-                        style="max-height: 100%; max-width: 100%; object-fit: cover;">
-                    <p v-else class="text-muted">No Image</p>
-                </div>
-                <statusMap :status="this.ispayment" role="tenant" />
+    <div class="container py-4">
+        <div class="row g-0 shadow-lg rounded-5 overflow-hidden modern-booking-card animate-fade-in">
 
-
-                <!-- Booking Details -->
-                <div class="text-start px-3">
-                    <p><strong><i class="bi bi-person-fill"></i>Full name:</strong> {{ booking.firstname }} {{
-                        booking.lastname }}</p>
-                    <p><strong><i class="bi bi-calendar-fill"></i> Age:</strong> {{ booking.age }}</p>
-                    <p><strong><i class="bi bi-gender-ambiguous"></i> Gender:</strong> {{ booking.gender }}</p>
-                    <p><strong><i class="bi bi-telephone-fill"></i> Contact No#:</strong> {{ booking.contactNumber }}
-                    </p>
-                    <p><strong><i class="bi bi-envelope-fill"></i> Email:</strong> {{ booking.contactEmail }}</p>
-                    <p><strong><i class="bi bi-house-door-fill"></i> Move-in Date:</strong> {{ booking.moveInDate }}</p>
-                    <p><strong><i class="bi bi-flag-fill"></i> Move-out Date:</strong> {{ booking.moveOutDate }}</p>
-
+            <div class="col-md-4 p-4 text-white d-flex flex-column bg-solid-blue">
+                <div class="profile-img-container shadow-sm mb-4">
+                    <img v-if="booking.pictureID" :src="booking.pictureID" alt="Profile Image"
+                        class="img-fluid rounded-4">
+                    <div v-else class="no-image-placeholder text-white-50">
+                        <i class="bi bi-person-bounding-box display-4"></i>
+                        <p class="small mt-2">No Image</p>
+                    </div>
                 </div>
 
-                <!-- Action Button -->
-                <div v-if="booking.status === 'confirmed' || booking.status === 'pending'" class="mt-3">
-                    <button class="btn btn-danger" @click="cancelBooking(booking.bookingID)">
-                        <i class="bi bi-x-circle-fill me-2"></i>Cancel Booking
+                <div class="status-badge-container mb-4">
+                    <statusMap :status="this.ispayment" role="tenant" />
+                </div>
+
+                <div class="personal-info-list flex-grow-1">
+                    <div class="info-row border-bottom border-white-opacity py-2 mb-2">
+                        <small class="d-block text-white-50 text-uppercase tracking-wider">Full Name</small>
+                        <span class="fw-bold fs-5">{{ booking.firstname }} {{ booking.lastname }}</span>
+                    </div>
+                    <div class="d-flex gap-3 border-bottom border-white-opacity py-2 mb-2">
+                        <div class="flex-fill">
+                            <small class="d-block text-white-50 text-uppercase tracking-wider">Age</small>
+                            <span class="fw-bold">{{ booking.age }}</span>
+                        </div>
+                        <div class="flex-fill">
+                            <small class="d-block text-white-50 text-uppercase tracking-wider">Gender</small>
+                            <span class="fw-bold text-capitalize">{{ booking.gender }}</span>
+                        </div>
+                    </div>
+                    <div class="info-row border-bottom border-white-opacity py-2 mb-2">
+                        <small class="d-block text-white-50 text-uppercase tracking-wider">Contact</small>
+                        <span class="fw-bold d-block small">{{ booking.contactNumber }}</span>
+                        <span class="fw-bold d-block small opacity-75">{{ booking.contactEmail }}</span>
+                    </div>
+                    <div class="info-row border-bottom border-white-opacity py-2">
+                        <small class="d-block text-white-50 text-uppercase tracking-wider">Stay Duration</small>
+                        <span class="fw-bold small">{{ booking.moveInDate }} — {{ booking.moveOutDate }}</span>
+                    </div>
+                </div>
+
+                <div v-if="booking.status === 'confirmed' || booking.status === 'pending'" class="mt-4">
+                    <button class="btn btn-cancel-modern w-100 rounded-pill py-2 fw-bold"
+                        @click="cancelBooking(booking.bookingID)">
+                        <i class="bi bi-x-circle me-2"></i>Cancel Booking
                     </button>
                 </div>
             </div>
 
-
-
-            <!-- Right Section -->
-            <div class="col-md-8 bg-light p-4">
-                <div class="border mb-4 rounded bg-white d-flex align-items-center justify-content-center overflow-hidden"
-                    style="height: 300px;">
-                    <img :src="booking.room?.roomImages" alt="Dormitory Image"
-                        class="w-100 h-100 object-fit-cover rounded" v-if="booking.room?.roomImages" />
-                    <p class="mb-0 text-muted" v-else>No Image</p>
+            <div class="col-md-8 bg-white p-4 p-lg-5">
+                <div class="dorm-header-img rounded-4 overflow-hidden mb-4 shadow-sm border position-relative">
+                    <img :src="booking.room?.roomImages" alt="Dormitory Image" class="w-100 h-100 object-fit-cover"
+                        v-if="booking.room?.roomImages" />
+                    <div class="bg-light w-100 h-100 d-flex align-items-center justify-content-center" v-else>
+                        <p class="text-muted">No Room Image Available</p>
+                    </div>
+                    <div class="price-tag-floating shadow-sm">
+                        ₱{{ booking.room?.price }}<span class="fs-6 fw-normal">/mo</span>
+                    </div>
                 </div>
 
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="bg-white p-3 border rounded shadow-sm h-100">
-                            <strong>🏢 Dormitory Name:</strong> {{ booking.room?.dorm.dormName }}
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="bg-white p-3 border rounded shadow-sm h-100">
-                            <strong>📍 Address:</strong> {{ booking.room?.dorm.address }}
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="bg-white p-3 border rounded shadow-sm h-100">
-                            <strong>🛏️ Occupancy Type:</strong> {{ booking.room?.dorm.occupancyType }}
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="bg-white p-3 border rounded shadow-sm h-100">
-                            <strong>✅ Availability:</strong> {{ booking.room?.dorm.availability }}
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="bg-white p-3 border rounded shadow-sm h-100">
-                            <strong>🔢 Room No#:</strong> {{ booking.room?.roomNumber }}
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="bg-white p-3 border rounded shadow-sm h-100">
-                            <strong>💵 Monthly Rate:</strong> ₱{{ booking.room?.price }}
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="bg-white p-3 border rounded shadow-sm h-100">
-                            <strong>🛏️ Room Type:</strong> {{ booking.room?.roomType }}
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="bg-white p-3 border rounded shadow-sm h-100">
-                            <strong>🚻 Gender Preference:</strong> {{ booking.room?.genderPreference }}
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6" v-for="(val, label) in {
+                        'Dormitory': booking.room?.dorm.dormName,
+                        'Address': booking.room?.dorm.address,
+                        'Room Number': booking.room?.roomNumber,
+                        'Room Type': booking.room?.roomType
+                    }" :key="label">
+                        <div class="p-3 rounded-4 bg-soft-blue border border-blue-subtle h-100">
+                            <small class="text-muted d-block fw-bold text-uppercase" style="font-size: 0.65rem;">{{
+                                label }}</small>
+                            <span class="fw-bold text-dark">{{ val }}</span>
                         </div>
                     </div>
                 </div>
-                <div class="mb-2 mt-4">
+
+                <div class="mb-4">
                     <BookingStatus :status="this.ispayment" role="tenant" />
                 </div>
 
+                <div v-if="ispayment === 'confirmed'" class="payment-section mt-5">
+                    <h5 class="fw-black mb-4 text-dark border-start-orange ps-3">Payment Settlement</h5>
 
-
-                <div v-if="ispayment === 'confirmed'">
-                    <!-- Payment method (fixed to GCash) -->
-                    <div class="container py-4 mb-4">
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold text-dark">
-                                <i class="bi bi-credit-card-2-front-fill text-primary me-2"></i>Payment Method
-                            </label>
-                            <input type="text" class="form-control form-control-lg shadow-sm" v-model="payment_type"
-                                value="GCash" readonly />
-                            <div class="form-text text-muted">
-                                Payments are only available via GCash.
-                            </div>
-                        </div>
-
-                        <!-- GCash Card -->
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body rounded-4 p-4"
-                                style="border:2px solid #4edce2; background: linear-gradient(135deg,#e8fafa,#ffffff);">
-
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h6 class="fw-bold text-primary mb-0">
-                                        <i class="bi bi-wallet2 me-2"></i>GCash Number
-                                    </h6>
-
+                    <div class="row g-4">
+                        <div class="col-md-5">
+                            <div
+                                class="gcash-card p-4 rounded-5 text-white shadow-sm position-relative overflow-hidden">
+                                <div class="d-flex justify-content-between mb-4">
+                                    <span class="fw-bold small tracking-widest">GCASH PORTAL</span>
+                                    <i class="bi bi-qr-code-scan fs-4"></i>
                                 </div>
+                                <small class="d-block opacity-75">Merchant Number</small>
+                                <h4 class="fw-black mb-0 tracking-wider">{{ booking.room?.dorm.gcashNumber }}</h4>
+                                <div class="card-wave"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="upload-zone rounded-5 border-dashed p-4 text-center h-100 d-flex flex-column justify-content-center"
+                                @click="triggerPaymentImage" v-if="isPaymentImage">
+                                <input ref="PaymentPicturesInput" class="d-none" type="file" accept="image/*"
+                                    @change="handlePaymentPicture" />
+                                <div class="upload-icon-circle bg-light mb-2 mx-auto">
+                                    <i class="bi bi-cloud-arrow-up text-blue fs-3"></i>
+                                </div>
+                                <h6 class="fw-bold mb-1 text-dark">Upload Receipt</h6>
+                                <p class="small text-muted mb-0">Browse GCash Screenshot</p>
+                            </div>
 
-                                <p class="fs-5 fw-bold text-dark mb-1">{{ booking.room?.dorm.gcashNumber }}</p>
-                                <small class="text-muted">Send payment to this number and upload your receipt
-                                    below.</small>
+                            <div v-if="PaymentPicturePreview"
+                                class="preview-container mt-3 position-relative text-center">
+                                <img :src="PaymentPicturePreview" class="img-fluid rounded-4 border shadow-sm"
+                                    style="max-height: 200px;">
+                                <button type="button" @click="removePaymentPicture"
+                                    class="btn btn-danger btn-sm rounded-circle position-absolute top-0 end-0 m-2">
+                                    <i class="bi bi-x"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Upload Proof of Payment -->
-                    <div class="border border-secondary rounded-3 p-4 mb-3 text-center" style="cursor: pointer;"
-                        v-if="isPaymentImage" @click="triggerPaymentImage">
-                        <input ref="PaymentPicturesInput" class="d-none" type="file" accept="image/*"
-                            @change="handlePaymentPicture" />
-                        <div class="d-flex flex-column align-items-center text-center mb-3">
-                            <img :src="paymentIcon" alt="Payment Icon" style="max-width: 60px; height: auto;"
-                                class="mb-2" />
-                            <h5 class="text-secondary mt-2">Upload GCash Payment Receipt</h5>
-                            <small class="text-muted">Click to browse and select an image file</small>
-                        </div>
+                    <div v-if="errors.payment_image"
+                        class="alert alert-danger mt-3 rounded-4 py-2 small border-0 shadow-sm">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errors.payment_image[0] }}
                     </div>
 
-                    <!-- Preview -->
-                    <div v-if="PaymentPicturePreview" class="text-center mb-3">
-                        <img :src="PaymentPicturePreview" alt="Uploaded Payment Image" class="img-fluid rounded mb-2"
-                            style="max-height: 250px;" />
-                        <div>
-                            <button type="button" @click="removePaymentPicture" class="btn btn-danger shadow-sm">
-                                Remove Uploaded Image
-                            </button>
-                        </div>
-                    </div>
-                    <div class="justify-content-center d-flex mb-2">
-                        <span v-if="errors.payment_image" class="text-danger small mt-1 d-block">
-                            <i class="bi bi-exclamation-circle-fill me-1"></i>{{ errors.payment_image[0] }}
-                        </span>
-                    </div>
-
-                    <!-- Pay Button -->
-                    <button type="submit" class="btn btn-success w-100 py-2 fw-semibold shadow-sm"
+                    <button type="submit" class="btn btn-orange-solid w-100 py-3 mt-4 rounded-pill fw-black shadow-sm"
                         @click="submitPayment">
-                        <i class="bi bi-check-circle-fill me-2"></i>Confirm GCash Payment
+                        SUBMIT PAYMENT RECEIPT
                     </button>
                 </div>
             </div>
         </div>
     </div>
 </template>
-
 
 <script>
 import axios from 'axios';
@@ -369,8 +330,6 @@ export default {
 };
 </script>
 
-<style scoped>
-.border {
-    border: 1px solid #dee2e6 !important;
-}
+<style scoped src="/resources/css/tenant/mybooking.css">
+
 </style>

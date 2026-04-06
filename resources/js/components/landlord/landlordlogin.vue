@@ -1,89 +1,105 @@
 <template>
-    <Loader ref="loader" />
     <Toastcomponents ref="toast" />
-    <div class="container my-5 d-flex justify-content-center">
-        <div class="card border-0 shadow-lg py-4 px-3 w-100"
-            style="max-width: 700px; border-radius: 25px; background: #ffffff;">
-            <div class="card-body">
-                <h1 class="text-center mb-2 mt-3 fw-bold text-primary">👋 Hello Landlord</h1>
-                <p class="text-center mb-4 text-muted fs-6">
-                    Welcome back! Please log in to manage your properties and connect with tenants.
-                </p>
-            </div>
-            <!-- Login Form -->
-            <form @submit.prevent="LandlordLogin" novalidate>
-                <div class="row px-4">
-                    <!-- Email -->
-                    <div class="mt-3">
-                        <label for="email" class="form-label fw-semibold">Email</label>
-                        <input type="email" name="email" id="email" class="form-control p-3" v-model="email"
-                            placeholder="Enter your email" style="border: 2px solid #4edce2; border-radius: 12px;">
-                        <span v-if="errors.email" class="text-danger small">
-                            {{ errors.email[0] }}
-                        </span>
+
+    <div class="container min-vh-100 d-flex align-items-center">
+        <div class="card border-0 shadow-lg overflow-hidden w-100 animate__animated animate__fadeIn"
+            style="max-width: 500px; border-radius: 30px; background: #ffffff;">
+
+            <div style="height: 6px; background: linear-gradient(90deg, #003C87, #FC7D07);"></div>
+
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-5">
+                    <div class="d-inline-block p-3 rounded-circle mb-3" style="background: rgba(0, 60, 135, 0.08);">
+                        <i class="bi bi-house-heart-fill fs-1" style="color: #003C87;"></i>
                     </div>
-
-
-                    <!-- Password -->
-                    <div class="mt-3">
-                        <label for="password" class="form-label fw-semibold">Password</label>
-                        <div class="input-group">
-                            <input type="password" id="password" name="password" v-model="password"
-                                class="form-control p-3" placeholder="Enter your password"
-                                style="border: 2px solid #4edce2; border-radius: 12px;">
-                        </div>
-                        <span v-if="errors.password" class="text-danger small">
-                            {{ errors.password[0] }}
-                        </span>
-                    </div>
-
-
-                    <!-- Show Password -->
-                    <div class="mt-3 d-flex align-items-center">
-                        <input type="checkbox" id="show-password" name="show-password" class="form-check-input me-2"
-                            style="border: 2px solid #4edce2;" @click="toggleShowPassword">
-                        <label for="show-password" class="form-label m-0">Show Password</label>
-                    </div>
-
-
-                    <!-- Sign In Button -->
-                    <div class="container d-flex justify-content-center">
-                        <div class="w-75 mt-4">
-                            <button type="submit" class="btn btn-primary rounded-pill w-100 py-2 shadow-sm"
-                                style="background: linear-gradient(135deg, #4edce2, #1fb6ff); border: none; font-weight: 600; transition: all 0.3s;">
-                                Sign In
-                            </button>
-                        </div>
-                    </div>
+                    <h2 class="fw-bold text-dark" style="letter-spacing: -1px;">Welcome Back</h2>
+                    <p class="text-muted small">Manage your properties and tenants with ease.</p>
                 </div>
-            </form>
 
+                <form @submit.prevent="LandlordLogin" novalidate>
+                    <div class="mb-4">
+                        <label for="email" class="form-label small fw-bold text-muted text-uppercase ms-1">Email
+                            Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-2 border-end-0"
+                                style="border-color: #f1f3f5; border-radius: 12px 0 0 12px;">
+                                <i class="bi bi-envelope text-muted"></i>
+                            </span>
+                            <input type="email" name="email" id="email"
+                                class="form-control border-2 border-start-0 p-3 shadow-none login-input" v-model="email"
+                                placeholder="name@example.com"
+                                style="border-color: #f1f3f5; border-radius: 0 12px 12px 0; font-size: 0.95rem;">
+                        </div>
+                        <span v-if="errors.email" class="text-danger x-small mt-1 d-block">
+                            <i class="bi bi-exclamation-circle me-1"></i> {{ errors.email[0] }}
+                        </span>
+                    </div>
 
-            <!-- Signup Link -->
-            <p class="text-center mt-4 mb-2 text-muted">
-                Don’t have an account?
-                <a @click="clickSignupLink" style="cursor: pointer; font-weight: 600;"
-                    class="text-decoration-none text-primary">
-                    Sign up here
-                </a>
-            </p>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <label for="password"
+                                class="form-label small fw-bold text-muted text-uppercase ms-1">Password</label>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-2 border-end-0"
+                                style="border-color: #f1f3f5; border-radius: 12px 0 0 12px;">
+                                <i class="bi bi-shield-lock text-muted"></i>
+                            </span>
+                            <input :type="showPassword ? 'text' : 'password'" id="password" name="password"
+                                v-model="password"
+                                class="form-control border-2 border-start-0 p-3 shadow-none login-input"
+                                placeholder="Enter password"
+                                style="border-color: #f1f3f5; border-radius: 0 12px 12px 0; font-size: 0.95rem;">
+                        </div>
+                        <span v-if="errors.password" class="text-danger x-small mt-1 d-block">
+                            <i class="bi bi-exclamation-circle me-1"></i> {{ errors.password[0] }}
+                        </span>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between mb-4 mt-2">
+                        <div class="form-check ms-1">
+                            <input type="checkbox" id="show-password" class="form-check-input shadow-none"
+                                @click="toggleShowPassword" style="cursor: pointer;">
+                            <label for="show-password" class="form-check-label small text-muted"
+                                style="cursor: pointer;">
+                                Show Password
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                        class="btn w-100 py-3 rounded-3 shadow-sm fw-bold border-0 transition-all landlord-login-btn text-white"
+                        style="background: #003C87; letter-spacing: 0.5px; border-radius: 12px !important;">
+                        LOG IN TO DASHBOARD
+                    </button>
+                </form>
+
+                <div class="text-center mt-5">
+                    <p class="text-muted small mb-0">
+                        New to <span class="fw-bold" style="color: #003C87;">DormDash</span>?
+                        <a @click="clickSignupLink" style="cursor: pointer; color: #FC7D07 !important;"
+                            class="fw-bold text-decoration-none border-bottom border-warning border-2 pb-1 ms-1">
+                            Create Landlord Account
+                        </a>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 <script>
 import axios from 'axios';
 import Toastcomponents from '@/components/Toastcomponents.vue';
-import Loader from '@/components/loader.vue';
 
 export default {
     components: {
         Toastcomponents,
-        Loader
 
     },
     data() {
         return {
             email: '',
+             showPassword: false, // ✅ define it here
             password: '',
             errors: {},
             linkSignup: '',
@@ -97,7 +113,6 @@ export default {
             formData.append('email', this.email);
             formData.append('password', this.password);
             try {
-                this.$refs.loader.loading = true;
 
                 const response = await axios.post('/loginLandlord', formData, {
                     headers: {
@@ -113,6 +128,7 @@ export default {
                     this.$refs.loader.loading = false;;
                     this.errors = {};
                     this.fill();
+                    this.$refs.loader.loading = false;
 
                     return true;
                 }
@@ -133,7 +149,6 @@ export default {
             }
 
             finally { 
-                this.$refs.loader.loading = false;
 
             }
 
@@ -161,3 +176,4 @@ export default {
 }
 
 </script>
+<style scoped src="./../../../css/accountprocess/landlordLogin.css"></style>

@@ -5,67 +5,77 @@
     <div class="container mt-5">
 
         <div class="d-flex justify-content-end align-items-center mb-4">
-            <div class="d-flex gap-2 flex-wrap">
-                <!-- View Rooms Button -->
-                <button class="btn btn-outline-secondary shadow-sm px-4 rounded-pill d-flex align-items-center gap-2"
-                    @click="ViewRoomsPage">
-                    <i class="bi bi-door-open-fill"></i>
-                    View Rooms
+            <div class="d-flex gap-3 flex-wrap">
+
+                <button class="btn btn-modern-blue shadow-sm" @click="ViewRoomsPage">
+                    <div class="icon-circle-white me-2">
+                        <i class="bi bi-door-open-fill"></i>
+                    </div>
+                    <span>View Rooms</span>
                 </button>
 
-                <!-- Add Dorm Button -->
-                <button class="btn btn-outline-primary shadow-sm px-4 rounded-pill d-flex align-items-center gap-2"
-                    @click="VisibleAddModal = true" :disabled="!isVerified" :title="isVerified
-                        ? 'Add Dormitory'
-                        : 'Your account is not verified. Please verify your account to add dormitories.'">
-                    <i class="bi bi-plus-circle"></i>
-                    Add Dorm
+                <button class="btn btn-modern-orange shadow-sm" @click="VisibleAddModal = true" :disabled="!isVerified"
+                    :title="isVerified ? 'Add Dormitory' : 'Account not verified'">
+                    <div class="icon-circle-white me-2">
+                        <i class="bi bi-plus-lg"></i>
+                    </div>
+                    <span>Add Dorm</span>
                 </button>
-
 
             </div>
-
         </div>
-        <div v-if="!isVerified"
-            class="alert alert-warning border-0 shadow-sm rounded-3 p-4 mb-4 d-flex align-items-center gap-3">
-            <i class="bi bi-shield-lock-fill fs-3 text-warning"></i>
-            <div>
-                <h6 class="fw-bold text-dark mb-1">Account Not Verified</h6>
-                <p class="mb-2 small text-muted">
-                    Please verify your account to unlock all features including adding dormitories.
-                    Verification ensures security and trust within the platform.
-                </p>
-                <button class="btn btn-warning btn-sm rounded-pill shadow-sm px-3" @click="goToVerificationPage">
-                    🔒 Verify Now
+        <div v-if="!isVerified" class="verification-banner mb-4">
+            <div class="banner-glass-effect"></div>
+            <div class="d-flex align-items-center gap-4 position-relative z-index-2">
+                <div class="alert-icon-box">
+                    <i class="bi bi-shield-lock-fill"></i>
+                    <div class="pulse-ring"></div>
+                </div>
+
+                <div class="flex-grow-1">
+                    <h6 class="fw-800 text-dark mb-1 text-uppercase letter-spacing-1">Account Verification Required</h6>
+                    <p class="mb-0 small text-muted opacity-75">
+                        Unlock full access to dormitory management and premium security features by verifying your
+                        identity.
+                    </p>
+                </div>
+
+                <button class="btn btn-verify-now" @click="goToVerificationPage">
+                    <span>Verify Identity</span>
+                    <i class="bi bi-arrow-right-short ms-1"></i>
                 </button>
             </div>
         </div>
 
 
-        <div class="input-group mb-4 w-100 shadow-sm rounded-pill overflow-hidden" style="border:2px solid #4edce2;">
-            <span class="input-group-text bg-white border-0">
-                <i class="bi bi-search text-primary"></i>
-            </span>
-            <input type="text" class="form-control border-0 shadow-none" placeholder="Search Dormitories name"
-                aria-label="Search Locations" v-model="searchTerm" />
-        </div>
-        <div class="mb-1 d-flex gap-2 flex-wrap justify-content-start">
-            <div class="col-md-6 col-lg-4 mb-2">
-                <select class="form-select shadow-sm rounded-4" v-model="selectedLocation" @change="dropdownLocation"
-                    style="border:2px solid #4edce2;">
+        <div class="filter-glass-bar d-flex align-items-center gap-2 mb-4 shadow-sm">
+            <div class="search-segment d-flex align-items-center px-3 flex-grow-1">
+                <i class="bi bi-search text-primary-blue me-2"></i>
+                <input type="text" class="form-control border-0 shadow-none bg-transparent"
+                    placeholder="Search Dormitories name..." v-model="searchTerm" />
+            </div>
 
-                    <option disabled value="">Select Locations</option>
+            <div class="v-divider"></div>
+
+            <div class="filter-segment d-none d-md-flex">
+                <i class="bi bi-geo-alt text-muted me-1"></i>
+                <select class="form-select border-0 shadow-none bg-transparent py-0" v-model="selectedLocation"
+                    @change="dropdownLocation">
+                    <option value="" disabled>Location</option>
                     <option value="all">All Locations</option>
                     <option value="mandaue">Mandaue City</option>
                     <option value="lapu-lapu">Lapu-Lapu</option>
                 </select>
             </div>
-            <div class="col-md-6 col-lg-4 mb-2">
-                <select class="form-select shadow-sm rounded-4" v-model="selectedAvailability"
-                    @change="dropdownAvailability" style="border:2px solid #4edce2;">
 
-                    <option disabled value="">Select Availability</option>
-                    <option value="all">All Availability</option>
+            <div class="v-divider"></div>
+
+            <div class="filter-segment d-none d-md-flex me-2">
+                <i class="bi bi-check-circle text-muted me-1"></i>
+                <select class="form-select border-0 shadow-none bg-transparent py-0" v-model="selectedAvailability"
+                    @change="dropdownAvailability">
+                    <option value="" disabled>Availability</option>
+                    <option value="all">All</option>
                     <option value="Available">Available</option>
                     <option value="Not Available">Not Available</option>
                 </select>
@@ -73,291 +83,355 @@
         </div>
         <!-- Search Bar -->
 
-        <div v-if="dorms.length === 0" class="text-center text-muted">
-            No dormitories found matching your search criteria.
+        <div v-if="dorms.length === 0" class="empty-state-card py-5">
+            <div class="text-center px-4">
+                <div class="icon-stack mb-4">
+                    <div class="icon-pulse"></div>
+                    <i class="bi bi-house-exclamation-fill"></i>
+                </div>
+
+                <h5 class="fw-800 text-dark mb-2">No Results Found</h5>
+                <p class="text-muted small mx-auto mb-4" style="max-width: 320px;">
+                    We couldn't find any dormitories matching
+                    <span class="text-primary-blue fw-600">"{{ searchTerm }}"</span>.
+                    Try adjusting your search or filters.
+                </p>
+
+                <button class="btn btn-reset-filters shadow-sm" @click="resetFilters">
+                    <i class="bi bi-arrow-clockwise me-2"></i>
+                    Clear All Filters
+                </button>
+            </div>
         </div>
         <!-- Table -->
-        <div class="container bg-white rounded shadow-sm p-3"
-            style="border: 1px solid #4edce2; border-radius: 0.5rem; max-height: 700px; overflow-y: auto;">
+        <div v-else class="table-container shadow-sm">
+            <div class="table-responsive custom-scrollbar">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr class="align-middle">
+                            <th scope="col" class="ps-4">#</th>
+                            <th scope="col">Dormitory Name</th>
+                            <th scope="col">Address</th>
+                            <th scope="col">Contact Info</th>
+                            <th scope="col" class="text-center">Rooms</th>
+                            <th scope="col" class="text-center pe-4">Actions</th>
+                        </tr>
+                    </thead>
 
-            <table class="table bg-info table-bordered table-hover mb-0"
-                style="border-collapse: separate; border-spacing: 0;">
-                <!-- Table Header -->
-                <thead class="bg-info text-white">
-                    <tr class="text-center align-middle">
-                        <th scope="col">#</th>
-                        <th scope="col">Dormitory Name</th>
-                        <th scope="col">Address</th>
-                        <th scope="col">Contact Email</th>
-                        <th scope="col">Contact Phone</th>
-                        <th scope="col">Rooms</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-
-
-                <!-- Table Body -->
-                <tbody>
-                    <tr v-for="(dorm, index) in dorms" :key="dorm.dormID" class="text-center align-middle bg-info">
-
-                        <td class="fw-semibold">{{ dorm.dormID }}</td>
-                        <td>{{ dorm.dormName }}</td>
-                        <td class="text-truncate" style="max-width: 150px;">{{ dorm.address }}</td>
-                        <td class="text-truncate" style="max-width: 150px;">{{ dorm.contactEmail }}</td>
-                        <td>{{ dorm.contactPhone }}</td>
-                        <td class="fw-bold">{{ dorm.totalRooms }}</td>
-                        <td>
-                            <div class="d-flex justify-content-center gap-2">
-                                <button class="btn btn-sm btn-success" @click="viewDorm(dorm.dormID)" title="View Dorm">
-                                    <i class="bi bi-eye-fill"></i>
-                                </button>
-                                <button class="btn btn-sm btn-primary" @click="editDorm(dorm.dormID)" title="Edit Dorm">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" @click="deleteDorm(dorm.dormID)"
-                                    title="Delete Dorm">
-                                    <i class="bi bi-trash-fill"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                    <tbody>
+                        <tr v-for="(dorm, index) in dorms" :key="dorm.dormID" class="align-middle">
+                            <td class="ps-4 fw-bold text-primary-blue">{{ dorm.dormID }}</td>
+                            <td>
+                                <span class="fw-700 text-dark">{{ dorm.dormName }}</span>
+                            </td>
+                            <td>
+                                <div class="text-truncate text-muted small" style="max-width: 180px;"
+                                    :title="dorm.address">
+                                    <i class="bi bi-geo-alt-fill me-1 text-accent-orange opacity-75"></i>
+                                    {{ dorm.address }}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <span class="small fw-600 text-dark">{{ dorm.contactEmail }}</span>
+                                    <span class="text-muted smaller">{{ dorm.contactPhone }}</span>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge rounded-pill bg-soft-primary px-3 py-2">
+                                    {{ dorm.totalRooms }} Rooms
+                                </span>
+                            </td>
+                            <td class="pe-4">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button class="btn-action btn-view" @click="viewDorm(dorm.dormID)"
+                                        title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <button class="btn-action btn-edit" @click="editDorm(dorm.dormID)"
+                                        title="Edit Dorm">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="btn-action btn-delete" @click="deleteDorm(dorm.dormID)"
+                                        title="Delete">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
 
         <!-- Pagination with Bootstrap 5 -->
-        <div v-if="lastPage > 1" class="d-flex justify-content-center align-items-center my-3">
-            <nav aria-label="Page navigation">
-                <ul class="pagination mb-0">
-                    <li :class="['page-item', { disabled: currentPage === 1 }]">
-                        <button class="page-link" :disabled="currentPage === 1"
-                            @click="handlePagination(currentPage - 1)" aria-label="Previous">
-                            <span aria-hidden="true">&laquo; Prev</span>
+        <div v-if="lastPage > 1" class="d-flex justify-content-center align-items-center my-4">
+            <nav aria-label="Page navigation" class="pagination-container p-2 shadow-sm">
+                <ul class="pagination gap-2 mb-0 border-0">
+                    <li :class="['page-item border-0', { disabled: currentPage === 1 }]">
+                        <button class="btn-nav" :disabled="currentPage === 1" @click="handlePagination(currentPage - 1)"
+                            aria-label="Previous">
+                            <i class="bi bi-chevron-left"></i>
+                            <span class="ms-1 d-none d-sm-inline">Prev</span>
                         </button>
                     </li>
 
-                    <li class="page-item disabled">
-                        <span class="page-link">
-                            Page {{ currentPage }} of {{ lastPage }}
-                        </span>
+                    <li class="page-item d-flex align-items-center mx-2">
+                        <div class="page-indicator">
+                            <span class="current-text">Page</span>
+                            <span class="badge-page mx-2">{{ currentPage }}</span>
+                            <span class="total-text text-muted">of {{ lastPage }}</span>
+                        </div>
                     </li>
 
-                    <li :class="['page-item', { disabled: currentPage === lastPage }]">
-                        <button class="page-link" :disabled="currentPage === lastPage"
+                    <li :class="['page-item border-0', { disabled: currentPage === lastPage }]">
+                        <button class="btn-nav" :disabled="currentPage === lastPage"
                             @click="handlePagination(currentPage + 1)" aria-label="Next">
-                            <span aria-hidden="true">Next &raquo;</span>
+                            <span class="me-1 d-none d-sm-inline">Next</span>
+                            <i class="bi bi-chevron-right"></i>
                         </button>
                     </li>
                 </ul>
             </nav>
         </div>
+
         <!-- Modal Add Dorm -->
-        <div v-if="VisibleAddModal" class="modal fade show d-block w-100" tabindex="-1"
-            style="background-color: rgba(0, 0, 0, 0.5);">
+        <div v-if="VisibleAddModal" class="modal fade show d-block" tabindex="-1"
+            style="background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(10px); z-index: 1050;">
             <div class="modal-dialog modal-xl modal-dialog-centered">
+
                 <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
-                    <!-- Modal Header -->
-                    <div class="modal-header text-black py-3">
-                        <h5 class="modal-title fw-bold">🏠 Add Dorm</h5>
-                        <button type="button" class="btn-close btn-close-black" @click="CloseAddModal"></button>
+
+                    <div
+                        class="modal-header border-0 bg-white py-3 px-4 d-flex align-items-center justify-content-between">
+                        <h5 class="modal-title fw-800 text-dark d-flex align-items-center gap-2">
+                            <span class="header-emoji-box">🏠</span> Add Dormitory
+                        </h5>
+                        <button type="button" class="btn-close shadow-none" @click="CloseAddModal"></button>
                     </div>
-                    <!-- Modal Body -->
-                    <div class="modal-body bg-white">
-                        <div class="p-3 d-flex align-items-center flex-wrap bg-light border rounded shadow-sm"
-                            style="gap: 1rem;">
-                            <img :src="getAssetPath('images/Logo/logo.png')" alt="Company Logo" width="50" class="me-3"
-                                style="border-radius: 8px;" />
 
-                            <span class="fw-bold fs-5 logo-text me-4" style="color: #2c3e50; user-select: none;">
-                                DormHub
-                            </span>
-
-                            <div class="d-flex flex-column flex-grow-1" style="gap: 0.25rem;">
-                                <small class="text-muted d-flex align-items-center" style="gap: 0.3rem;">
-                                    <span>📍</span>
-                                    Click <strong>Select address</strong> to locate your dormitory.
-                                </small>
-
-                                <small class="text-muted d-flex align-items-center" style="gap: 0.3rem;">
-                                    <span>✅</span>
-                                    Ensure all required fields are filled before submitting.
-                                </small>
+                    <div class="modal-body bg-white px-4 pb-4">
+                        <div class="p-3 d-flex align-items-center flex-wrap bg-light border-0 rounded-4 shadow-sm mb-4"
+                            style="border-left: 5px solid #003c87 !important;">
+                            <img :src="getAssetPath('images/Logo/logo.png')" alt="Logo" width="50"
+                                class="shadow-sm rounded-3 me-3" />
+                            <span class="fw-800 fs-5 logo-text me-4">DormDash</span>
+                            <div class="d-flex flex-column flex-grow-1">
+                                <small class="text-dark fw-600">📍 Click <strong>Select address</strong> to locate your
+                                    dormitory.</small>
+                                <small class="text-muted">✅ Ensure all required fields are filled before
+                                    submitting.</small>
                             </div>
                         </div>
 
-                        <div class="row g-3">
-                            <!-- Left Column -->
-                            <div class="col">
-                                <div class="form-floating mb-3 mt-3">
-                                    <input type="text" class="form-control border-primary shadow-sm" id="dormName"
-                                        v-model="dorm_name" placeholder="Dorm Name"
-                                        style="height: 48px; font-size: 1rem;" />
-                                    <label for="dormName" class="fw-semibold text-primary">Dorm Name</label>
+                        <div class="row g-4">
+                            <div class="col-lg-6">
+
+                                <div class="form-floating mb-1">
+                                    <input type="text" class="form-control premium-input"
+                                        :class="{ 'is-invalid': errors.dorm_name }" id="dormName" v-model="dorm_name"
+                                        placeholder=" " />
+                                    <label for="dormName">Dormitory Name</label>
+                                </div>
+                                <div class="mb-3" v-if="errors.dorm_name">
+                                    <span class="text-danger small fw-bold d-flex align-items-center gap-1">
+                                        <i class="bi bi-exclamation-circle-fill"></i> {{ errors.dorm_name[0] }}
+                                    </span>
                                 </div>
 
-                                <span class="mb-3 text-danger small d-flex align-items-center gap-1"
-                                    v-if="errors.dorm_name">
-                                    <i class="fa-solid fa-circle-exclamation"></i>
-                                    {{ errors.dorm_name[0] }}
-                                </span>
-                                <div class="form-floating mt-3">
-                                    <input type="text" class="form-control bg-light text-muted" id="address"
-                                        v-model="address" placeholder="Address" readonly
-                                        style="height: 48px; cursor: not-allowed;" />
-                                    <label for="address" class="fw-semibold">Address</label>
+                                <div class="form-floating mb-2">
+                                    <input type="text" class="form-control premium-input bg-light-soft" id="address"
+                                        v-model="address" placeholder=" " readonly />
+                                    <label for="address">Address</label>
                                 </div>
-
-                                <div class="d-grid mb-3">
-                                    <button type="button" class="btn btn-outline-primary fw-semibold"
-                                        @click="VisibleMap = true" style="gap: 0.5rem;">
-                                        📍 Select address
+                                <div class="d-grid mb-1">
+                                    <button type="button" class="btn btn-map-action shadow-sm"
+                                        @click="VisibleMap = true">
+                                        <i class="bi bi-geo-alt-fill me-2"></i> Select address from Map
                                     </button>
                                 </div>
-
-                                <span class="mb-3 text-danger " v-if="errors.address">
-                                    <i class="fa-solid fa-circle-exclamation"></i>
-                                    {{ errors.address[0] }}
-                                </span>
-                                <div class="form-floating mb-3 mt-3">
-                                    <textarea class="form-control border-primary shadow-sm text-muted" id="description"
-                                        v-model="description" placeholder="Enter Description"
-                                        style="height: 150px; font-size: 1rem;"></textarea>
-                                    <label for="description" class="fw-semibold text-primary">Description</label>
+                                <div class="mb-3" v-if="errors.address">
+                                    <span class="text-danger small fw-bold d-flex align-items-center gap-1">
+                                        <i class="bi bi-exclamation-circle-fill"></i> {{ errors.address[0] }}
+                                    </span>
                                 </div>
 
+                                <div class="form-floating mb-1">
+                                    <textarea class="form-control premium-input" id="description" v-model="description"
+                                        placeholder=" "></textarea>
+                                    <label for="description">Description</label>
+                                </div>
+                                <div class="mb-3" v-if="errors.description">
+                                    <span class="text-danger small fw-bold d-flex align-items-center gap-1">
+                                        <i class="bi bi-exclamation-circle-fill"></i> {{ errors.description[0] }}
+                                    </span>
+                                </div>
 
-                                <span class="mb-3 text-danger" v-if="errors.description">
-                                    <i class="fa-solid fa-circle-exclamation"></i>{{ errors.description[0]
-                                    }}</span>
-
-                                <div>
-                                    <label for="total_rooms">Number of Rooms</label>
-
-                                    <div class="mb-3 mt-3 d-flex align-items-center gap-2">
-
-                                        <button class="btn btn-outline-danger" @click="decreamnentRooms()"><span
-                                                class="fw-bold">-</span></button>
-                                        <input type="text" class="form-control w-100 text-center" id="total_rooms"
-                                            placeholder="0" v-model="total_rooms" readonly>
-                                        <button class="btn btn-outline-success" @click="increamentRooms()"><span
-                                                class="fw-bold">+</span></button>
+                                <div class="p-3 rounded-4 bg-light-soft border">
+                                    <label class="fw-bold text-muted small mb-2 d-block">TOTAL NUMBER OF ROOMS</label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <button type="button" class="btn btn-stepper-danger"
+                                            @click="decreamnentRooms()"><i class="bi bi-dash-lg"></i></button>
+                                        <input type="text" class="form-control stepper-input bg-transparent"
+                                            v-model="total_rooms" readonly>
+                                        <button type="button" class="btn btn-stepper-success"
+                                            @click="increamentRooms()"><i class="bi bi-plus-lg"></i></button>
                                     </div>
                                 </div>
                             </div>
-                            <!-- Middle Column -->
-                            <div class="col">
-                                <div class="form-floating mb-3 mt-3">
-                                    <input type="email" class="form-control border-primary shadow-sm" id="contact_email"
-                                        placeholder="Contact Email" v-model="contact_email"
-                                        style="height: 48px; font-size: 1rem;" />
-                                    <label for="contact_email" class="fw-semibold text-primary">Contact Email</label>
+
+                            <div class="col-lg-6">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-1">
+                                            <input type="email" class="form-control premium-input" id="email"
+                                                v-model="contact_email" placeholder=" " />
+                                            <label for="email">Contact Email</label>
+                                        </div>
+                                        <div class="mb-2" v-if="errors.contact_email">
+                                            <span class="text-danger small fw-bold d-flex align-items-center gap-1">
+                                                <i class="bi bi-exclamation-circle-fill"></i> {{ errors.contact_email[0]
+                                                }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-1">
+                                            <input type="tel" class="form-control premium-input" id="phone"
+                                                v-model="contact_phone" placeholder=" " />
+                                            <label for="phone">Contact Phone</label>
+                                        </div>
+                                        <div class="mb-2" v-if="errors.contact_phone">
+                                            <span class="text-danger small fw-bold d-flex align-items-center gap-1">
+                                                <i class="bi bi-exclamation-circle-fill"></i> {{ errors.contact_phone[0]
+                                                }}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <span class="mb-3 text-danger mt-3" v-if="errors.contact_email"> <i
-                                        class="fa-solid fa-circle-exclamation"></i> {{
-                                            errors.contact_email[0] }}</span>
-                                <div class="form-floating mb-3 mt-3">
-                                    <input type="tel" class="form-control border-primary shadow-sm" id="contact_phone"
-                                        placeholder="Contact Phone" v-model="contact_phone"
-                                        style="height: 48px; font-size: 1rem;" />
-                                    <label for="contact_phone" class="fw-semibold text-primary">Contact Phone</label>
+                                <div class="row g-3 mt-1">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-1">
+                                            <input type="tel" class="form-control premium-input" id="gcash"
+                                                v-model="gcashNumber" placeholder=" " />
+                                            <label for="gcash">GCash Number</label>
+                                        </div>
+                                        <div class="mb-2" v-if="errors.gcashNumber">
+                                            <span class="text-danger small fw-bold d-flex align-items-center gap-1">
+                                                <i class="bi bi-exclamation-circle-fill"></i> {{ errors.gcashNumber[0]
+                                                }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-1">
+                                            <input type="text" class="form-control premium-input" id="btype"
+                                                v-model="building_type" placeholder=" " />
+                                            <label for="btype">Building Type</label>
+                                        </div>
+                                        <div class="mb-2" v-if="errors.building_type">
+                                            <span class="text-danger small fw-bold d-flex align-items-center gap-1">
+                                                <i class="bi bi-exclamation-circle-fill"></i> {{ errors.building_type[0]
+                                                }}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <span class="text-danger mb-3" v-if="errors.contact_phone"> <i
-                                        class="fa-solid fa-circle-exclamation"></i> {{
-                                            errors.contact_phone[0] }}</span>
-                                <div class="form-floating mb-3 mt-3">
-                                    <input type="tel" class="form-control border-primary shadow-sm" id="contact_phone"
-                                        placeholder="Gcash Number" v-model="gcashNumber"
-                                        style="height: 48px; font-size: 1rem;" />
-                                    <label for="contact_phone" class="fw-semibold text-primary">Gcash Number</label>
-                                </div>
-                                <span class="text-danger mb-3" v-if="errors.gcashNumber"> <i
-                                        class="fa-solid fa-circle-exclamation"></i> {{
-                                            errors.gcashNumber[0] }}</span>
-
-                                <div class="form-floating mb-3 mt-3">
-                                    <input type="text" class="form-control border-primary shadow-sm" id="building_type"
-                                        placeholder="Enter Building Type" v-model="building_type"
-                                        style="height: 48px; font-size: 1rem;" />
-                                    <label for="building_type" class="fw-semibold text-primary">Building Type</label>
-                                </div>
-
-                                <span class="text-danger mb-3" v-if="errors.building_type"> <i
-                                        class="fa-solid fa-circle-exclamation"></i> {{
-                                            errors.building_type[0] }}</span>
-                                <div class="form-floating mb-3 mt-3">
-                                    <select class="form-select border-primary shadow-sm" id="availability"
-                                        v-model="availability" style="height: 48px; font-size: 1rem;">
-                                        <option disabled value="">Select Availability</option>
+                                <div class="form-floating mt-3 mb-1">
+                                    <select class="form-select premium-input" id="avail" v-model="availability">
+                                        <option disabled value="">Select Status</option>
                                         <option value="Available">Available</option>
                                         <option value="Not Available">Not Available</option>
                                     </select>
-                                    <label for="availability" class="fw-semibold text-primary">Select
-                                        Availability</label>
+                                    <label for="avail">Availability Status</label>
+                                </div>
+                                <div class="mb-3" v-if="errors.availability">
+                                    <span class="text-danger small fw-bold d-flex align-items-center gap-1">
+                                        <i class="bi bi-exclamation-circle-fill"></i> {{ errors.availability[0] }}
+                                    </span>
                                 </div>
 
-                                <span class="text-danger mb-3" v-if="errors.availability">
-                                    <i class="fa-solid fa-circle-exclamation"></i> {{
-                                        errors.availability[0] }}</span>
-                                <div class="form-floating mb-3 mt-3">
-                                    <select class="form-select border-primary shadow-sm" id="occupancy_type"
-                                        v-model="occupancy_type" style="height: 48px; font-size: 1rem;">
-                                        <option disabled value="">Select Occupancy Type</option>
+                                <div class="form-floating mb-1">
+                                    <select class="form-select premium-input" id="occ" v-model="occupancy_type">
+                                        <option disabled value="">Select Occupancy</option>
                                         <option value="Male only">Male only</option>
                                         <option value="Female only">Female only</option>
-                                        <option value="Mixed (Male & Female – separate floors)">Mixed (Male & Female –
-                                            separate floors)</option>
-                                        <option value="Mixed (Unspecified)">Mixed (Unspecified)</option>
+                                        <option value="Mixed (Male & Female – separate floors)">Mixed (Separate Floors)
+                                        </option>
+                                        <option value="Mixed (Unspecified)">Mixed (General)</option>
                                     </select>
-                                    <label for="occupancy_type" class="fw-semibold text-primary">Occupancy Type</label>
+                                    <label for="occ">Occupancy Type</label>
+                                </div>
+                                <div class="mb-4" v-if="errors.occupancy_type">
+                                    <span class="text-danger small fw-bold d-flex align-items-center gap-1">
+                                        <i class="bi bi-exclamation-circle-fill"></i> {{ errors.occupancy_type[0] }}
+                                    </span>
                                 </div>
 
-                                <span class="text-danger mb-3" v-if="errors.occupancy_type"> <i
-                                        class="fa-solid fa-circle-exclamation"></i> {{
-                                            errors.occupancy_type[0] }}</span>
-
-
-                                <div class="d-grid">
+                                <div class="d-grid pt-2">
                                     <button type="submit" @click="DisplayModalImages"
-                                        class="btn btn-outline-success btn-lg">
-                                        Upload Dormitory Images
+                                        class="btn btn-premium-submit py-3 shadow">
+                                        <i class="bi bi-cloud-arrow-up-fill me-2"></i> Upload Dormitory Images
                                     </button>
                                 </div>
                             </div>
-                            <!-- Right Column -->
                         </div>
+                        
                     </div>
-                    <!-- Modal Footer -->
                 </div>
+
             </div>
+
             <Toastcomponents ref="toast" />
         </div>
+
+        
         <!-- MAP MODAL -->
         <div v-if="VisibleMap" class="modal fade show d-block w-100" tabindex="-1"
-            style="background-color: rgba(0,0,0,0.5);" @click.self="VisibleMap = false">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content position-relative">
+            style="background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(10px); z-index: 1060;"
+            @click.self="VisibleMap = false">
 
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h5 class="modal-title">Dorm Location</h5>
-                        <button type="button" class="btn-close" @click="VisibleMap = false" aria-label="Close"></button>
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+
+                    <div
+                        class="modal-header border-0 bg-white py-3 px-4 d-flex align-items-center justify-content-between">
+                        <h5 class="modal-title fw-800 text-dark d-flex align-items-center gap-2">
+                            <span class="header-emoji-box">📍</span> Dormitory Location
+                        </h5>
+                        <button type="button" class="btn-close shadow-none" @click="VisibleMap = false"></button>
                     </div>
-                    <!-- Modal Body with Map -->
-                    <div class="modal-body pt-3 position-relative">
-                        <!-- 📍 Instruction -->
-                        <div class="mb-2 text-muted" style="font-size: 14px;">
-                            📍 Use this pin to locate your dormitory.
+
+                    <div class="modal-body p-0 position-relative">
+
+                        <div class="position-absolute top-0 start-0 end-0 p-3" style="z-index: 5;">
+                            <div class="bg-white p-3 rounded-4 shadow-sm border d-flex align-items-center gap-3">
+                                <div class="header-emoji-box bg-primary-light">
+                                    <i class="bi bi-geo-alt-fill text-primary"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <small class="text-muted d-block fw-bold"
+                                        style="font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">Selected
+                                        Location</small>
+                                    <div class="text-dark fw-600 text-truncate" style="font-size: 14px;">
+                                        {{ address || 'Drag the pin to select the address...' }}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <!-- Map Container -->
-                        <div id="AddMap" class="rounded" style="height: 400px; width: 100%;"></div>
+
+                        <div id="AddMap" class="bg-light" style="height: 500px; width: 100%;"></div>
                     </div>
-                    <!-- Modal Footer -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @click="VisibleMap = false">
-                            Back to Inputs
+
+                    <div class="modal-footer border-0 bg-white p-3">
+                        <button type="button" class="btn btn-premium-back px-4 py-2" @click="VisibleMap = false">
+                            <i class="bi bi-arrow-left me-2"></i> Back to Form
+                        </button>
+                        <button type="button" class="btn btn-premium-submit px-4 py-2" @click="VisibleMap = false">
+                            Confirm Location
                         </button>
                     </div>
 
@@ -365,63 +439,105 @@
             </div>
         </div>
         <!-- Amenities Modal -->
-        <div class="modal fade show d-block w-100" v-if="amenitiesModal" tabindex="-1"
-            style="background-color: rgba(0,0,0,0.5);" @click.self="amenitiesModal = false">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content border-0 shadow-lg rounded-4">
-                    <div class="modal-header  text-dark rounded-top-4">
-                        <h5 class="modal-title d-flex align-items-center gap-2">
-                            <i class="fa-solid fa-circle-plus text-primary"></i>
-                            Add Amenities <span class="text-muted small">(Optional)</span>
-                        </h5>
-                        <button type="button" class="btn-close btn-close-dark" @click="closeaminitiemodal"
-                            aria-label="Close"></button>
-                    </div>
-                    <Toastcomponents ref="toast" />
+      <div class="modal fade show d-block w-100" v-if="amenitiesModal" tabindex="-1"
+    style="background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px);" >
+    
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-2xl rounded-4 overflow-hidden">
+            
+            <div class="modal-header border-0 bg-white pt-4 px-4">
+                <h5 class="modal-title d-flex align-items-center gap-2 fw-800 text-dark">
+                    <i class="fa-solid fa-circle-plus text-primary"></i>
+                    Add Amenities <span class="text-muted small fw-normal">(Optional)</span>
+                </h5>
+               
+            </div>
 
-                    <div class="modal-body">
-                        <div v-for="(amenity, index) in amenities" :key="index" class="form-floating mb-3">
-                            <input type="text" class="form-control mb-2" v-model="amenities[index]"
-                                :id="'amenity' + index" placeholder="Enter amenity" />
-                            <label :for="'amenity' + index">Amenity {{ index + 1 }}</label>
-                            <span class="text-danger mb-3 " v-if="errors.amenities">{{ errors.amenities[0] }}</span>
+            <Toastcomponents ref="toast" />
 
-                        </div>
-
-                        <button class="btn btn-primary mb-4" @click="addAmenity" :disabled="amenities.length >= 4"
-                            :title="amenities.length >= 4 ? 'Max 4 amenities allowed' : 'Add Amenity'">
-                            <i class="fa-solid fa-plus"></i> Add Amenity
-                        </button>
+            <div class="modal-body px-4 pb-4">
+                
+                <div v-for="(amenity, index) in amenities" :key="index" class="form-floating mb-3 premium-input-group">
+                    <input type="text" class="form-control premium-control" v-model="amenities[index]"
+                        :id="'amenity' + index" placeholder="Enter amenity" />
+                    <label :for="'amenity' + index" class="text-muted">
+                        <i class="fa-solid fa-tag me-1 small"></i> Amenity {{ index + 1 }}
+                    </label>
+                    
+                    <div class="error-wrapper mt-1">
+                        <span class="text-danger x-small fw-bold" v-if="errors.amenities">
+                            <i class="fa-solid fa-circle-exclamation me-1"></i> {{ errors.amenities[0] }}
+                        </span>
                     </div>
                 </div>
+
+                <div class="mt-4">
+                    <button class="btn btn-add-modern w-100 py-3" @click="addAmenity" :disabled="amenities.length >= 4"
+                        :title="amenities.length >= 4 ? 'Max 4 amenities allowed' : 'Add Amenity'">
+                        <div class="d-flex align-items-center justify-content-center gap-2">
+                            <i class="fa-solid fa-plus-circle fs-5"></i>
+                            <span class="fw-bold">Add Another Amenity Slot</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-footer border-0 bg-light-subtle p-3">
+                <button type="button" class="btn btn-primary rounded-3 w-100 py-2 fw-bold" @click="closeaminitiemodal">
+                    Done
+                </button>
             </div>
         </div>
+    </div>
+</div>
         <div class="modal fade show d-block w-100" v-if="rulesandpoliciesModal" tabindex="-1"
-            style="background-color: rgba(0,0,0,0.5);" @click.self="rulesandpoliciesModal = false">
+            style="background-color: rgba(15, 23, 42, 0.7); backdrop-filter: blur(10px);"
+            @click.self="rulesandpoliciesModal = false">
+
             <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content border-0 shadow-lg rounded-4">
-                    <div class="modal-header  text-dark rounded-top-4">
-                        <h5 class="modal-title d-flex align-items-center gap-2">
-                            <i class="fa-solid fa-circle-plus text-primary"></i>
-                            Add Rules and Policy <span class="text-muted small">(Optional)</span>
+                <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
+                    <div class="modal-header border-0 bg-white pt-4 px-4">
+                        <h5 class="modal-title d-flex align-items-center gap-2 fw-800 text-dark">
+                            <i class="fa-solid fa-shield-halved text-primary"></i>
+                            Add Rules and Policy <span class="text-muted small fw-normal">(Optional)</span>
                         </h5>
-                        <button type="button" class="btn-close btn-close-dark" @click="rulesandpoliciesModal = false"
-                            aria-label="Close"></button>
+                      
                     </div>
+
                     <Toastcomponents ref="toast" />
 
-                    <div class="modal-body">
-                        <div v-for="(rule, index) in rules" :key="index" class="form-floating mb-3">
-                            <input type="text" class="form-control mb-2" v-model="rules[index]" :id="'rule' + index"
-                                placeholder="Enter rule or policy" />
-                            <label :for="'rule' + index">Rule/Policy {{ index + 1 }}</label>
-                            <span class="text-danger mb-3 " v-if="errors.rules">{{ errors.rules[0]
-                            }}</span>
+                    <div class="modal-body px-4 pb-4">
+                        <div v-for="(rule, index) in rules" :key="index" class="form-floating mb-3 premium-input-group">
+                            <input type="text" class="form-control premium-control" v-model="rules[index]"
+                                :id="'rule' + index" placeholder="Enter rule or policy" />
+                            <label :for="'rule' + index" class="text-muted">
+                                <i class="fa-solid fa-gavel me-1 small"></i> Rule/Policy {{ index + 1 }}
+                            </label>
+
+                            <div class="error-wrapper mt-1">
+                                <span class="text-danger x-small fw-bold" v-if="errors.rules">
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i> {{ errors.rules[0] }}
+                                </span>
+                            </div>
                         </div>
-                        <button class="btn btn-primary mb-4" @click="addRulesAndpolicy"
-                            :disabled="addRulesAndpolicy.length >= 4"
-                            :title="addRulesAndpolicy.length >= 4 ? 'Max 4 rules/policies allowed' : 'Add Rule/Policy'">
-                            <i class="fa-solid fa-plus"></i> Add Rule/Policy
+
+                        <div class="mt-4">
+                            <button class="btn btn-add-modern w-100 py-3" @click="addRulesAndpolicy"
+                                :disabled="rules.length >= 4"
+                                :title="rules.length >= 4 ? 'Max 4 rules allowed' : 'Add Rule'">
+                                <div class="d-flex align-items-center justify-content-center gap-2">
+                                    <i class="fa-solid fa-plus-circle fs-5"></i>
+                                    <span class="fw-bold">Add Another Rule</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer border-0 bg-light-subtle p-3">
+                        <button type="button" class="btn btn-primary rounded-3 w-100 py-2 fw-bold"
+                            @click="rulesandpoliciesModal = false">
+                            Confirm Policies
                         </button>
                     </div>
                 </div>
@@ -429,338 +545,223 @@
         </div>
         <!-- Update Modal -->
         <div v-if="VisibleUpdateModal" class="modal fade show d-block w-100" tabindex="-1"
-            style="background-color: rgba(0, 0, 0, 0.5);">
+            style="background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); z-index: 1055;">
+
             <div class="modal-dialog modal-xl modal-dialog-centered">
-                <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
-                    <!-- Modal Header -->
-                    <div class="modal-header text-dark py-3">
-                        <h5 class="modal-title fw-bold d-flex align-items-center gap-2">
-                            <i class="fa-solid fa-pen-to-square text-primary"></i>
-                            Update Dorm
-                        </h5>
-                        <button type="button" class="btn-close btn-close-dark" @click="VisibleUpdateModal = false"
-                            aria-label="Close"></button>
+                <div class="modal-content border-0 rounded-24 shadow-2xl overflow-hidden">
+
+                    <div class="modal-header border-0 bg-white pt-4 px-4 pb-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="icon-box-primary shadow-sm">
+                                <i class="fa-solid fa-pen-nib"></i>
+                            </div>
+                            <div>
+                                <h5 class="modal-title fw-800 text-dark mb-0">Update Property Details</h5>
+                                <p class="text-muted small mb-0">Modify your dormitory information and policies</p>
+                            </div>
+                        </div>
+                    
                     </div>
 
                     <Toastcomponents ref="toast" />
 
-                    <!-- Modal Body -->
                     <form @submit.prevent="updateDorm">
-                        <div class="modal-body bg-white">
-                            <div
-                                class="p-3 d-flex align-items-center flex-wrap gap-3 shadow-sm rounded-4 bg-light border mb-3">
-                                <!-- Logo + Name -->
-                                <div class="d-flex align-items-center me-4">
-                                    <img :src="getAssetPath('images/Logo/logo.png')" alt="Company Logo" width="50"
-                                        class="me-2 rounded-circle border">
-                                    <span class="fw-bold fs-5 logo-text text-primary">DormHub</span>
-                                </div>
+                        <div class="modal-body custom-scrollbar bg-white px-4 pb-4"
+                            style="max-height: 80vh; overflow-y: auto;">
 
-                                <!-- Instructions -->
-                                <div class="d-flex flex-column small text-muted">
-                                    <div class="mb-1">
-                                        📍 Click <strong class="text-dark">Select address</strong> to locate your
-                                        dormitory.
-                                    </div>
+                            <div
+                                class="modern-banner mb-4 d-flex align-items-center justify-content-between p-3 rounded-20 shadow-sm border border-light">
+                                <div class="d-flex align-items-center">
+                                    <img :src="getAssetPath('images/Logo/logo.png')" alt="Logo" width="42"
+                                        class="me-3 rounded-12 shadow-sm">
                                     <div>
-                                        ✅ Ensure all required fields are filled before submitting.
+                                        <span class="fw-800 fs-5 text-primary tracking-tight">DormDash</span>
+                                        <div class="text-muted small opacity-75">📍 Select address to sync location
+                                        </div>
                                     </div>
+                                </div>
+                                <div class="d-none d-md-block text-end">
+                                    <span class="badge bg-success-soft text-success rounded-pill px-3 py-2">
+                                        <i class="fa-solid fa-shield-check me-1"></i> Form Secure
+                                    </span>
                                 </div>
                             </div>
 
-
-                            <div class="row g-3">
-                                <!-- Left Column -->
+                            <div class="row g-4">
                                 <div class="col-md-4">
-                                    <div class="form-floating mb-2">
-                                        <input type="text" class="form-control  rounded-4 border-primary shadow-sm"
-                                            id="dormName" v-model="editDormData.dormName" placeholder="Dorm Name">
-                                        <label for="dormName" class="text-primary">Dorm Name</label>
-                                        <span class="text-danger small d-flex align-items-center mt-1"
-                                            v-if="errors.editDormData?.dormName">
-                                            <i class="fa-solid fa-circle-exclamation me-1"></i>
-                                            {{ errors.editDormData.dormName[0] }}
-                                        </span>
-                                    </div>
-
-                                    <div class="form-floating mb-2 position-relative">
-                                        <input type="text" class="form-control  rounded-4 border-primary shadow-sm"
-                                            id="address" v-model="editDormData.address" placeholder="Address" readonly>
-                                        <label for="address" class="text-primary">Address</label>
-
-                                        <!-- Error message with icon -->
-                                        <span class="text-danger small d-flex align-items-center mt-1"
-                                            v-if="errors.editDormData?.address">
-                                            <i class="fa-solid fa-circle-exclamation me-1"></i>
-                                            {{ errors.editDormData.address[0] }}
-                                        </span>
-                                    </div>
-                                    <button type="button" class="btn mb-2 btn-outline-primary w-100"
-                                        @click="UpdateVisibleMap = true">
-                                        📍 Select Address
-                                    </button>
-
-                                    <div class="form-floating mb-2 position-relative">
-                                        <!-- Description Icon -->
-
-
-                                        <textarea class="form-control  rounded-4 border-primary shadow-sm"
-                                            id="description" v-model="editDormData.description"
-                                            placeholder="Description" style="height: 120px;"></textarea>
-                                        <label for="description" class="text-primary">Description</label>
-
-                                        <!-- Error Message with Icon -->
-                                        <span class="text-danger small d-flex align-items-center mt-1"
-                                            v-if="errors.editDormData?.description">
-                                            <i class="fa-solid fa-circle-exclamation me-1"></i>
-                                            {{ errors.editDormData.description[0] }}
-                                        </span>
-                                    </div>
-
-                                    <!-- Optional Amenities Field -->
-                                    <div class="form-floating mb-2 position-relative">
-                                        <!-- Amenities Icon -->
-                                        <input type="text" class="form-control rounded-4 border-secondary shadow-sm"
-                                            id="Optional" v-model="editDormData.newAmenities"
-                                            placeholder="Optional Add Amenities">
-                                        <label for="Optional" class="text-secondary">(Optional) Add Amenities</label>
-                                    </div>
-                                    <span class="text-danger small" v-if="errors.editDormData?.newAmenities">
-                                        {{ errors.editDormData.newAmenities[0] }}
-                                    </span>
-
-                                    <div class="mb-2">
-                                        <button type="button" class="btn btn-outline-secondary w-100"
-                                            @click="addnewAmenity()">
-                                            <i class="fas fa-plus me-2"></i> Add Amenity
-                                        </button>
-
-
-                                    </div>
-
-                                    <div class="border rounded-4 p-2 shadow-sm bg-light">
-                                        <!-- Table Header -->
-                                        <div class="row fw-bold border-bottom py-2 text-center text-primary">
-                                            <div class="col">
-                                                <i class="fa-solid fa-list me-1"></i> Amenity
-                                            </div>
-                                            <div class="col-3">
-                                                <i class="fa-solid fa-gears me-1"></i> Actions
-                                            </div>
+                                    <div class="input-group-stack">
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control modern-input" id="dormName"
+                                                v-model="editDormData.dormName" placeholder="Dorm Name">
+                                            <label for="dormName">Property Name</label>
+                                            <span class="error-msg" v-if="errors.editDormData?.dormName">
+                                                <i class="fa-solid fa-circle-exclamation me-1"></i> {{
+                                                errors.editDormData.dormName[0] }}
+                                            </span>
                                         </div>
 
-                                        <!-- Amenities List -->
-                                        <div v-for="amenity in editDormData.amenities"
-                                            :key="amenity.pivot ? amenity.pivot.id : amenity.id"
-                                            class="row align-items-center py-2 border-bottom text-center bg-white rounded-3 my-1 shadow-sm">
-
-                                            <!-- Amenity Name -->
-                                            <div class="col">
-                                                <input type="text" readonly
-                                                    class="form-control text-center border-0 bg-transparent fw-semibold text-secondary"
-                                                    v-model="amenity.aminityName" placeholder="Amenity name" />
+                                        <div class="address-input-wrapper mb-3">
+                                            <div class="form-floating">
+                                                <input type="text" class="form-control modern-input-readonly"
+                                                    id="address" v-model="editDormData.address" placeholder="Address"
+                                                    readonly>
+                                                <label for="address">Verified Address</label>
                                             </div>
+                                            <button type="button" class="btn btn-map-trigger mt-2"
+                                                @click="UpdateVisibleMap = true">
+                                                <i class="fa-solid fa-map-location-dot me-2"></i> Update Location
+                                            </button>
+                                            <span class="error-msg" v-if="errors.editDormData?.address">
+                                                {{ errors.editDormData.address[0] }}
+                                            </span>
+                                        </div>
 
-                                            <!-- Actions -->
-                                            <div class="col-3 d-flex justify-content-center gap-2">
-                                                <button
-                                                    class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1"
-                                                    @click.prevent="deleteAmenity(amenity.pivot.id)">
-                                                    <i class="fa-solid fa-trash"></i>
+                                        <div class="form-floating mb-3">
+                                            <textarea class="form-control modern-input h-120" id="description"
+                                                v-model="editDormData.description" placeholder="Description"></textarea>
+                                            <label for="description">Property Narrative</label>
+                                            <span class="error-msg" v-if="errors.editDormData?.description">
+                                                {{ errors.editDormData.description[0] }}
+                                            </span>
+                                        </div>
+
+                                        <div class="amenity-manager-card rounded-20 p-3 bg-light-subtle border">
+                                            <label
+                                                class="small fw-800 text-muted text-uppercase mb-3 d-block">Facilities
+                                                Management</label>
+                                            <div class="input-group mb-2">
+                                                <input type="text" class="form-control modern-input-sm"
+                                                    v-model="editDormData.newAmenities" placeholder="New facility...">
+                                                <button class="btn btn-primary px-3 rounded-12 ms-2" type="button"
+                                                    @click="addnewAmenity()">
+                                                    <i class="fa-solid fa-plus"></i>
                                                 </button>
+                                            </div>
+                                            <div class="amenity-scroll custom-scrollbar mt-3">
+                                                <div v-for="amenity in editDormData.amenities"
+                                                    :key="amenity.pivot?.id || amenity.id"
+                                                    class="amenity-row shadow-sm">
+                                                    <span class="text-truncate fw-semibold">{{ amenity.aminityName
+                                                        }}</span>
+                                                    <button @click.prevent="deleteAmenity(amenity.pivot.id)"
+                                                        class="btn-delete-small">
+                                                        <i class="fa-solid fa-trash-can"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Middle Column -->
+
                                 <div class="col-md-4">
-                                    <div class="form-floating mb-2 position-relative">
-                                        <!-- Email Icon -->
+                                    <div class="spec-card rounded-24 p-4 border border-primary-subtle shadow-sm mb-4">
+                                        <h6 class="fw-800 mb-4 text-dark"><i
+                                                class="fa-solid fa-sliders text-primary me-2"></i> Core Specifications
+                                        </h6>
 
+                                        <div class="form-floating mb-3">
+                                            <input type="email" class="form-control modern-input" id="contact_email"
+                                                v-model="editDormData.contactEmail" placeholder="Email">
+                                            <label for="contact_email">Support Email</label>
+                                        </div>
 
-                                        <input type="email" class="form-control rounded-4 border-primary shadow-sm"
-                                            id="contact_email" v-model="editDormData.contactEmail"
-                                            placeholder="Contact Email">
-                                        <label for="contact_email" class="text-primary">Contact Email</label>
+                                        <div class="form-floating mb-3">
+                                            <input type="tel" class="form-control modern-input" id="contact_phone"
+                                                v-model="editDormData.contactPhone" placeholder="Phone">
+                                            <label for="contact_phone">Contact Hotline</label>
+                                        </div>
 
-                                        <!-- Error message with icon -->
-                                        <span class="text-danger small d-flex align-items-center mt-1"
-                                            v-if="errors.editDormData?.contactEmail">
-                                            <i class="fa-solid fa-circle-exclamation me-1"></i>
-                                            {{ errors.editDormData.contactEmail[0] }}
-                                        </span>
+                                        <div class="form-floating mb-3">
+                                            <input type="tel" class="form-control modern-input" id="gcash"
+                                                v-model="editDormData.gcashNumber" placeholder="GCash">
+                                            <label for="gcash">GCash Account</label>
+                                        </div>
+
+                                        <div class="row g-2 mb-3">
+                                            <div class="col-6">
+                                                <div class="form-floating">
+                                                    <select class="form-select modern-select"
+                                                        v-model="editDormData.availability">
+                                                        <option value="Available">Active</option>
+                                                        <option value="Not Available">Full</option>
+                                                    </select>
+                                                    <label>Status</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-floating">
+                                                    <input type="text" class="form-control modern-input"
+                                                        v-model="editDormData.buildingType">
+                                                    <label>Building</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="room-stepper p-3 rounded-16 border bg-white">
+                                            <label class="small fw-800 text-muted d-block text-center mb-2">Inventory
+                                                (Rooms)</label>
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <button type="button" class="btn-step"
+                                                    @click="updatedecreamnentRooms()">-</button>
+                                                <span class="fs-4 fw-800 text-primary">{{ editDormData.totalRooms
+                                                    }}</span>
+                                                <button type="button" class="btn-step"
+                                                    @click="updateincreamentRooms()">+</button>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <!-- Contact Phone -->
-                                    <div class="form-floating mb-2 position-relative">
-                                        <!-- Phone Icon -->
-                                        <input type="tel" class="form-control  rounded-4 border-primary shadow-sm"
-                                            id="contact_phone" v-model="editDormData.contactPhone"
-                                            placeholder="Contact Phone">
-                                        <label for="contact_phone" class="text-primary">Contact Phone</label>
-
-                                        <!-- Error message with icon -->
-                                        <span class="text-danger small d-flex align-items-center mt-1"
-                                            v-if="errors.editDormData?.contactPhone">
-                                            <i class="fa-solid fa-circle-exclamation me-1"></i>
-                                            {{ errors.editDormData.contactPhone[0] }}
-                                        </span>
-
+                                    <div class="d-grid gap-3">
+                                        <button type="button" @click="updateImages()" class="btn btn-glass-dark">
+                                            <i class="fa-solid fa-images me-2"></i> Media Manager
+                                        </button>
+                                        <button type="submit" class="btn btn-primary-gradient py-3 shadow-lg">
+                                            <i class="fa-solid fa-cloud-arrow-up me-2"></i> Save Changes
+                                        </button>
+                                        <button type="button" class="btn btn-outline-dark py-3" @click="VisibleUpdateModal = false">
+                                            <i class="fa-solid fa-times me-2"></i> Discard Changes
+                                        </button>
                                     </div>
-                                    <div class="form-floating mb-2 position-relative">
-                                        <!-- Phone Icon -->
-                                        <input type="tel" class="form-control  rounded-4 border-primary shadow-sm"
-                                            id="gcash number" v-model="editDormData.gcashNumber"
-                                            placeholder="Gcash number">
-                                        <label for="gcash number" class="text-primary">Gcash Number</label>
+                                </div>
 
-                                        <!-- Error message with icon -->
-                                        <span class="text-danger small d-flex align-items-center mt-1"
-                                            v-if="errors.editDormData?.gcashNumber">
-                                            <i class="fa-solid fa-circle-exclamation me-1"></i>
-                                            {{ errors.editDormData.gcashNumber[0] }}
-                                        </span>
+                                <div class="col-md-4">
+                                    <div class="policy-wrapper p-4 rounded-24 bg-dark text-white h-100 shadow-xl">
+                                        <h6 class="fw-800 mb-4 d-flex align-items-center">
+                                            <i class="fa-solid fa-gavel text-warning me-2"></i> Rules & Policies
+                                        </h6>
 
-                                    </div>
-
-                                    <div class="form-floating mb-2 position-relative">
-                                        <!-- Building Icon -->
-
-                                        <input type="text" class="form-control  rounded-4 border-primary shadow-sm"
-                                            id="building_type" placeholder="Enter Building Type"
-                                            v-model="editDormData.buildingType">
-                                        <label for="building_type" class="text-primary">Building Type</label>
-
-                                        <!-- Error message with icon -->
-                                        <span class="text-danger small d-flex align-items-center mt-1"
-                                            v-if="errors.editDormData?.buildingType">
-                                            <i class="fa-solid fa-circle-exclamation me-1"></i>
-                                            {{ errors.editDormData.buildingType[0] }}
-                                        </span>
-                                    </div>
-                                    <div class="form-floating mb-2 position-relative">
-                                        <!-- Availability Icon -->
-
-
-                                        <select class="form-select  rounded-4 border-primary shadow-sm"
-                                            id="availability" v-model="editDormData.availability">
-                                            <option disabled value="">Select Availability</option>
-                                            <option value="Available">Available</option>
-                                            <option value="Not Available">Not Available</option>
-                                        </select>
-                                        <label for="availability" class="text-primary">Select Availability</label>
-
-                                        <!-- Error Message with Icon -->
-                                        <span class="text-danger small d-flex align-items-center mt-1"
-                                            v-if="errors.editDormData?.availability">
-                                            <i class="fa-solid fa-circle-exclamation me-1"></i>
-                                            {{ errors.editDormData.availability[0] }}
-                                        </span>
-                                    </div>
-
-                                    <!-- Occupancy Type Field -->
-                                    <div class="form-floating mb-2 position-relative">
-                                        <select class="form-select  rounded-4 border-primary shadow-sm"
-                                            id="occupancy_type" v-model="editDormData.occupancyType">
-                                            <option disabled value="">Select Occupancy Type</option>
-                                            <option value="Male only">Male only</option>
-                                            <option value="Female only">Female only</option>
-                                            <option value="Mixed (Male & Female – separate floors)">Mixed (Male & Female
-                                                – separate floors)</option>
-                                            <option value="Mixed (Unspecified)">Mixed (Unspecified)</option>
-                                        </select>
-                                        <label for="occupancy_type" class="text-primary">Occupancy Type</label>
-                                    </div>
-                                    <span class="text-danger mb-3" v-if="errors.editDormData?.occupancyType">{{
-                                        errors.editDormData.occupancyType[0] }}</span>
-                                    <div class="mt-3 mb-3">
-                                        <label class="fw-bold mb-2 text-primary text-center">
-                                            <i class="fa-solid fa-door-closed me-1"></i> Number of Rooms
-                                        </label>
-
-                                        <div class="d-flex align-items-center justify-content-center gap-2">
-                                            <!-- Decrease Button -->
-                                            <button type="button"
-                                                class="btn btn-outline-danger rounded-circle d-flex align-items-center justify-content-center"
-                                                style="width: 40px; height: 40px;" @click="updatedecreamnentRooms()">
-                                                <i class="fa-solid fa-minus"></i>
-                                            </button>
-
-                                            <!-- Room Count Input -->
-                                            <input type="text"
-                                                class="form-control text-center fw-bold rounded-4 border-primary shadow-sm"
-                                                id="total_rooms" placeholder="0" v-model="editDormData.totalRooms"
-                                                readonly style="max-width: 300px;">
-
-                                            <!-- Increase Button -->
-                                            <button type="button"
-                                                class="btn btn-outline-success rounded-circle d-flex align-items-center justify-content-center"
-                                                style="width: 40px; height: 40px;" @click="updateincreamentRooms()">
+                                        <div class="input-group mb-4">
+                                            <input type="text" class="form-control dark-input shadow-none"
+                                                v-model="newrules" placeholder="Add rule...">
+                                            <button class="btn btn-warning fw-bold px-3 ms-2 rounded-12" type="button"
+                                                @click="addNewRule()">
                                                 <i class="fa-solid fa-plus"></i>
                                             </button>
                                         </div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <button type="button" @click="updateImages()"
-                                            class="btn btn-outline-dark w-100">
-                                            <i class="bi bi-image me-2"></i> Update Images
-                                        </button>
-                                    </div>
-                                    <div class="d-grid gap-2 mt-3">
 
-                                        <button type="submit" class="btn btn-outline-success w-100">
-                                            <i class="fas fa-edit me-2"></i> Update Dorm
-                                        </button>
-                                    </div>
-                                </div>
-                                <!-- Right Column -->
-                                <div class="col-md-4">
-                                    <div class="form-floating mb-2 position-relative">
-                                        <input type="text" class="form-control rounded-4 border-secondary shadow-sm"
-                                            id="Optional" v-model="newrules"
-                                            placeholder="Optional Add Rules and Policies">
-                                        <label for="Optional" class="text-secondary">(Optional) Add Rules and
-                                            Policies</label>
-                                    </div>
-                                    <button class="btn btn-outline-primary w-100" type="button" @click="addNewRule()"><i
-                                            class="fas fa-plus me-2"></i>Add Rule</button>
-                                    <span class="text-danger small d-flex align-items-center mt-1"
-                                        v-if="errors.newrules">
-                                        <i class="fa-solid fa-circle-exclamation me-1"></i>
-                                        {{ errors.newrules[0] }}
-                                    </span>
-                                    <div class="border rounded-4 p-3 shadow-sm bg-light">
-                                        <!-- Header -->
-                                        <div class="row fw-bold border-bottom py-2 text-center bg-white rounded-top">
-                                            <div class="col">
-                                                <i class="fa-solid fa-scroll me-2"></i>Rules and Policies
-                                            </div>
-                                            <div class="col-3">
-                                                Actions
-                                            </div>
-                                        </div>
-
-                                        <!-- List -->
-                                        <div v-for="rule in editDormData.rules_and_policy"
-                                            :key="rule.pivot ? rule.pivot.id : rule.id"
-                                            class="row align-items-center py-2 border-bottom text-center bg-white rounded mb-2 shadow-sm">
-                                            <div class="col">
-                                                <input type="text" readonly
-                                                    class="form-control text-center bg-light border-0 fw-semibold text-secondary"
-                                                    v-model="rule.rulesName" placeholder="Rule name" />
-                                            </div>
-                                            <div class="col-3 d-flex justify-content-center gap-2">
-                                                <button
-                                                    class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1"
-                                                    type="button"
-                                                    @click.prevent="deleteRulesAndPolicies(rule.pivot.id)">
-                                                    <i class="fa-solid fa-trash"></i>
+                                        <div class="rule-scroll custom-scrollbar-light">
+                                            <div v-for="rule in editDormData.rules_and_policy"
+                                                :key="rule.pivot?.id || rule.id" class="rule-item-dark">
+                                                <p class="mb-0 small pe-3">{{ rule.rulesName }}</p>
+                                                <button @click.prevent="deleteRulesAndPolicies(rule.pivot.id)"
+                                                    class="btn-delete-rule">
+                                                    <i class="fa-solid fa-circle-minus"></i>
                                                 </button>
                                             </div>
                                         </div>
+
+                                        <div class="mt-4 pt-3 border-top border-secondary">
+                                            <div class="form-floating text-dark">
+                                                <select class="form-select modern-select-dark border-0 shadow-none"
+                                                    v-model="editDormData.occupancyType">
+                                                    <option value="Male only">Male Only</option>
+                                                    <option value="Female only">Female Only</option>
+                                                    <option value="Mixed (Unspecified)">Mixed</option>
+                                                </select>
+                                                <label class="text-muted">Target Demographic</label>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-4">
                                 </div>
                             </div>
                         </div>
@@ -768,517 +769,478 @@
                 </div>
             </div>
         </div>
-
         <!-- Update Map View -->
         <div v-if="UpdateVisibleMap" class="modal fade show d-block w-100" tabindex="-1"
-            style="background-color: rgba(0,0,0,0.5);" @click.self="UpdateVisibleMap = false">
+            style="background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); z-index: 1060;"
+            @click.self="UpdateVisibleMap = false">
+
             <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Update Dorm Location</h5>
-                        <button type="button" class="btn-close" @click="UpdateVisibleMap = false"
-                            aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="map" style="height: 400px; width: 100%; border-radius: 8px;"></div>
+                <div class="modal-content border-0 rounded-24 shadow-2xl overflow-hidden bg-white">
+
+                    <div class="modal-header border-0 pt-4 px-4 pb-0 d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="icon-box-map shadow-sm bg-primary-soft text-primary">
+                                <i class="fa-solid fa-location-crosshairs fa-lg"></i>
+                            </div>
+                            <div>
+                                <h5 class="modal-title fw-800 text-dark mb-0">Pin Location</h5>
+                                <p class="text-muted small mb-0">Drag the marker to your dormitory's exact spot</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close-custom shadow-sm border-0"
+                            @click="UpdateVisibleMap = false">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
                     </div>
 
+                    <div class="modal-body p-4">
+                        <div class="position-relative overflow-hidden rounded-20 border shadow-inner">
+                            <div id="map" style="height: 480px; width: 100%;" class="modern-map-canvas"></div>
+
+                            <div class="map-search-overlay">
+                                
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between mt-3">
+                            <div
+                                class="d-flex align-items-center gap-2 text-primary bg-primary-soft px-3 py-2 rounded-12">
+                                <i class="fa-solid fa-circle-info small"></i>
+                                <span class="small fw-bold">GPS coordinates will sync automatically</span>
+                            </div>
+                            <button type="button" class="btn btn-primary-gradient px-4 py-2"
+                                @click="UpdateVisibleMap = false">
+                                Confirm Location
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <!-- Display Data Modal -->
         <div v-if="VisibleDisplayDataModal" class="modal fade show d-block w-100" tabindex="-1"
-            style="background-color: rgba(0,0,0,0.5);" @click.self="VisibleDisplayDataModal = false">
+            style="background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); z-index: 1055;"
+            @click.self="VisibleDisplayDataModal = false">
+
             <div class="modal-dialog modal-xl modal-dialog-centered">
-                <div class="modal-content border-0 shadow-lg rounded-4">
-                    <!-- Modal Header -->
-                    <div class="modal-header b text-dark rounded-top-4">
-                        <h5 class="modal-title" id="tenantModalLabel">Dormitory Information</h5>
-                        <button type="button" class="btn-close btn-close-dark" @click="VisibleDisplayDataModal = false"
-                            aria-label="Close"></button>
+                <div class="modal-content border-0 shadow-2xl rounded-24 overflow-hidden">
+
+                    <div
+                        class="modal-header border-0 bg-white py-4 px-4 d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="header-icon bg-primary-soft text-primary shadow-sm">
+                                <i class="fa-solid fa-building-user"></i>
+                            </div>
+                            <div>
+                                <h5 class="modal-title fw-800 text-dark mb-0">{{ selectedDorm?.dormName }}</h5>
+                                <p class="text-muted small mb-0"><i class="fa-solid fa-location-dot me-1"></i> {{
+                                    selectedDorm?.address }}</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close-custom shadow-sm"
+                            @click="VisibleDisplayDataModal = false">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
                     </div>
 
-                    <!-- Modal Body -->
-                    <div class="modal-body" style="max-height: 70vh; overflow-y: auto; padding: 1.5rem;">
-                        <div class="mb-3 text-center">
-                            <img :src="currentMainImage" class="img-fluid rounded shadow-sm"
-                                style="max-height: 300px; object-fit: cover; width: auto;" alt="Main Image">
-                        </div>
+                    <div class="modal-body custom-scrollbar"
+                        style="max-height: 75vh; overflow-y: auto; padding: 0 2rem 2rem 2rem;">
 
-                        <!-- Images Section -->
-                        <div class="d-flex gap-3 justify-content-center">
-                            <img v-if="selectedDorm?.images?.mainImage" :src="selectedDorm.images.mainImage"
-                                class="img-thumbnail shadow-sm"
-                                style="width: 120px; height: 80px; object-fit: cover; cursor: pointer;"
-                                @click="changeMainImage(selectedDorm.images.mainImage)" alt="Thumbnail 1">
-
-                            <img v-if="selectedDorm?.images?.secondaryImage" :src="selectedDorm.images.secondaryImage"
-                                class="img-thumbnail shadow-sm"
-                                style="width: 120px; height: 80px; object-fit: cover; cursor: pointer;"
-                                @click="changeMainImage(selectedDorm.images.secondaryImage)" alt="Thumbnail 2">
-
-                            <img v-if="selectedDorm?.images?.thirdImage" :src="selectedDorm.images.thirdImage"
-                                class="img-thumbnail shadow-sm"
-                                style="width: 120px; height: 80px; object-fit: cover; cursor: pointer;"
-                                @click="changeMainImage(selectedDorm.images.thirdImage)" alt="Thumbnail 3">
-                        </div>
-                        <!-- Dorm Info Section -->
-                        <div class="row g-4 mt-3">
-
-                            <!-- Left Column -->
-                            <div class="col-md-6">
-                                <div class="card border-0 shadow-sm mb-3">
-                                    <div class="card-body rounded-4" style="border:2px solid #4edce2;">
-                                        <h6 class="fw-bold text-primary mb-1">Dorm Name</h6>
-                                        <p class="mb-0 text-secondary">{{ selectedDorm?.dormName }}</p>
-                                    </div>
-                                </div>
-
-                                <div class="card border-0 shadow-sm mb-3">
-                                    <div class="card-body rounded-4" style="border:2px solid #4edce2;">
-                                        <h6 class="fw-bold text-primary mb-1">Address</h6>
-                                        <p class="mb-0 text-secondary" style="max-height: 100px; overflow-y: auto;">
-                                            {{ selectedDorm?.address }}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div class="card border-0 shadow-sm mb-3">
-                                    <div class="card-body rounded-4" style="border:2px solid #4edce2;">
-                                        <h6 class="fw-bold text-primary mb-1">Contact Email</h6>
-                                        <p class="mb-0 text-secondary">{{ selectedDorm?.contactEmail }}</p>
-                                    </div>
-                                </div>
-
-                                <div class="card border-0 shadow-sm mb-3">
-                                    <div class="card-body rounded-4" style="border:2px solid #4edce2;">
-                                        <h6 class="fw-bold text-primary mb-1">Description</h6>
-                                        <p class="mb-0 text-secondary">{{ selectedDorm?.description }}</p>
-                                    </div>
-                                </div>
-
-                                <div class="card border-0 shadow-sm mb-3">
-                                    <div class="card-body rounded-4" style="border:2px solid #4edce2;">
-                                        <h6 class="fw-bold text-primary mb-2">Amenities</h6>
-                                        <div class="d-flex flex-wrap gap-2">
-                                            <span v-for="amenity in selectedDorm?.amenities" :key="amenity.id"
-                                                class="badge rounded-pill bg-gradient px-3 py-2 shadow-sm"
-                                                style="background:black; font-size: 0.85rem;">
-                                                {{ amenity.aminityName }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="card border-0 shadow-sm">
-                                    <div class="card-body rounded-4" style="border:2px solid #4edce2;">
-                                        <h6 class="fw-bold text-primary mb-2">Rules & Policies</h6>
-                                        <div class="d-flex flex-wrap gap-2">
-                                            <span v-for="rule in selectedDorm?.rules_and_policy" :key="rule.id"
-                                                class="badge rounded-pill bg-gradient px-3 py-2 shadow-sm"
-                                                style="background: black; font-size: 0.85rem;">
-                                                {{ rule.rulesName }}
-                                            </span>
-                                        </div>
-                                    </div>
+                        <div class="row g-3 mb-5">
+                            <div class="col-lg-9">
+                                <div class="main-image-wrapper shadow-sm">
+                                    <img :src="currentMainImage" class="img-hero-modern" alt="Main View">
+                                    <div class="image-badge">Main View</div>
                                 </div>
                             </div>
-
-                            <!-- Right Column -->
-                            <div class="col-md-6">
-                                <div class="card border-0 shadow-sm mb-3">
-                                    <div class="card-body rounded-4" style="border:2px solid #4edce2;">
-                                        <h6 class="fw-bold text-primary mb-1">Contact Phone</h6>
-                                        <p class="mb-0 text-secondary">{{ selectedDorm?.contactPhone }}</p>
-                                    </div>
+                            <div class="col-lg-3 d-flex flex-column gap-3">
+                                <div v-if="selectedDorm?.images?.secondaryImage" class="side-thumb-card"
+                                    :class="{ 'active': currentMainImage === selectedDorm.images.secondaryImage }"
+                                    @click="changeMainImage(selectedDorm.images.secondaryImage)">
+                                    <img :src="selectedDorm.images.secondaryImage" class="img-side" alt="Secondary">
                                 </div>
-
-                                <div class="card border-0 shadow-sm mb-3">
-                                    <div class="card-body rounded-4" style="border:2px solid #4edce2;">
-                                        <h6 class="fw-bold text-primary mb-1">Total Rooms</h6>
-                                        <p class="mb-0 text-secondary fw-semibold">{{ selectedDorm?.totalRooms }}</p>
-                                    </div>
+                                <div v-if="selectedDorm?.images?.thirdImage" class="side-thumb-card"
+                                    :class="{ 'active': currentMainImage === selectedDorm.images.thirdImage }"
+                                    @click="changeMainImage(selectedDorm.images.thirdImage)">
+                                    <img :src="selectedDorm.images.thirdImage" class="img-side" alt="Third">
                                 </div>
-
-                                <div class="card border-0 shadow-sm mb-3">
-                                    <div class="card-body rounded-4" style="border:2px solid #4edce2;">
-                                        <h6 class="fw-bold text-primary mb-1">Registration Date</h6>
-                                        <p class="mb-0 text-secondary">{{ formatDate(selectedDorm?.created_at) }}</p>
-                                    </div>
+                                <div class="side-thumb-card"
+                                    :class="{ 'active': currentMainImage === selectedDorm.images.mainImage }"
+                                    @click="changeMainImage(selectedDorm.images.mainImage)">
+                                    <img :src="selectedDorm.images.mainImage" class="img-side" alt="Reset">
                                 </div>
-
-                                <div class="card border-0 shadow-sm mb-3">
-                                    <div class="card-body rounded-4" style="border:2px solid #4edce2;">
-                                        <h6 class="fw-bold text-primary mb-1">Occupancy Type</h6>
-                                        <p class="mb-0 text-secondary" style="max-height: 120px; overflow-y: auto;">
-                                            {{ selectedDorm?.occupancyType }}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div class="card border-0 shadow-sm">
-                                    <div class="card-body rounded-4" style="border:2px solid #4edce2;">
-                                        <h6 class="fw-bold text-primary mb-1">Building Type</h6>
-                                        <p class="mb-0 text-secondary" style="max-height: 120px; overflow-y: auto;">
-                                            {{ selectedDorm?.buildingType }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="card border-0 shadow-sm mt-3 mb-3">
-                                    <div class="card-body rounded-4 p-3"
-                                        style="border:2px solid #4edce2; background: linear-gradient(135deg, #e0f7f9, #ffffff);">
-
-                                        <div class="d-flex align-items-center">
-                                            <!-- GCash Icon -->
-                                            <div class="me-3 p-2 bg-primary bg-opacity-10 rounded-circle">
-                                                <i class="bi bi-wallet2 text-primary fs-4"></i>
-                                            </div>
-
-                                            <!-- Text Section -->
-                                            <div>
-                                                <h6 class="fw-bold text-primary mb-1">GCash Number</h6>
-                                                <p class="mb-0 text-dark fw-semibold fs-5">
-                                                    {{ selectedDorm?.gcashNumber }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-
                             </div>
-
                         </div>
-                        <div class="card shadow-sm p-3 mb-4 border-0" @click="showReviews = !showReviews"
-                            style="cursor:pointer;">
-                            <div class="d-flex align-items-center">
-                                <div class="me-3">
-                                    <i class="bi bi-chat-left-text-fill text-primary fs-2"></i>
-                                </div>
-                                <div>
-                                    <h6 class="fw-bold text-primary mb-1">Review & Feedback</h6>
-                                    <p class="mb-0 text-dark fw-semibold fs-5">
-                                        {{ totalReviews }} Reviews
+
+                        <div class="row g-4">
+                            <div class="col-md-7">
+                                <section class="mb-4">
+                                    <h6 class="fw-800 text-uppercase small text-primary tracking-widest mb-3">About
+                                        Property</h6>
+                                    <p class="text-secondary leading-relaxed fs-6">
+                                        {{ selectedDorm?.description }}
                                     </p>
+                                </section>
+
+                                <div class="specs-pill-container d-flex flex-wrap gap-2 mb-4">
+                                    <div class="spec-pill"><i class="fa-solid fa-door-closed me-2"></i>{{
+                                        selectedDorm?.totalRooms }} Rooms</div>
+                                    <div class="spec-pill"><i class="fa-solid fa-user-group me-2"></i>{{
+                                        selectedDorm?.occupancyType }}</div>
+                                    <div class="spec-pill"><i class="fa-solid fa-couch me-2"></i>{{
+                                        selectedDorm?.buildingType }}</div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <!-- Reviews Section -->
-                        <div v-if="showReviews" class="card shadow-sm p-3 mb-4 border-0">
-                            <div v-for="review in reviews" :key="review.id"
-                                class="d-flex mb-3 align-items-start gap-3 p-3 rounded-3 shadow-sm"
-                                style="background-color: #f9f9f9; border-left: 4px solid #3498db;">
-
-                                <!-- Profile Image -->
-                                <img v-if="review.profileImage" :src="review.profileImage" class="rounded-circle"
-                                    style="width:50px; height:50px; object-fit:cover;">
-
-                                <div class="flex-fill">
-                                    <!-- Name & Stars -->
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <span class="fw-bold">{{ review.firstname }} {{ review.lastname }}</span>
-                                        <small class="text-muted">{{ review.created_at }}</small>
+                                <section>
+                                    <h6 class="fw-800 text-uppercase small text-primary tracking-widest mb-3">Amenities
+                                    </h6>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <span v-for="amenity in selectedDorm?.amenities" :key="amenity.id"
+                                            class="amenity-tag-modern">
+                                            {{ amenity.aminityName }}
+                                        </span>
                                     </div>
-                                    <div class="text-warning mb-1">{{ review.stars }}</div>
+                                </section>
+                            </div>
 
-                                    <!-- Comment -->
-                                    <p class="text-muted mb-0">{{ review.comment }}</p>
+                            <div class="col-md-5">
+                                <div class="gcash-card-v3 mb-4 p-4 text-white shadow-lg">
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <span class="fw-bold opacity-75 small">Payment Partner</span>
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/GCash_logo.svg/1280px-GCash_logo.svg.png"
+                                            height="20" alt="GCash">
+                                    </div>
+                                    <div class="mb-1 small opacity-75">Account Number</div>
+                                    <h3 class="fw-800 mb-0 tracking-widest">{{ selectedDorm?.gcashNumber }}</h3>
+                                </div>
+
+                                <div class="contact-strip mb-3">
+                                    <div class="icon-circle bg-white text-primary shadow-sm"><i
+                                            class="fa-solid fa-phone"></i></div>
+                                    <div class="ms-3">
+                                        <div class="small text-muted">Phone</div>
+                                        <div class="fw-bold">{{ selectedDorm?.contactPhone }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="contact-strip mb-4" @click="showReviews = !showReviews"
+                                    style="cursor: pointer;">
+                                    <div class="icon-circle bg-white text-warning shadow-sm"><i
+                                            class="fa-solid fa-star"></i></div>
+                                    <div class="ms-3">
+                                        <div class="small text-muted">Ratings</div>
+                                        <div class="fw-bold text-primary">{{ totalReviews }} Reviews <i
+                                                class="fa-solid fa-chevron-right ms-2 small"></i></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <transition name="slide-fade">
+                            <div v-if="showReviews" class="mt-4 pt-4 border-top">
+                                <div v-for="review in reviews" :key="review.id" class="review-card-minimal mb-3">
+                                    <div class="d-flex gap-3">
+                                        <img :src="review.profileImage" class="avatar-sm rounded-circle">
+                                        <div>
+                                            <div class="fw-bold text-dark">{{ review.firstname }}</div>
+                                            <div class="stars text-warning small mb-1">
+                                                <i v-for="i in 5" :key="i" class="fa-solid fa-star"
+                                                    :class="i <= review.stars ? 'text-warning' : 'text-light'"></i>
+                                            </div>
+                                            <p class="text-secondary small mb-0">{{ review.comment }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </transition>
                     </div>
                 </div>
             </div>
         </div>
-        <div v-if="VisibleImagePostModal" class="modal fade show d-block w-100" tabindex="-1"
-            style="background-color: rgba(0,0,0,0.5);">
+        <div v-if="VisibleImagePostModal" class="modal fade show d-block" tabindex="-1"
+            style="background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(10px);">
             <div class="modal-dialog modal-xl modal-dialog-centered">
-                <div class="modal-content shadow-lg rounded-4 overflow-hidden">
-                    <!-- Header -->
-                    <div class="modal-header text-black">
-                        <h5 class="modal-title">Upload Images</h5>
-                        <button type="button" class="btn-close" @click="VisibleImagePostModal = false"></button>
+                <div class="modal-content border-0 rounded-24 shadow-2xl overflow-hidden">
+
+
+                    <div
+                        class="modal-header border-0 bg-white py-4 px-4 d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="header-icon-box bg-soft-blue text-brand-blue">
+                                <i class="bi bi-images fs-4"></i>
+                            </div>
+                            <div>
+                                <h5 class="modal-title fw-800 text-dark mb-0">Upload Property Gallery</h5>
+                                <p class="text-muted small mb-0">Step-by-step images to showcase your dormitory</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close-custom" @click="VisibleImagePostModal = false">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
                     </div>
 
-                    <!-- Body -->
-                    <div class="modal-body bg-white">
-                        <div class="container mx-auto">
+                    <div class="modal-body bg-white px-4 pb-4 pt-0">
+                        <div class="container-fluid p-0 mx-auto" style="max-width: 900px;">
 
-                            <div class="nav-pills w-100 ">
-                                <ul class="nav mb-3 justify-content-center flex-wrap">
-                                    <li class="" v-for="(step, index) in steps" :key="index">
-                                        <button class="btn btn-primary m-2" :class="{ active: currentStep === index }"
-                                            :disabled="index > currentStep">
-                                            {{ step }}
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                            <!-- Step 0: Room Image Upload -->
-                            <div v-if="currentStep === 0">
-                                <div class="border border-secondary rounded-3 p-4 mb-3 text-center bg-light hover-shadow"
-                                    style="cursor: pointer; transition: all 0.3s;" @click="triggerRoomImage1">
-
-                                    <!-- Hidden File Input -->
-                                    <input ref="RoomsImages1Input" class="d-none" type="file" accept="image/*"
-                                        @change="handleroomImage1" />
-
-                                    <!-- Icon + Text -->
-                                    <div class="d-flex flex-column align-items-center justify-content-center">
-                                        <i class="fa-solid fa-image fa-2x text-secondary mb-2"></i>
-                                        <h5 class="text-secondary mb-1">Click to Upload Dorm Main Image</h5>
-                                        <small class="text-muted">JPG, PNG or GIF – Max 5MB</small>
-                                    </div>
-                                </div>
-                                <p v-if="errors.roomImage1File" class="text-danger text-center">{{
-                                    errors.roomImage1File[0] }}</p>
-                                <!-- Image Preview -->
-                                <div v-if="roomImage1Preview" class="text-center mb-3">
-                                    <img :src="roomImage1Preview" alt="Uploaded Room Image"
-                                        class="img-fluid rounded mb-2" style="max-height: 250px;" />
-                                    <div>
-                                        <button type="button" @click="removeRoomImages1" class="btn btn-danger mt-3">
-                                            Remove Uploaded Image
-                                        </button>
-                                    </div>
+                            <div class="premium-stepper-bar mb-5 mt-3">
+                                <div class="stepper-line"></div>
+                                <div v-for="(step, index) in steps" :key="index" class="stepper-node"
+                                    :class="{ active: currentStep === index, completed: currentStep > index }">
+                                    <div class="node-circle">{{ index + 1 }}</div>
+                                    <span class="node-label">{{ step }}</span>
                                 </div>
                             </div>
 
-                            <!-- Step 1: Room Image 2 Upload -->
-                            <div v-if="currentStep === 1">
-                                <div class="border border-secondary rounded-3 p-4 mb-3 text-center bg-light hover-shadow"
-                                    style="cursor: pointer; transition: all 0.3s;" @click="triggerRoomImage2">
+                            <div v-if="currentStep === 0" class="upload-section">
+                                <input ref="RoomsImages1Input" class="d-none" type="file" accept="image/*"
+                                    @change="handleroomImage1" />
 
-                                    <!-- Hidden File Input -->
-                                    <input ref="RoomsImages2Input" class="d-none" type="file" accept="image/*"
-                                        @change="handleroomImage2" />
-
-                                    <!-- Icon + Text -->
-                                    <div class="d-flex flex-column align-items-center justify-content-center">
-                                        <i class="fa-solid fa-image fa-2x text-secondary mb-2"></i>
-                                        <h5 class="text-secondary mb-1">Click to Upload Dorm Room Image 2</h5>
-                                        <small class="text-muted">JPG, PNG or GIF – Max 5MB</small>
-                                    </div>
+                                <div v-if="!roomImage1Preview" class="premium-dropzone" @click="triggerRoomImage1">
+                                    <i class="bi bi-cloud-arrow-up fs-1 mb-3 text-brand-blue"></i>
+                                    <h6 class="fw-bold text-dark">Dormitory Main Thumbnail</h6>
+                                    <p class="text-muted small mb-0 mt-1">This image will be shown on search listings
+                                    </p>
+                                    <span class="text-muted smaller mt-3">JPG, PNG, GIF • Max 5MB</span>
                                 </div>
-                                <p v-if="errors.roomImage2File" class="text-danger text-center">{{
-                                    errors.roomImage2File[0] }}</p>
 
+                                <div v-if="errors.roomImage1File" class="error-pill mt-2">
+                                    <i class="bi bi-exclamation-triangle-fill"></i> {{ errors.roomImage1File[0] }}
+                                </div>
 
-                                <!-- Image Preview -->
-                                <div v-if="roomImage2Preview" class="text-center mb-3">
-                                    <img :src="roomImage2Preview" alt="Uploaded Room Image"
-                                        class="img-fluid rounded mb-2" style="max-height: 250px;" />
-                                    <div>
-                                        <button type="button" @click="removeRoomImages2" class="btn btn-danger mt-3">
-                                            Remove Uploaded Image
+                                <div v-if="roomImage1Preview" class="preview-card mt-3 shadow-sm border">
+                                    <div class="card-inner d-flex align-items-center p-3 gap-3">
+                                        <img :src="roomImage1Preview" alt="Main Thumb"
+                                            class="preview-image rounded-3" />
+                                        <div class="flex-grow-1">
+                                            <span class="nav-label text-brand-blue">MAIN PREVIEW</span>
+                                            <h6 class="fw-bold m-0 text-dark">Dormitory Thumbnail</h6>
+                                        </div>
+                                        <button type="button" @click="removeRoomImages1" class="btn-remove"
+                                            title="Remove image">
+                                            <i class="bi bi-trash-fill"></i>
                                         </button>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Step 2: Room Image 3 Upload -->
-                            <div v-if="currentStep === 2">
-                                <div class="border border-secondary rounded-3 p-4 mb-3 text-center bg-light hover-shadow"
-                                    style="cursor: pointer; transition: all 0.3s;" @click="triggerRoomImage3">
+                            <div v-if="currentStep === 1" class="upload-section">
+                                <input ref="RoomsImages2Input" class="d-none" type="file" accept="image/*"
+                                    @change="handleroomImage2" />
 
-                                    <!-- Hidden file input -->
-                                    <input ref="RoomsImages3Input" class="d-none" type="file" accept="image/*"
-                                        @change="handleroomImage3" />
-
-                                    <!-- Icon and Text -->
-                                    <div class="d-flex flex-column align-items-center justify-content-center">
-                                        <i class="fa-solid fa-image fa-2x text-secondary mb-2"></i>
-                                        <h5 class="text-secondary mb-1">Click to Upload Dorm Room Image 3</h5>
-                                        <small class="text-muted">JPG, PNG or GIF – Max 5MB</small>
-                                    </div>
+                                <div v-if="!roomImage2Preview" class="premium-dropzone orange-theme"
+                                    @click="triggerRoomImage2">
+                                    <i class="bi bi-camera fs-1 mb-3 text-brand-orange"></i>
+                                    <h6 class="fw-bold text-dark">Dorm Room Image 2</h6>
+                                    <p class="text-muted small mb-0 mt-1">Showcase the interior layout</p>
                                 </div>
-                                <p v-if="errors.roomImage3File" class="text-danger text-center">{{
-                                    errors.roomImage3File[0] }}</p>
 
-                                <!-- Image Preview -->
-                                <div v-if="roomImage3Preview" class="text-center mb-3">
-                                    <img :src="roomImage3Preview" alt="Uploaded Room Image"
-                                        class="img-fluid rounded mb-2" style="max-height: 250px;" />
-                                    <div>
-                                        <button type="button" @click="removeRoomImages3" class="btn btn-danger">
-                                            Remove Uploaded Image
+                                <div v-if="errors.roomImage2File" class="error-pill mt-2">
+                                    <i class="bi bi-exclamation-triangle-fill"></i> {{ errors.roomImage2File[0] }}
+                                </div>
+
+                                <div v-if="roomImage2Preview" class="preview-card mt-3 shadow-sm border">
+                                    <div class="card-inner d-flex align-items-center p-3 gap-3">
+                                        <img :src="roomImage2Preview" alt="Room 2" class="preview-image rounded-3" />
+                                        <div class="flex-grow-1">
+                                            <span class="nav-label text-brand-orange">INTERIOR</span>
+                                            <h6 class="fw-bold m-0 text-dark">Room View 2</h6>
+                                        </div>
+                                        <button type="button" @click="removeRoomImages2" class="btn-remove"
+                                            title="Remove image">
+                                            <i class="bi bi-trash-fill"></i>
                                         </button>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="d-flex justify-content-between mt-4  text-create">
-                                <button type="button" class="btn btn-outline-secondary" @click="prevStep"
+                            <div v-if="currentStep === 2" class="upload-section">
+                                <input ref="RoomsImages3Input" class="d-none" type="file" accept="image/*"
+                                    @change="handleroomImage3" />
+
+                                <div v-if="!roomImage3Preview" class="premium-dropzone orange-theme"
+                                    @click="triggerRoomImage3">
+                                    <i class="bi bi-camera fs-1 mb-3 text-brand-orange"></i>
+                                    <h6 class="fw-bold text-dark">Dorm Room Image 3</h6>
+                                    <p class="text-muted small mb-0 mt-1">Provide another perspective of the room</p>
+                                </div>
+
+                                <div v-if="errors.roomImage3File" class="error-pill mt-2">
+                                    <i class="bi bi-exclamation-triangle-fill"></i> {{ errors.roomImage3File[0] }}
+                                </div>
+
+                                <div v-if="roomImage3Preview" class="preview-card mt-3 shadow-sm border">
+                                    <div class="card-inner d-flex align-items-center p-3 gap-3">
+                                        <img :src="roomImage3Preview" alt="Room 3" class="preview-image rounded-3" />
+                                        <div class="flex-grow-1">
+                                            <span class="nav-label text-brand-orange">INTERIOR</span>
+                                            <h6 class="fw-bold m-0 text-dark">Room View 3</h6>
+                                        </div>
+                                        <button type="button" @click="removeRoomImages3" class="btn-remove"
+                                            title="Remove image">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-5 gap-3 border-top pt-4">
+                                <button type="button" class="btn btn-modern-secondary px-4" @click="prevStep"
                                     :disabled="currentStep === 0">
-                                    Previous
+                                    <i class="bi bi-arrow-left me-2"></i> Previous
                                 </button>
-                                <button type="button" class="btn btn-outline-success" @click="nextStep"
-                                    :disabled="currentStep === steps.length - 1">
-                                    Next
+
+                                <button v-if="currentStep < steps.length - 1" type="button"
+                                    class="btn btn-modern-primary px-4" @click="nextStep">
+                                    Next <i class="bi bi-arrow-right ms-2"></i>
+                                </button>
+
+                                <button v-if="currentStep === steps.length - 1"
+                                    class="btn btn-modern-orange-submit px-4 fw-800" @click="AddnewDorm">
+                                    <i class="bi bi-cloud-arrow-down-fill me-2"></i> Submit Dorm Details
                                 </button>
                             </div>
-                            <div v-if="currentStep === steps.length - 1" class="mt-3 text-center">
-                                <button class="btn btn-outline-success mb-2" @click="AddnewDorm">
-                                    Submit Dorm Details
-                                </button>
-                            </div>
-                            <!-- Image Grid -->
+
                         </div>
                     </div>
-                    <!-- Footer -->
                 </div>
+                
             </div>
         </div>
         <!--Update Images-->
         <div v-if="VisibleUpdateImagePostModal" class="modal fade show d-block w-100" tabindex="-1"
-            style="background-color: rgba(0,0,0,0.5);">
-            <div class="modal-dialog modal-xl modal-dialog-centered">
-                <div class="modal-content shadow-lg rounded-4 overflow-hidden">
-                    <!-- Header -->
-                    <div class="modal-header  text-black">
-                        <h5 class="modal-title">Update Images</h5>
-                        <button type="button" class="btn-close" @click="VisibleUpdateImagePostModal = false"></button>
+    style="background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); z-index: 1060;">
+    
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content border-0 rounded-24 shadow-2xl overflow-hidden bg-light">
+            
+            <div class="modal-header bg-white border-0 py-3 px-4 d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="icon-box-update shadow-sm bg-success-soft text-success">
+                        <i class="fa-solid fa-images fa-lg"></i>
                     </div>
+                    <div>
+                        <h5 class="modal-title fw-800 text-dark mb-0">Gallery Management</h5>
+                        <p class="text-muted small mb-0">Update your dormitory's visual showcase</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close-custom shadow-sm border-0" @click="VisibleUpdateImagePostModal = false">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
 
-                    <!-- Body -->
-                    <div class="modal-body bg-white">
-                        <div class="container mx-auto">
-                            <div class="nav-pills w-100 ">
-                                <ul class="nav mb-3 justify-content-center flex-wrap">
-                                    <li class="" v-for="(step, index) in steps" :key="index">
-                                        <button class="btn btn-primary m-2"
-                                            :class="{ active: editcurrentStep === index }"
-                                            :disabled="index > editcurrentStep">
-                                            {{ step }}
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div v-if="editcurrentStep === 0">
-                                <div class="border border-secondary rounded-3 p-4 mb-3 text-center"
-                                    style="cursor: pointer;" @click="edittriggerRoomImage1">
+            <div class="modal-body p-4 p-lg-5">
+                <div class="stepper-wrapper mb-5">
+                    <div v-for="(step, index) in steps" :key="index" class="stepper-item"
+                        :class="{ active: editcurrentStep === index, completed: editcurrentStep > index }">
+                        <div class="step-counter shadow-sm">{{ index + 1 }}</div>
+                        <div class="step-name">{{ step }}</div>
+                    </div>
+                </div>
 
-                                    <input ref="editRoomsImages1Input" class="d-none" type="file" accept="image/*"
-                                        @change="edithandleroomImage1" />
+                <div class="container mx-auto">
+                    <div v-if="editcurrentStep === 0" class="step-content-box animate-fade-in">
+                        <div class="upload-dropzone border-dashed-2 rounded-24 p-5 text-center mb-4 transition-all"
+                             @click="edittriggerRoomImage1">
+                            
+                            <input ref="editRoomsImages1Input" class="d-none" type="file" accept="image/*" @change="edithandleroomImage1" />
 
-                                    <!-- Icon + Text -->
-                                    <div class="d-flex flex-column align-items-center text-center mb-3">
-                                        <h5 class="text-secondary mt-2">Update Main Room Image</h5>
-                                        <small class="text-muted">Click here to choose a new photo from your
-                                            device</small>
-                                    </div>
+                            <div v-if="!editDormData.roomImage1Preview && !editDormData.roomImage1" class="py-4">
+                                <div class="upload-icon-circle bg-white shadow-sm mb-3 mx-auto">
+                                    <i class="fa-solid fa-camera-retro text-primary fa-2x"></i>
                                 </div>
-
-
-                                <!-- Image Preview -->
-                                <div v-if="editDormData.roomImage1Preview || editDormData.roomImage1"
-                                    class="text-center mb-3">
-                                    <img :src="editDormData.roomImage1Preview || editDormData.roomImage1"
-                                        alt="Uploaded Room Image" class="img-fluid rounded mb-2"
-                                        style="max-height: 250px;" />
-                                    <div class="mt-2">
-                                        <button type="button" @click="editremoveRoomImages1"
-                                            class="btn btn-danger btn-sm">
-                                            Remove Image
-                                        </button>
-                                    </div>
-                                </div>
+                                <h5 class="fw-700 text-dark">Main Room Photo</h5>
+                                <p class="text-muted small">This is the first photo users will see.</p>
+                                <span class="btn btn-white shadow-sm rounded-pill px-4 fw-600 border">Choose File</span>
                             </div>
 
-                            <div v-if="editcurrentStep === 1">
-                                <div class="border border-secondary rounded-3 p-4 mb-3 text-center"
-                                    style="cursor: pointer;" @click="edittriggerRoomImage2">
-
-                                    <input ref="editRoomsImages2Input" class="d-none" type="file" accept="image/*"
-                                        @change="edithandleroomImage2" />
-
-                                    <!-- Icon + Text -->
-                                    <div class="d-flex flex-column align-items-center text-center mb-3">
-                                        <h5 class="text-secondary mt-2">Update Secondary Room Image</h5>
-                                        <small class="text-muted">Click here to select a new photo from your
-                                            device</small>
-                                    </div>
-                                </div>
-
-
-                                <!-- Image Preview -->
-                                <div v-if="editDormData.roomImage2Preview || editDormData.roomImage2"
-                                    class="text-center mb-3">
-                                    <img :src="editDormData.roomImage2Preview || editDormData.roomImage2"
-                                        alt="Uploaded Room Image" class="img-fluid rounded mb-2"
-                                        style="max-height: 250px;" />
-                                    <div>
-                                        <div class="mt-2">
-                                            <button type="button" @click="editremoveRoomImages2"
-                                                class="btn btn-danger btn-sm">
-                                                Remove Image
-                                            </button>
-                                        </div>
-                                    </div>
+                            <div v-else class="preview-container position-relative rounded-20 overflow-hidden shadow-lg mx-auto" style="max-width: 500px;">
+                                <img :src="editDormData.roomImage1Preview || editDormData.roomImage1" class="img-fluid w-100" />
+                                <div class="preview-overlay d-flex align-items-center justify-content-center">
+                                    <button type="button" @click.stop="editremoveRoomImages1" class="btn btn-blur-danger rounded-pill px-4">
+                                        <i class="fa-solid fa-trash-can me-2"></i> Remove
+                                    </button>
                                 </div>
                             </div>
-
-                            <div v-if="editcurrentStep === 2">
-                                <div class="border border-secondary rounded-3 p-4 mb-3 text-center"
-                                    style="cursor: pointer;" @click="edittriggerRoomImage3">
-
-                                    <input ref="editRoomsImages3Input" class="d-none" type="file" accept="image/*"
-                                        @change="edithandleroomImage3" />
-
-                                    <!-- Icon + Text -->
-                                    <div class="d-flex flex-column align-items-center text-center mb-3">
-                                        <h5 class="text-secondary mt-2">Update Third Room Image</h5>
-                                        <small class="text-muted">Click here to choose a new photo from your
-                                            device</small>
-                                    </div>
-                                </div>
-
-
-                                <!-- Image Preview -->
-                                <div v-if="editDormData.roomImage3Preview || editDormData.roomImage3"
-                                    class="text-center mb-3">
-                                    <img :src="editDormData.roomImage3Preview || editDormData.roomImage3"
-                                        alt="Uploaded Room Image" class="img-fluid rounded mb-2"
-                                        style="max-height: 250px;" />
-                                    <div>
-                                        <button type="button" @click="editremoveRoomImages3"
-                                            class="btn btn-danger btn-sm">
-                                            Remove Image
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="d-flex justify-content-between mt-4  text-create">
-                                <button type="button" class="btn btn-outline-secondary" @click="updateprevStep"
-                                    :disabled="editcurrentStep === 0">
-                                    Previous
-                                </button>
-                                <button type="button" class="btn btn-outline-success" @click="updatenextStep"
-                                    :disabled="editcurrentStep === steps.length - 1">
-                                    Next
-                                </button>
-                            </div>
-                            <div v-if="editcurrentStep === steps.length - 1" class="mt-3 text-center">
-                                <button class="btn btn-outline-success mb-2" @click="editImages">
-                                    Update Dormitory Images
-                                </button>
-                            </div>
-
-                            <!-- Image Grid -->
-
                         </div>
                     </div>
 
-                    <!-- Footer -->
+                    <div v-if="editcurrentStep === 1" class="step-content-box animate-fade-in">
+                        <div class="upload-dropzone border-dashed-2 rounded-24 p-5 text-center mb-4 transition-all"
+                             @click="edittriggerRoomImage2">
+                            
+                            <input ref="editRoomsImages2Input" class="d-none" type="file" accept="image/*" @change="edithandleroomImage2" />
+
+                            <div v-if="!editDormData.roomImage2Preview && !editDormData.roomImage2" class="py-4">
+                                <div class="upload-icon-circle bg-white shadow-sm mb-3 mx-auto">
+                                    <i class="fa-solid fa-bed text-primary fa-2x"></i>
+                                </div>
+                                <h5 class="fw-700 text-dark">Secondary Photo</h5>
+                                <p class="text-muted small">Show another angle of the room.</p>
+                                <span class="btn btn-white shadow-sm rounded-pill px-4 fw-600 border">Choose File</span>
+                            </div>
+
+                            <div v-else class="preview-container position-relative rounded-20 overflow-hidden shadow-lg mx-auto" style="max-width: 500px;">
+                                <img :src="editDormData.roomImage2Preview || editDormData.roomImage2" class="img-fluid w-100" />
+                                <div class="preview-overlay d-flex align-items-center justify-content-center">
+                                    <button type="button" @click.stop="editremoveRoomImages2" class="btn btn-blur-danger rounded-pill px-4">
+                                        <i class="fa-solid fa-trash-can me-2"></i> Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="editcurrentStep === 2" class="step-content-box animate-fade-in">
+                        <div class="upload-dropzone border-dashed-2 rounded-24 p-5 text-center mb-4 transition-all"
+                             @click="edittriggerRoomImage3">
+                            
+                            <input ref="editRoomsImages3Input" class="d-none" type="file" accept="image/*" @change="edithandleroomImage3" />
+
+                            <div v-if="!editDormData.roomImage3Preview && !editDormData.roomImage3" class="py-4">
+                                <div class="upload-icon-circle bg-white shadow-sm mb-3 mx-auto">
+                                    <i class="fa-solid fa-clapperboard text-primary fa-2x"></i>
+                                </div>
+                                <h5 class="fw-700 text-dark">Additional Photo</h5>
+                                <p class="text-muted small">Add a photo of the bathroom or common area.</p>
+                                <span class="btn btn-white shadow-sm rounded-pill px-4 fw-600 border">Choose File</span>
+                            </div>
+
+                            <div v-else class="preview-container position-relative rounded-20 overflow-hidden shadow-lg mx-auto" style="max-width: 500px;">
+                                <img :src="editDormData.roomImage3Preview || editDormData.roomImage3" class="img-fluid w-100" />
+                                <div class="preview-overlay d-flex align-items-center justify-content-center">
+                                    <button type="button" @click.stop="editremoveRoomImages3" class="btn btn-blur-danger rounded-pill px-4">
+                                        <i class="fa-solid fa-trash-can me-2"></i> Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <button type="button" class="btn btn-light rounded-pill px-4 py-2 fw-600 border" 
+                            @click="updateprevStep" :disabled="editcurrentStep === 0">
+                            <i class="fa-solid fa-chevron-left me-2"></i> Previous
+                        </button>
+
+                        <div class="d-flex gap-2">
+                            <button v-if="editcurrentStep < steps.length - 1" type="button" 
+                                class="btn btn-primary-gradient rounded-pill px-5 py-2 fw-700" @click="updatenextStep">
+                                Next Step <i class="fa-solid fa-chevron-right ms-2"></i>
+                            </button>
+                            
+                            <button v-else type="button" class="btn btn-success-gradient rounded-pill px-5 py-2 fw-700 shadow" @click="editImages">
+                                Finish & Update
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
 
         </div>
 
-    </div>
     <Modalconfirmation ref="modal" />
     <Toastcomponents ref="toast" />
 
@@ -2676,135 +2638,125 @@ export default {
         getAssetPath(path) {
             return `/` + path;
         },
-        initMap() {
-            const centerPoint = { lat: 10.32, lng: 123.93 };
-            const defaultZoom = 13;
+      initMap() {
+    // 1. Update Center Point to Surigao City Hall area
+    const centerPoint = { lat: 9.7894, lng: 125.4920 }; 
+    const defaultZoom = 14;
 
-            // Invisible polygons for Mandaue and Lapu-Lapu/Mactan
-            const mandauePolygon = new google.maps.Polygon({
-                paths: [
-                    { lat: 10.338, lng: 123.897 },
-                    { lat: 10.348, lng: 123.935 },
-                    { lat: 10.310, lng: 123.940 },
-                    { lat: 10.295, lng: 123.900 },
-                ],
-                visible: false
-            });
+    // 2. Define Surigao City Boundary Polygon (Mainland focus)
+    const surigaoPolygon = new google.maps.Polygon({
+        paths: [
+            { lat: 9.8150, lng: 125.4750 },
+            { lat: 9.8150, lng: 125.5200 },
+            { lat: 9.7600, lng: 125.5200 },
+            { lat: 9.7600, lng: 125.4750 },
+        ],
+        visible: false // Keep invisible for the premium UI feel
+    });
 
-            const lapuLapuPolygon = new google.maps.Polygon({
-                paths: [
-                    { lat: 10.260, lng: 123.945 },
-                    { lat: 10.280, lng: 123.945 },
-                    { lat: 10.310, lng: 123.920 },
-                    { lat: 10.335, lng: 123.945 },
-                    { lat: 10.325, lng: 123.975 },
-                    { lat: 10.300, lng: 123.980 },
-                ],
-                visible: false
-            });
+    const mapStyle = [
+        { featureType: "all", elementType: "all", stylers: [{ saturation: -20 }, { lightness: 20 }] },
+        { featureType: "poi", stylers: [{ visibility: "off" }] },
+        { featureType: "transit", stylers: [{ visibility: "off" }] }
+    ];
 
-            const mapStyle = [
-                { featureType: "all", elementType: "all", stylers: [{ saturation: -20 }, { lightness: 20 }] },
-                { featureType: "poi", stylers: [{ visibility: "off" }] },
-                { featureType: "transit", stylers: [{ visibility: "off" }] }
-            ];
+    const initializeMap = (elementId, initialPosition, isUpdate = false) => {
+        const mapElement = document.getElementById(elementId);
+        if (!mapElement || mapElement._map) return;
 
-            const initializeMap = (elementId, initialPosition, isUpdate = false) => {
-                const mapElement = document.getElementById(elementId);
-                if (!mapElement || mapElement._map) return;
+        const map = new google.maps.Map(mapElement, {
+            center: initialPosition,
+            zoom: defaultZoom,
+            styles: mapStyle
+        });
 
-                const map = new google.maps.Map(mapElement, {
-                    center: initialPosition,
-                    zoom: defaultZoom,
-                    styles: mapStyle
-                });
+        // Add the new polygon to the map
+        surigaoPolygon.setMap(map);
 
-                // Add polygons to map (invisible)
-                mandauePolygon.setMap(map);
-                lapuLapuPolygon.setMap(map);
+        const geocoder = new google.maps.Geocoder();
 
-                const geocoder = new google.maps.Geocoder();
+        const updateLocation = (latLng) => {
+            // Check if inside the Surigao City bounds
+            const insideSurigao = google.maps.geometry.poly.containsLocation(latLng, surigaoPolygon);
 
-                const updateLocation = (latLng) => {
-                    const insideMandaue = google.maps.geometry.poly.containsLocation(latLng, mandauePolygon);
-                    const insideLapuLapu = google.maps.geometry.poly.containsLocation(latLng, lapuLapuPolygon);
+            if (!insideSurigao) {
+                this.$refs.toast.showToast(
+                    "Selected location is outside Surigao City boundaries.",
+                    "danger"
+                );
+                return false;
+            }
 
-                    if (!insideMandaue && !insideLapuLapu) {
-                        this.$refs.toast.showToast(
-                            "Selected location is outside Mandaue, Lapu-Lapu, or Mactan.",
-                            "danger"
-                        );
-                        return false;
-                    }
+            geocoder.geocode({ location: latLng }, (results, status) => {
+                if (status === "OK" && results[0]) {
+                    const address = results[0].formatted_address;
+                    const latitude = latLng.lat();
+                    const longitude = latLng.lng();
 
-                    geocoder.geocode({ location: latLng }, (results, status) => {
-                        if (status === "OK" && results[0]) {
-                            const address = results[0].formatted_address;
-                            const latitude = latLng.lat();
-                            const longitude = latLng.lng();
-
-                            if (isUpdate) {
-                                this.editDormData.address = address;
-                                this.editDormData.latitude = latitude;
-                                this.editDormData.longitude = longitude;
-                                this.$refs.toast.showToast(address, "success");
-                            } else {
-                                this.address = address;
-                                this.latitude = latitude;
-                                this.longitude = longitude;
-                                this.$refs.toast.showToast(address, "success");
-                            }
-                        }
-                    });
-                };
-
-                const draggableMarker = new google.maps.Marker({
-                    position: initialPosition,
-                    map: map,
-                    draggable: true,
-                    title: "Drag to select location",
-                    icon: {
-                        url: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png",
-                        scaledSize: new google.maps.Size(50, 50)
-                    }
-                });
-
-                draggableMarker.addListener("dragend", (event) => {
-                    const latLng = event.latLng;
-                    const inside = google.maps.geometry.poly.containsLocation(latLng, mandauePolygon) ||
-                        google.maps.geometry.poly.containsLocation(latLng, lapuLapuPolygon);
-
-                    if (!inside) {
-                        // Snap back to previous valid location
-                        draggableMarker.setPosition(new google.maps.LatLng(
-                            parseFloat(this.editDormData.latitude) || centerPoint.lat,
-                            parseFloat(this.editDormData.longitude) || centerPoint.lng
-                        ));
-                        this.$refs.toast.showToast(
-                            "Cannot place marker outside allowed cities.",
-                            "danger"
-                        );
+                    if (isUpdate) {
+                        this.editDormData.address = address;
+                        this.editDormData.latitude = latitude;
+                        this.editDormData.longitude = longitude;
                     } else {
-                        updateLocation(latLng);
+                        this.address = address;
+                        this.latitude = latitude;
+                        this.longitude = longitude;
                     }
-                });
+                    this.$refs.toast.showToast(address, "success");
+                }
+            });
+        };
 
-                mapElement._map = map;
-                mapElement._draggableMarker = draggableMarker;
-            };
-
-            if (this.VisibleMap) {
-                initializeMap("AddMap", centerPoint, false);
+        const draggableMarker = new google.maps.Marker({
+            position: initialPosition,
+            map: map,
+            draggable: true,
+            title: "Drag to select location",
+            icon: {
+                url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png", // Use a standard or custom icon
+                scaledSize: new google.maps.Size(40, 40)
             }
+        });
 
-            if (this.UpdateVisibleMap) {
-                const initialPosition = this.editDormData.latitude && this.editDormData.longitude
-                    ? { lat: parseFloat(this.editDormData.latitude), lng: parseFloat(this.editDormData.longitude) }
-                    : centerPoint;
-                initializeMap("map", initialPosition, true);
+        draggableMarker.addListener("dragend", (event) => {
+            const latLng = event.latLng;
+            const inside = google.maps.geometry.poly.containsLocation(latLng, surigaoPolygon);
+
+            if (!inside) {
+                // Snap back to the center or previous valid data if outside
+                const lastLat = isUpdate ? parseFloat(this.editDormData.latitude) : this.latitude;
+                const lastLng = isUpdate ? parseFloat(this.editDormData.longitude) : this.longitude;
+
+                draggableMarker.setPosition(new google.maps.LatLng(
+                    lastLat || centerPoint.lat,
+                    lastLng || centerPoint.lng
+                ));
+                
+                this.$refs.toast.showToast(
+                    "Marker cannot be placed outside Surigao City.",
+                    "danger"
+                );
+            } else {
+                updateLocation(latLng);
             }
-        },
+        });
 
+        mapElement._map = map;
+        mapElement._draggableMarker = draggableMarker;
+    };
+
+    // Logic to open Add or Update Map
+    if (this.VisibleMap) {
+        initializeMap("AddMap", centerPoint, false);
+    }
+
+    if (this.UpdateVisibleMap) {
+        const initialPosition = this.editDormData.latitude && this.editDormData.longitude
+            ? { lat: parseFloat(this.editDormData.latitude), lng: parseFloat(this.editDormData.longitude) }
+            : centerPoint;
+        initializeMap("map", initialPosition, true);
+    }
+},
 
 
         formatDate(dateStr) {
@@ -2882,187 +2834,6 @@ export default {
 };
 </script>
 
-<style scoped>
-.table-responsive {
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.spinner-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 6px solid #ccc;
-    border-top-color: #3498db;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.table-responsive {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    /* smooth scrolling on iOS */
-    max-width: 100%;
-}
-
-.table-responsive table {
-    min-width: 700px;
-    /* Adjust based on your table's total width */
-}
-
-.file-upload-btn:hover {
-    background: #1AA059;
-    color: #ffffff;
-    transition: all .2s ease;
-    cursor: pointer;
-}
-
-.file-upload-btn:active {
-    border: 0;
-    transition: all .2s ease;
-}
-
-.file-upload-content {
-    display: none;
-    text-align: center;
-}
-
-.file-upload-input {
-    position: absolute;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    outline: none;
-    opacity: 0;
-    cursor: pointer;
-}
-
-.image-upload-wrap {
-    margin-top: 20px;
-    border: 4px dashed #4edce2;
-    position: relative;
-}
-
-.image-dropping,
-.image-upload-wrap:hover {
-    background-color: #4edce2;
-    border: 4px dashed #ffffff;
-}
-
-.image-title-wrap {
-    padding: 0 15px 15px 15px;
-    color: #222;
-}
-
-.drag-text {
-    text-align: center;
-}
-
-.drag-text h3 {
-    font-weight: 100;
-    text-transform: uppercase;
-    color: black;
-    padding: 60px 0;
-}
-
-.file-upload-image {
-    max-height: 200px;
-    max-width: 200px;
-    margin: auto;
-    padding: 20px;
-}
-
-.remove-image {
-    width: 200px;
-    margin: 0;
-    color: black;
-    background: #4edce2;
-    border: none;
-    padding: 10px;
-    border-radius: 4px;
-    border-bottom: 4px solid #b02818;
-    transition: all .2s ease;
-    outline: none;
-    text-transform: uppercase;
-    font-weight: 700;
-}
-
-.remove-image:hover {
-    background: #4edce2;
-    color: black;
-    transition: all .2s ease;
-    cursor: pointer;
-}
-
-.remove-image:active {
-    border: 0;
-    transition: all .2s ease;
-}
-
-.file-upload-input {
-    display: none;
-}
-
-.image-upload-wrap {
-    border: 2px dashed #ddd;
-    padding: 40px;
-    text-align: center;
-    cursor: pointer;
-    margin-bottom: 20px;
-}
-
-.file-upload-content {
-    display: block;
-    margin-top: 20px;
-}
-
-.file-upload-image {
-    max-width: 100%;
-    max-height: 300px;
-    margin: 0 auto;
-    display: block;
-}
-
-.remove-image {
-    background: none;
-    border: none;
-    color: #ff0000;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.image-wrapper {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    /* You can adjust ratio like 1 / 1 for square */
-    overflow: hidden;
-    border-radius: 0.5rem;
-    background-color: #f8f9fa;
-}
-
-.uniform-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-}
+<style scoped src="../../../../css/landlord/dormManagement.css">
 </style>
+<style scoped src="../../../../css/partials/pagination.css"></style>

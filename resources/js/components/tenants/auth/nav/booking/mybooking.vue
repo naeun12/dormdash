@@ -2,113 +2,94 @@
     <Loader ref="loader" />
     <NotificationList ref="toastRef" />
 
-    <div class="container-fluid py-4">
-        <div class="container-fluid mt-3">
-            <h2 class="mb-4 text-primary fw-semibold text-center">My Bookings</h2>
-        </div>
-        <div class="d-flex justify-content-end">
-            <button @click="viewPayments" class="custom-btn  px-4 py-2 mb-3 rounded-pill fw-semibold">
-                💸 View Payments
-            </button>
-        </div>
-
-        <div v-if="bookings.length === 0"
-            class="text-center p-5 bg-light rounded-4 shadow-lg position-relative overflow-hidden">
-            <!-- Decorative Circle -->
-            
-
-            <h4 class="text-muted fw-bold mb-3">No bookings found</h4>
-            <p class="text-muted fs-6 mb-4">You haven't made any bookings yet. Explore dormitories and find your perfect
-                room!</p>
-        </div>
-
-        <div class="card mb-3 shadow-lg border-0 rounded-4 hover-card"
-            v-for="(booking, index) in bookings.slice(0, showCount)" :key="index" style="background: #ffffff;">
-
-            <!-- Header -->
-            <div class="card-header text-white fw-bold rounded-top-4"
-                style="background: linear-gradient(90deg, #4edce2, #2cb5b8);">
-                📝 Booking Information
+    <div class="bookings-wrapper py-5">
+        <div class="container">
+            <div class="booking-glass-header d-flex align-items-center justify-content-between p-4 mb-4 shadow-sm">
+                <div>
+                    <h2 class="fw-black mb-0 text-dark">My Bookings</h2>
+                    <p class="text-muted mb-0 small">Manage your stay and track reservation status</p>
+                </div>
+                <button @click="viewPayments" class="btn btn-orange-premium px-4 py-2 rounded-pill shadow-sm">
+                    <i class="bi bi-credit-card-2-back me-2"></i>View Payments
+                </button>
             </div>
 
-            <div class="row g-0 rounded-bottom-4 overflow-hidden" style="border: 1.5px solid #d9f3f4;">
-
-                <!-- Image Column -->
-                <div class="col-md-2 d-flex align-items-center justify-content-center bg-light">
-                    <img :src="booking.pictureID" alt="Dorm Image" class="img-fluid rounded-start-4"
-                        style="height: 120px; object-fit: cover; width: 100%;" />
+            <div v-if="bookings.length === 0" class="empty-bookings-card text-center p-5 bg-white rounded-5 shadow-sm">
+                <div class="empty-icon-bg mb-3 mx-auto">
+                    <i class="bi bi-calendar-x text-orange"></i>
                 </div>
+                <h4 class="fw-bold text-dark">No bookings found</h4>
+                <p class="text-muted mb-4">Explore dormitories and find your perfect room today!</p>
+                <button class="btn btn-blue-premium px-4 rounded-pill">Find a Room</button>
+            </div>
 
-                <!-- Booking Info -->
-                <div class="col-md-9 p-3">
-                    <div class="row">
-                        <!-- Personal Info -->
-                        <div class="col-md-4 mb-2">
-                            <p class="mb-1 fw-semibold text-dark">
-                                <i class="bi bi-person-fill text-primary"></i> Fullname:
-                                <span class="text-muted">{{ booking.firstname }} {{ booking.lastname }}</span>
-                            </p>
-                            <p class="mb-1 fw-semibold text-dark">
-                                <i class="bi bi-calendar2-week-fill text-success"></i> Age:
-                                <span class="text-muted">{{ booking.age }}</span>
-                            </p>
-                            <p class="mb-0 fw-semibold text-dark">
-                                <i class="bi bi-gender-ambiguous text-info"></i> Gender:
-                                <span class="text-muted">{{ booking.gender }}</span>
-                            </p>
-                        </div>
+            <div class="booking-feed">
+                <div class="booking-card-modern mb-4 overflow-hidden shadow-sm"
+                    v-for="(booking, index) in bookings.slice(0, showCount)" :key="index">
 
-                        <!-- Dorm Info -->
-                        <div class="col-md-4 mb-2">
-                            <p class="mb-1 fw-semibold text-dark">
-                                🏠 Dormitory:
-                                <span class="text-muted">{{ booking.room?.dorm.dormName }}</span>
-                            </p>
-                            <p class="mb-0 fw-semibold text-dark">
-                                📍 Location:
-                                <span class="text-muted">{{ booking.room?.dorm.address }}</span>
-                            </p>
-                        </div>
-
-                        <!-- Room Info -->
-                        <div class="col-md-4 mb-2">
-                            <p class="mb-1 fw-semibold text-dark">
-                                🛏 Room:
-                                <span class="text-muted">{{ booking.room?.roomNumber }}</span>
-                            </p>
-                            <p class="mb-1 fw-semibold text-dark">
-                                📅 Check-in:
-                                <span class="text-muted">{{ booking.moveOutDate }}</span>
-                            </p>
-                            <p class="mb-0 fw-semibold text-dark d-flex align-items-center">
-                                <i class="bi bi-info-circle-fill me-1 text-primary"></i>
-                                Status:
+                    <div class="row g-0">
+                        <div class="col-lg-3 position-relative">
+                            <img :src="booking.pictureID" alt="Dorm Image" class="booking-img-main" />
+                            <div class="status-overlay">
                                 <statusMap :status="booking.status" role="tenant" />
-                            </p>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-7 p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="fw-bold text-dark mb-1">{{ booking.room?.dorm.dormName }}</h5>
+                                    <p class="text-muted small mb-0"><i
+                                            class="bi bi-geo-alt-fill text-orange me-1"></i>{{
+                                        booking.room?.dorm.address }}</p>
+                                </div>
+                                <div class="room-badge shadow-sm">
+                                    <small class="fw-bold">Room {{ booking.room?.roomNumber }}</small>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="info-item d-flex align-items-center gap-2">
+                                        <i class="bi bi-person-circle text-blue"></i>
+                                        <div>
+                                            <small class="d-block text-muted">Tenant</small>
+                                            <span class="fw-semibold">{{ booking.firstname }} {{ booking.lastname
+                                                }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item d-flex align-items-center gap-2">
+                                        <i class="bi bi-calendar-check text-blue"></i>
+                                        <div>
+                                            <small class="d-block text-muted">Check-in Date</small>
+                                            <span class="fw-semibold">{{ booking.moveOutDate }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="col-lg-2 d-flex align-items-center justify-content-center p-3 border-start bg-light-soft">
+                            <button @click="viewBooking(booking)" class="btn btn-view-booking w-100 py-3 rounded-4">
+                                <span>Details</span>
+                                <i class="bi bi-arrow-right-short ms-1"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Button Column -->
-                <div class="col-md-1 d-flex align-items-center justify-content-center bg-white">
-                    <button @click="viewBooking(booking)"
-                        class="btn btn-outline-info rounded-pill px-3 py-1 fw-semibold shadow-sm">
-                        View
-                    </button>
-                </div>
+            <div class="text-center mt-5" v-if="bookings.length > 3">
+                <button class="btn btn-show-more shadow-sm" @click="toggleShow">
+                    {{ showAll ? 'Show Less' : 'Show More Bookings' }}
+                </button>
             </div>
         </div>
-
-
-        <div class="text-center mt-3">
-            <button class="custom-btn rounded-pill px-4" v-if="bookings.length > 3" @click="toggleShow">
-                {{ showAll ? 'Show Less' : 'Show More' }}
-            </button>
-        </div>
-
     </div>
 </template>
-
 <script>
 import axios from 'axios';
 import Loader from '@/components/loader.vue';
@@ -198,8 +179,6 @@ export default {
 };
 </script>
 
-<style scoped>
-.card {
-    border-radius: 12px;
-}
+<style scoped src="/resources/css/tenant/booking.css">
+
 </style>

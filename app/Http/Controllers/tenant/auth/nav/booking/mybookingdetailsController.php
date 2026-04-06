@@ -36,7 +36,7 @@ class mybookingdetailsController extends Controller
             if (!$tenant) {
                 return redirect()->route('tenant-login')->with('error', 'Landlord not found.');
             }
-            $title = 'Tenant room Details - Dormhub';
+            $title = 'Tenant room Details - DormDash';
             return view('tenant.auth.nav.bookings.mybookingdetails',['title' => 'Tenant - Booking Details',
             'tenant_id' => $tenant_id,
             'booking_id' => $booking_id,

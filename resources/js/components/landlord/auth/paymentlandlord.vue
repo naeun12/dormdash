@@ -2,87 +2,134 @@
     <Loader ref="loader" />
     <NotificationList ref="toastRef" />
 
+    <div class="d-flex flex-column flex-md-row bg-light overflow-hidden" style="min-height: 100vh;">
 
-    <div class="d-flex flex-column flex-md-row bg-light" style="min-height: 90vh;">
-        <!-- Left Side: Benefits -->
-        <div class="p-4 text-white bg-info shadow-lg rounded-4 m-3 m-md-4"
-            style="width: 100%; max-width: 320px; flex-shrink: 0;">
-            <h4 class="mb-4 text-center fw-bold">
-                <i class="bi bi-star-fill me-2 text-warning"></i> Benefits
-            </h4>
+        <div class="p-4 p-lg-5 text-white shadow-lg m-3 m-md-4 rounded-4 d-flex flex-column justify-content-center"
+            style="width: 100%; max-width: 400px; flex-shrink: 0; background-color: #003C87; position: relative;">
 
-
-            <ul class="list-unstyled">
-                <li class="mb-3 d-flex align-items-start">
-                    <i class="bi bi-house-door-fill me-2 text-warning fs-5 mt-1"></i>
-                    <span>Can upload your dorm listings</span>
-                </li>
-                <li class="mb-3 d-flex align-items-start">
-                    <i class="bi bi-people-fill me-2 text-warning fs-5 mt-1"></i>
-                    <span>Reach more tenants faster</span>
-                </li>
-                <li class="mb-3 d-flex align-items-start">
-                    <i class="bi bi-shield-check me-2 text-warning fs-5 mt-1"></i>
-                    <span>Verified landlord badge</span>
-                </li>
-                <li class="mb-3 d-flex align-items-start">
-                    <i class="bi bi-graph-up-arrow me-2 text-warning fs-5 mt-1"></i>
-                    <span>Better visibility on Dormhub search</span>
-                </li>
-            </ul>
-
-
-            <hr class="border-light opacity-75" />
-            <div class="mt-3 text-center">
-                <small class="text-light fst-italic">Powered by Dormhub Secure Payments</small>
+            <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10"
+                style="background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 20px 20px;">
             </div>
-        </div>
 
+            <div class="position-relative">
+                <div class="text-center mb-4">
+                    <div class="d-inline-block p-3 rounded-circle bg-white bg-opacity-10 mb-3">
+                        <i class="bi bi-patch-check-fill text-warning fs-1"></i>
+                    </div>
+                    <h3 class="fw-bold">Landlord Pro</h3>
+                    <p class="text-white-50">Unlock the full potential of DormDash</p>
+                </div>
 
-        <!-- Right Side: Payment / Verified Section -->
-        <div class="flex-fill d-flex align-items-center justify-content-center p-3 p-md-4 bg-light">
-            <!-- If Not Verified -->
-            <div v-if="verified === 0" class="card shadow-lg border-0 rounded-4 p-4 w-100" style="max-width: 420px;">
-                <h4 class="text-center fw-bold mb-4 text-primary">Upgrade Your Account</h4>
-
-
-                <div class="mb-4 d-flex justify-content-center">
-                    <div class="fw-bold border rounded-pill px-3 px-md-4 py-2 shadow-sm bg-light">
-                        Payment Method:
-                        <span class="badge bg-primary ms-2 px-3 py-2">GCash</span>
+                <div class="list-group list-group-flush bg-transparent mt-4">
+                    <div class="d-flex align-items-start mb-4">
+                        <div class="bg-white bg-opacity-25 rounded-circle p-2 me-3">
+                            <i class="bi bi-house-add-fill text-warning"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Unlimited Listings</h6>
+                            <small class="opacity-75">Upload and manage all your dorm properties.</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-4">
+                        <div class="bg-white bg-opacity-25 rounded-circle p-2 me-3">
+                            <i class="bi bi-lightning-charge-fill text-warning"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Instant Visibility</h6>
+                            <small class="opacity-75">Reach thousands of potential tenants instantly.</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-4">
+                        <div class="bg-white bg-opacity-25 rounded-circle p-2 me-3">
+                            <i class="bi bi-shield-shaded text-warning"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Trust Badge</h6>
+                            <small class="opacity-75">Get a verified badge to build tenant confidence.</small>
+                        </div>
                     </div>
                 </div>
 
+                <div class="mt-5 pt-4 border-top border-white border-opacity-10 text-center">
+                    <small class="opacity-50 fst-italic">DormDash Secure Gateway</small>
+                </div>
+            </div>
+        </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Email Address</label>
-                    <input type="email" class="form-control form-control-lg" placeholder="you@email.com"
-                        v-model="email" />
-                    <p class="text-danger mt-1" v-if="error.email">{{ error.email[0] }}</p>
+        <div class="flex-fill d-flex align-items-center justify-content-center p-3 p-md-5">
+
+            <div v-if="verified === 0" class="card shadow-lg border-0 rounded-4 p-4 p-md-5 w-100"
+                style="max-width: 480px; background-color: #ffffff;">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-dark mb-1">Upgrade Account</h2>
+                    <p class="text-muted">Start your journey as a verified partner</p>
                 </div>
 
+                <div class="mb-4">
+                    <div class="p-3 rounded-4 bg-light d-flex align-items-center justify-content-between border">
+                        <div class="d-flex align-items-center">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/GCash_logo.svg/1280px-GCash_logo.svg.png"
+                                alt="GCash" style="height: 20px;" class="me-2">
+                            <span class="fw-bold text-secondary small">GCASH E-WALLET</span>
+                        </div>
+                        <span class="badge bg-success rounded-pill px-3">Fast Secure</span>
+                    </div>
+                </div>
 
-                <button class="btn btn-primary btn-lg w-100 py-2 shadow-sm" @click="payWithGCash" :disabled="loading">
-                    <i class="bi bi-wallet2 me-2"></i>
-                    <span v-if="loading">Processing...</span>
-                    <span v-else>Pay ₱{{ amount }}</span>
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-dark small">BILLING EMAIL</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted">
+                            <i class="bi bi-envelope"></i>
+                        </span>
+                        <input type="email" class="form-control form-control-lg border-start-0 ps-0"
+                            placeholder="you@email.com" v-model="email" style="font-size: 1rem;" />
+                    </div>
+                    <p class="text-danger small mt-2 fw-medium" v-if="error.email">
+                        <i class="bi bi-exclamation-circle me-1"></i>{{ error.email[0] }}
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-4 mb-4 text-center"
+                    style="background-color: #f8faff; border: 2px dashed #003C8733;">
+                    <small class="text-muted d-block mb-1">TOTAL AMOUNT</small>
+                    <h1 class="fw-bold mb-0" style="color: #003C87;">₱{{ Number(amount).toLocaleString() }}</h1>
+                </div>
+
+                <button class="btn btn-lg w-100 py-3 rounded-4 shadow fw-bold text-white transition-all hover-scale"
+                    style="background-color: #FC7D07; border: none;" @click="payWithGCash" :disabled="loading">
+                    <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
+                    <i v-else class="bi bi-lock-fill me-2"></i>
+                    {{ loading ? 'PROCESSING...' : 'CONFIRM & PAY NOW' }}
                 </button>
+
+                <p class="text-center text-muted small mt-4">
+                    <i class="bi bi-shield-lock me-1"></i> Encrypted Payment Processing
+                </p>
             </div>
 
-
-            <!-- If Verified -->
-            <div v-else class="card shadow-lg border-0 text-center p-5 rounded-4" style="max-width: 420px;">
-                <i class="bi bi-check-circle-fill text-success fs-1 mb-3"></i>
-                <h3 class="fw-bold mb-2 text-success">Your Account is Verified!</h3>
-                <p class="text-muted mb-3">
-                    Thank you for completing the payment. You can now access all landlord features.
+            <div v-else class="card shadow-lg border-0 text-center p-5 rounded-4 animate__animated animate__fadeIn"
+                style="max-width: 480px;">
+                <div class="mb-4">
+                    <div class="d-inline-flex p-4 rounded-circle bg-success bg-opacity-10">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                    </div>
+                </div>
+                <h2 class="fw-bold mb-3 text-dark">Verification Complete!</h2>
+                <p class="text-secondary mb-4 px-3" style="line-height: 1.6;">
+                    Excellent! Your landlord account is now fully verified. You can now access your dashboard and start
+                    listing your properties to find new tenants.
                 </p>
-
+                <div class="pt-3">
+                    <div class="p-3 bg-light rounded-4 border">
+                        <div class="d-flex align-items-center justify-content-center text-success fw-bold">
+                            <i class="bi bi-shield-fill-check me-2"></i> PRO LANDLORD FEATURES ENABLED
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-
 </template>
 
 
@@ -152,8 +199,11 @@ export default {
             try {
                 const response = await axios.get(`/get/landlord/data/${this.landlord_id}`);
                 this.verified = response.data.landlord.isVerified;
+                this.$refs.loader.loading = false;
+
             } catch (error) {
                 console.error('Error fetching landlord data:', error);
+                this.$refs.loader.loading = false;
             }
         }
     },

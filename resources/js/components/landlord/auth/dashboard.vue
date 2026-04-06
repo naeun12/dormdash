@@ -8,77 +8,107 @@
 
 
             <!-- Header Card -->
-            <div class="py-3 px-3 px-md-4 mb-3 bg-light border-start border-primary border-4 rounded shadow-sm">
-                <h3 class="mb-2 text-primary">
-                    <i class="bi bi-person-circle me-2"></i>
-                    {{ landlord.firstname }} {{ landlord.lastname }}
-                </h3>
+            <div class="stats-filter-card p-4 mb-4 shadow-sm border-0">
+                <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-4">
 
-
-                <!-- Date & Reports -->
-                <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center mb-3 gap-2">
-                    <!-- Date -->
-                    <div class="d-flex align-items-center gap-2 w-100 w-md-auto">
-                        <label class="form-label fw-bold m-0">📅 Today's Date:</label>
-                        <input type="date" class="form-control w-25 w-md-auto"
-                            style="border: 1px solid #4edce2; min-width: 50px;" v-model="newDate" :max="today">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="avatar-icon-box">
+                            <i class="bi bi-person-badge-fill text-white fs-3"></i>
+                        </div>
+                        <div>
+                            <span class="nav-label d-block mb-1">PROPERTIES OF</span>
+                            <h3 class="fw-800 text-dark mb-0">
+                                {{ landlord.firstname }} {{ landlord.lastname }}
+                            </h3>
+                        </div>
                     </div>
 
-                    <div class="ms-md-auto mt-2 mt-md-0">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button"
-                                id="reportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                {{ selectedDorm ? selectedDorm.dormName : 'Choose Dorm' }}
-                            </button>
-                            <ul class="dropdown-menu w-100" aria-labelledby="reportDropdown">
-                                <li v-for="dorm in dorms" :key="dorm.dormID">
-                                    <a class="dropdown-item" href="#" @click.prevent="selectDorm(dorm)">
-                                        {{ dorm.dormName }}
-                                    </a>
-                                </li>
-                            </ul>
+                    <div class="d-flex flex-column flex-md-row gap-3 flex-grow-1 justify-content-lg-end">
+
+                        <div class="filter-group">
+                            <label class="nav-label">REPORT DATE</label>
+                            <div class="input-with-icon">
+                                <i class="bi bi-calendar3"></i>
+                                <input type="date" class="form-control modern-input" v-model="newDate" :max="today">
+                            </div>
                         </div>
 
-                    </div>
-                    <!-- Download Report -->
-                    <div class="ms-md-auto mt-2 mt-md-0">
-                        <a :href="`/generate-full-report/${landlord_id}?date=${newDate}`" target="_blank"
-                            class="btn btn-outline-success w-100" :class="{ 'disabled': !newDate }">
-                            📄 Download Full Report
-                        </a>
+                        <div class="filter-group">
+                            <label class="nav-label">SELECT DORMITORY</label>
+                            <div class="dropdown">
+                                <button class="btn modern-dropdown-btn dropdown-toggle w-100" type="button"
+                                    id="reportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-building me-2"></i>
+                                    {{ selectedDorm ? selectedDorm.dormName : 'All Dormitories' }}
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2"
+                                    aria-labelledby="reportDropdown">
+                                    <li v-for="dorm in dorms" :key="dorm.dormID">
+                                        <a class="dropdown-item py-2" href="#" @click.prevent="selectDorm(dorm)">
+                                            {{ dorm.dormName }}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="filter-group d-flex align-items-end">
+                            <a :href="`/generate-full-report/${landlord_id}?date=${newDate}`" target="_blank"
+                                class="btn download-btn w-100" :class="{ 'disabled': !newDate }">
+                                <i class="bi bi-cloud-arrow-down-fill me-2"></i>
+                                Export PDF Report
+                            </a>
+                        </div>
+
                     </div>
                 </div>
             </div>
 
-
             <!-- Info Cards -->
-            <div class="row">
-                <!-- Total Tenants -->
-                <div class="col-12 col-md-6 mb-3">
-                    <a :href="`/all-tenants-index/${landlord_id}`" class="text-decoration-none">
-                        <div class="card shadow-sm border-start border-primary border-4 h-100">
-                            <div class="card-body d-flex align-items-center justify-content-between">
-                                <div>
-                                    <h5 class="card-title mb-1 text-primary">Total Tenants</h5>
-                                    <p class="card-text display-6 fw-bold mb-0 text-primary">{{ totalTenants }}</p>
+            <div class="row g-4 mb-4">
+                <div class="col-12 col-md-6">
+                    <a :href="`/all-tenants-index/${landlord_id}`" class="stat-link-wrapper">
+                        <div class="modern-stat-card bg-brand-blue">
+                            <div class="glass-shine"></div>
+                            <div class="card-inner">
+                                <div class="stat-content">
+                                    <span class="stat-category">MANAGEMENT</span>
+                                    <h5 class="stat-title">Total Tenants</h5>
+                                    <h2 class="stat-number">{{ totalTenants }}</h2>
                                 </div>
-                                <i class="bi bi-people-fill fs-1 text-primary"></i>
+                                <div class="stat-visual">
+                                    <div class="icon-blob">
+                                        <i class="bi bi-people-fill"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-action-bar">
+                                <span>View Directory</span>
+                                <i class="bi bi-arrow-right"></i>
                             </div>
                         </div>
                     </a>
                 </div>
 
-
-                <!-- Vacant Beds -->
-                <div class="col-12 col-md-6 mb-3">
-                    <a :href="`/landlordRoomManagement/${landlord_id}`" class="text-decoration-none">
-                        <div class="card shadow-sm border-start border-success border-4 h-100">
-                            <div class="card-body d-flex align-items-center justify-content-between">
-                                <div>
-                                    <h5 class="card-title mb-1 text-success">Vacant Beds</h5>
-                                    <p class="card-text display-6 fw-bold mb-0 text-success">{{ availableBeds }}</p>
+                <div class="col-12 col-md-6">
+                    <a :href="`/landlordRoomManagement/${landlord_id}`" class="stat-link-wrapper">
+                        <div class="modern-stat-card bg-brand-orange">
+                            <div class="glass-shine"></div>
+                            <div class="card-inner">
+                                <div class="stat-content">
+                                    <span class="stat-category">AVAILABILITY</span>
+                                    <h5 class="stat-title">Vacant Beds</h5>
+                                    <h2 class="stat-number">{{ availableBeds }}</h2>
                                 </div>
-                                <i class="bi bi-door-open-fill fs-1 text-success"></i>
+                                <div class="stat-visual">
+                                    <div class="icon-blob">
+                                        <i class="bi bi-door-open-fill"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-action-bar">
+                                <span>Manage Inventory</span>
+                                <i class="bi bi-arrow-right"></i>
                             </div>
                         </div>
                     </a>
@@ -87,97 +117,138 @@
 
 
             <!-- Charts -->
-            <div class="charts d-flex flex-wrap gap-3 mb-4">
-                <!-- Highest Dorm Profits -->
-                <div class="chart-container p-3 border rounded shadow-sm flex-grow-1"
-                    style="flex: 1 1 45%; min-width: 250px;">
-                    <h6 class="fw-bold mb-2">📈 Highest Rooms Profits</h6>
-                    <LineChart v-if="chartData" :chart-data="chartData" :chart-options="chartOptions" />
+            <div class="charts d-flex flex-wrap gap-4 mb-4">
+                <div class="modern-chart-card flex-grow-1">
+                    <div class="chart-header">
+                        <div class="header-icon-box">
+                            <i class="bi bi-graph-up-arrow text-primary"></i>
+                        </div>
+                        <div>
+                            <span class="nav-label">REVENUE TRENDS</span>
+                            <h6 class="fw-bold m-0">Highest Rooms Profits</h6>
+                        </div>
+                    </div>
+
+                    <div class="chart-body pt-3">
+                        <LineChart v-if="chartData" :chart-data="chartData" :chart-options="chartOptions"
+                            style="max-height: 250px;" />
+                    </div>
                 </div>
 
-                <!-- Profits Per Dorm -->
-                <div class="chart-container p-3 border rounded shadow-sm flex-grow-1"
-                    style="flex: 1 1 45%; min-width: 250px;">
-                    <h6 class="fw-bold mb-2"><i class="bi bi-person-lines-fill me-2"></i> Occupants by Gender</h6>
-                    <DoughnutChart v-if="bookingChartData" :chart-data="bookingChartData"
-                        :chart-options="bookingChartOptions" />
+                <div class="modern-chart-card flex-grow-1">
+                    <div class="chart-header">
+                        <div class="header-icon-box icon-orange">
+                            <i class="bi bi-person-lines-fill text-primary"></i>
+                        </div>
+                        <div>
+                            <span class="nav-label">DEMOGRAPHICS</span>
+                            <h6 class="fw-bold m-0">Occupants by Gender</h6>
+                        </div>
+                    </div>
 
-                    <!-- Legend -->
-                    <div class="legend mt-3" v-if="bookingChartData?.labels?.length">
-                        <div class="legend-item d-flex justify-content-between align-items-center mb-1"
-                            v-for="(label, index) in bookingChartData.labels" :key="index">
-                            <span class="dot me-2" :style="{
-                                width: '10px', height: '10px', backgroundColor: bookingChartData.datasets[0].backgroundColor[index], borderRadius: '50%'
-                            }"></span>
-                            <span class="flex-grow-1 small">{{ label }}</span>
-                            <span class="small">
-                                {{ calculatePercentage(bookingChartData.datasets[0].data[index],
+                    <div class="chart-body d-flex align-items-center gap-3 pt-3">
+                        <div class="chart-wrapper" style="width: 140px;">
+                            <DoughnutChart v-if="bookingChartData" :chart-data="bookingChartData"
+                                :chart-options="bookingChartOptions" />
+                        </div>
+
+                        <div class="modern-legend flex-grow-1" v-if="bookingChartData?.labels?.length">
+                            <div class="legend-row d-flex align-items-center justify-content-between mb-2 p-2 rounded-3"
+                                v-for="(label, index) in bookingChartData.labels" :key="index">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="legend-indicator"
+                                        :style="{ backgroundColor: bookingChartData.datasets[0].backgroundColor[index] }"></span>
+                                    <span class="label-text">{{ label }}</span>
+                                </div>
+                                <span class="label-value">
+                                    {{ calculatePercentage(bookingChartData.datasets[0].data[index],
                                     bookingChartData.datasets[0].data) }}%
-                            </span>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
 
-
             <!-- Recent Bookings & Reservations -->
-            <div class="row">
-                <div class="col-12 col-md-6 mb-3">
-                    <a :href="`/booking-index/${landlord_id}`" class="text-decoration-none">
-                        <div class="card shadow-sm border-start border-info border-4 h-100">
-                            <div class="card-header bg-transparent d-flex align-items-center justify-content-between">
-                                <h5 class="mb-0 text-info"><i class="bi bi-calendar-check-fill me-2"></i>Recent Bookings
-                                </h5>
-                                <span class="badge bg-info text-white">Updated</span>
-                            </div>
-                            <div class="card-body table-responsive">
-                                <table class="table table-hover align-middle">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Move-In</th>
-                                            <th>Room</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="booking in bookings.slice(0, 3)" :key="booking.bookingID">
-                                            <td><strong>{{ booking.firstname }} {{ booking.lastname }}</strong></td>
-                                            <td><span class="text-muted">{{ booking.moveInDate }}</span></td>
-                                            <td><span class="badge bg-primary px-3 py-2">Room {{
-                                                booking.room?.roomNumber ?? 'N/A' }}</span></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+            <div class="row g-4">
+                <div class="col-12 col-lg-6">
+                    <a :href="`/booking-index/${landlord_id}`" class="table-card-link">
+                        <div class="modern-table-card">
+                            <div class="card-top-accent bg-brand-blue"></div>
+                            <div class="p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div>
+                                        <span class="nav-label">LOGISTICS</span>
+                                        <h5 class="fw-bold m-0"><i
+                                                class="bi bi-calendar-check-fill me-2 text-brand-blue"></i>Recent
+                                            Bookings</h5>
+                                    </div>
+                                    <span class="status-pill pill-blue">Live Update</span>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-custom">
+                                        <thead>
+                                            <tr>
+                                                <th>Tenant Name</th>
+                                                <th>Move-In</th>
+                                                <th class="text-end">Room</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="booking in bookings.slice(0, 3)" :key="booking.bookingID">
+                                                <td class="fw-bold text-dark">{{ booking.firstname }} {{
+                                                    booking.lastname }}</td>
+                                                <td><span class="text-muted small">{{ booking.moveInDate }}</span></td>
+                                                <td class="text-end">
+                                                    <span class="room-tag">{{ booking.room?.roomNumber ?? 'N/A'
+                                                        }}</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </a>
                 </div>
 
+                <div class="col-12 col-lg-6">
+                    <a :href="`/reservation-index/${landlord_id}`" class="table-card-link">
+                        <div class="modern-table-card">
+                            <div class="card-top-accent bg-brand-orange"></div>
+                            <div class="p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div>
+                                        <span class="nav-label">PENDING</span>
+                                        <h5 class="fw-bold m-0"><i
+                                                class="bi bi-person-plus-fill me-2 text-brand-orange"></i>Recent
+                                            Reservations</h5>
+                                    </div>
+                                </div>
 
-                <div class="col-12 col-md-6 mb-3">
-                    <a :href="`/reservation-index/${landlord_id}`" class="text-decoration-none">
-                        <div class="card shadow-sm border-start border-warning border-4 h-100">
-                            <div class="card-header bg-transparent d-flex align-items-center">
-                                <h5 class="mb-0 text-warning"><i class="bi bi-person-plus-fill me-2"></i>Recent
-                                    Reservations</h5>
-                            </div>
-                            <div class="card-body table-responsive">
-                                <table class="table table-hover align-middle">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Room</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="tenant in reservations.slice(0, 3)" :key="tenant.reservationID">
-                                            <td><strong>{{ tenant.firstname }} {{ tenant.lastname }}</strong></td>
-                                            <td><span class="badge bg-primary px-3 py-2">Room {{ tenant.room?.roomNumber
-                                                ?? 'N/A' }}</span></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <div class="table-responsive">
+                                    <table class="table table-custom">
+                                        <thead>
+                                            <tr>
+                                                <th>Tenant Name</th>
+                                                <th class="text-end">Room Assigned</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="tenant in reservations.slice(0, 3)" :key="tenant.reservationID">
+                                                <td class="fw-bold text-dark">{{ tenant.firstname }} {{ tenant.lastname
+                                                    }}</td>
+                                                <td class="text-end">
+                                                    <span class="room-tag orange-tag">{{ tenant.room?.roomNumber ??
+                                                        'N/A' }}</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </a>
@@ -489,3 +560,4 @@ export default
     }
 
 </script>
+<style scoped src="../../../../css/landlord/dashboard.css"></style>

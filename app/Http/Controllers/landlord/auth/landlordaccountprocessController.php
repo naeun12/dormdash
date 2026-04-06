@@ -230,7 +230,7 @@ class landlordaccountprocessController extends Controller
 
                 return response()->json([
                     'status' => 'success',
-                    'message' => 'Welcome aboard! DormHub is happy to have you.',
+                    'message' => 'Welcome aboard! DormDash is happy to have you.',
                 ],200);
             
 

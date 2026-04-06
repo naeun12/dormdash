@@ -31,7 +31,7 @@ class AdminTenantEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'DormHub Admin Reminder'
+            subject: 'DormDash Admin Reminder'
         );
     }
     /**

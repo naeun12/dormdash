@@ -1,6 +1,3 @@
 /* Bootstrap 5 */
 @import 'bootstrap/dist/css/bootstrap.min.css';
 
-/* Custom styles */
-@import "./landingpage/landingpage.css";
-@import "./navigationstyle/landingandacccountprocessnavigation.css";

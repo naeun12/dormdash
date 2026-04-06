@@ -64,7 +64,7 @@ public function verifyPaymentLandlord(Request $request)
                     'data' => [
                         'attributes' => [
                             'line_items' => [[
-                                'name' => 'Dormhub Account Upgrade',
+                                'name' => 'DormDash Account Upgrade',
                                 'quantity' => 1,
                                 'currency' => 'PHP',
                                 'amount' => $amountInCents,

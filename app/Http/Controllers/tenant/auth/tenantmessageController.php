@@ -52,7 +52,7 @@ class tenantmessageController extends Controller
     })->sortByDesc('sent_at')->values();
 
     return view('tenant.auth.tenantmessage', [
-        'title'      => 'DormHub Message',
+        'title'      => 'DormDash Message',
         'cssPath'    => '',
         'demo'       => '',
         'tenant_id'  => $tenant_id,
@@ -99,7 +99,7 @@ class tenantmessageController extends Controller
             ->get();
     
         return view('tenant.auth.tenantmessage', [
-            'title' => 'DormHub Message',
+            'title' => 'DormDash Message',
             'cssPath' => '',
             'landlord' => $landlord,
             'tenant_id' => $tenant_id,

@@ -1,210 +1,222 @@
 <template>
+    <loader ref="loader" />
 
-
-    <div>
-        <loader ref="loader" />
-        <div :class="['container-toast mt-5', { show: toaster }]">
-            <!-- Toast Container -->
-            <div :class="['toast-child', `bg-${toastColor}`]">
-                <div class="toast-body d-flex justify-content-between align-items-center text-white fw-bold py-3 px-4">
-                    <span class="text-wrap">{{ messageToaster }}</span>
-                    <button type="button" class="btn-close btn-close-white ms-3" @click="ExitToaster"
-                        aria-label="Close"></button>
-                </div>
+    <div v-show="toaster"
+        :class="['container-toast position-fixed top-0 start-50 translate-middle-x mt-5 z-3 animate__animated', toaster ? 'animate__fadeInDown' : 'animate__fadeOutUp']">
+        <div :class="['shadow-lg border-0']"
+            :style="{ borderRadius: '15px', minWidth: '320px', backgroundColor: toastColor === 'danger' ? '#dc3545' : '#003C87' }">
+            <div class="d-flex align-items-center text-white py-3 px-4">
+                <i class="bi bi-info-circle-fill me-3 fs-4"></i>
+                <div class="flex-grow-1 fw-medium">{{ messageToaster }}</div>
+                <button type="button" class="btn-close btn-close-white shadow-none ms-3" @click="ExitToaster"></button>
             </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-lg mt-4 py-4 mx-auto w-100 animate__animated animate__fadeIn"
+        style="max-width: 850px; border-radius: 30px; background: #fff;">
+        <div class="text-center mb-4 pt-3">
+            <h2 class="fw-bold" style="color: #003C87; letter-spacing: -1.5px;">Create Your <span
+                    style="color: #FC7D07;">Tenant Account</span></h2>
+            <p class="text-muted">Fill in your details to start your dorm hunting journey.</p>
         </div>
 
         <form @submit.prevent="submitTenant">
 
-            <!-- <div v-if="successMessage" class="alert alert-success text-center"><span class="text-black">{{successMessage}}</span></div> -->
-            <!-- Profile Picture -->
-            <div class="d-flex justify-content-center container-image my-4">
-                <div class="avatar-wrapper text-center">
-                    <img class="profile-pic rounded-circle" :src="profilePic" alt="Profile Picture" width="150">
+            <div class="d-flex justify-content-center mb-5">
+                <div class="position-relative">
+                    <div class="rounded-circle p-1 bg-white shadow-sm border">
+                        <img class="profile-pic rounded-circle object-fit-cover" :src="profilePic" alt="Profile"
+                            width="140" height="140" style="border: 4px solid #f8fafc;">
+                    </div>
+                    <button type="button"
+                        class="btn position-absolute bottom-0 end-0 rounded-circle p-2 shadow-sm d-flex align-items-center justify-content-center"
+                        @click="triggerFileInput"
+                        style="width: 42px; height: 42px; background: #003C87; color: white; border: 3px solid #fff;">
+                        <i class="bi bi-camera-fill"></i>
+                    </button>
+                    <input ref="fileInput" type="file" name="profile_pic" class="d-none" accept="image/*"
+                        @change="handleImageUpload">
+                </div>
+            </div>
 
-                    <div class="upload-button btn btn-primary mt-3" @click="triggerFileInput">
-                        Upload Image
-                        <input ref="fileInput" class="file-input" name="profile_pic" id="profile-pic" type="file"
-                            accept="image/*" style="display: none;" @change="handleImageUpload">
+            <div class="px-lg-5 px-4">
+                <h6 class="fw-bold mb-4 text-uppercase tracking-wider" style="color: #003C87; font-size: 0.85rem;">
+                    <i class="bi bi-person-fill me-2" style="color: #FC7D07;"></i>Personal Information
+                </h6>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small fw-bold text-muted">FIRST NAME</label>
+                        <input type="text" v-model="firstname" class="form-control custom-field"
+                            placeholder="e.g. Lance">
+                        <span v-if="errors.firstname" class="text-danger small mt-1 d-block">{{ errors.firstname[0]
+                        }}</span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small fw-bold text-muted">LAST NAME</label>
+                        <input type="text" v-model="lastname" class="form-control custom-field"
+                            placeholder="e.g. Monsanto">
+                        <span v-if="errors.lastname" class="text-danger small mt-1 d-block">{{ errors.lastname[0]
+                        }}</span>
                     </div>
                 </div>
-            </div>
 
-            <!-- First Name and Last Name -->
-            <div class="row px-4">
-                <div class="col-md-6 mb-3">
-                    <label for="firstname" class="form-label">First Name</label>
-                    <input type="text" id="firstname" name="firstname" v-model="firstname" class="form-control "
-                        style="border: 2px solid #4edce2 ;" placeholder="Enter your First Name">
-                    <span v-if="errors.firstname" class="error">{{ errors.firstname[0] }}</span>
-
-
-
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted">EMAIL ADDRESS</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"
+                            style="border-radius: 12px 0 0 12px; border-color: #dee2e6;">
+                            <i class="bi bi-envelope text-muted"></i>
+                        </span>
+                        <input type="email" v-model="email" class="form-control border-start-0 custom-field"
+                            style="border-radius: 0 12px 12px 0;" placeholder="lance@example.com">
+                    </div>
+                    <span v-if="errors.email" class="text-danger small mt-1 d-block">{{ errors.email[0] }}</span>
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <label for="lastname" class="form-label">Last Name</label>
-                    <input type="text" id="lastname" name="lastname" v-model="lastname" class="form-control"
-                        style="border: 2px solid #4edce2 ;" placeholder="Enter your Last Name" required>
-                    <span v-if="errors.lastname" class="error">{{ errors.lastname[0] }}</span>
-
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small fw-bold text-muted">PASSWORD</label>
+                        <input :type="passwordFieldType" v-model="password" class="form-control custom-field"
+                            placeholder="••••••••">
+                        <span v-if="errors.password" class="text-danger small mt-1 d-block">{{ errors.password[0]
+                        }}</span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small fw-bold text-muted">CONFIRM PASSWORD</label>
+                        <input :type="passwordFieldType" v-model="password_confirmation"
+                            class="form-control custom-field" placeholder="••••••••">
+                    </div>
                 </div>
-            </div>
 
-            <!-- Email -->
-            <div class="mb-3 px-4">
-                <label for="email" class="form-label">Email Address</label>
-                <input type="email" id="email" name="email" style="border: 2px solid #4edce2 ;" v-model="email"
-                    class="form-control " placeholder="Enter your Email Address" required>
-                <span v-if="errors.email" class="error">{{ errors.email[0] }}</span>
-
-            </div>
-
-            <!-- Password and Confirm Password -->
-            <div class="row px-4">
-                <div class="col-md-6 mb-0">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" name="password" v-model="password" class="form-control "
-                        style="border: 2px solid #4edce2 ;" placeholder="Enter your Password" required>
-                    <span class="error" v-if="errors.password">{{ errors.password[0] }}</span>
-
-                </div>
-                <div class="col-md-6 mb-0">
-                    <label for="confirm_password" class="form-label">Confirm Password</label>
-                    <input type="password" id="confirm_password" name="password_confirmation"
-                        v-model="password_confirmation" class="form-control " style="border: 2px solid #4edce2 ;"
-                        placeholder="Confirm your Password" required>
-                    <span v-if="errors.password_confirmation" class="error">{{ errors.password_confirmation[0] }}</span>
-                </div>
-            </div>
-
-            <!-- Show Password Checkbox -->
-            <div class="mb-3 px-4">
-                <div class="input-group-text bg-transparent border-0">
-                    <input type="checkbox" id="show-password" class="me-2 bg-transparent"
+                <div class="form-check mb-4 ms-1">
+                    <input type="checkbox" id="show-password" class="form-check-input shadow-none"
                         @click="togglePasswordVisibility">
-                    <label for="show-password" class="form-check-label bg-transparent">Show Password</label>
-                </div>
-            </div>
-
-            <!-- Phone Number -->
-            <div class="mb-3 px-4">
-                <label for="phonenumber" class="form-label">Phone Number</label>
-                <input type="tel" id="phonenumber" name="phonenumber" v-model="phonenumber" class="form-control"
-                    style="border: 2px solid #4edce2 ;" placeholder="Enter your Phone Number" required
-                    pattern="^(?:\+63|09)\d{9}$">
-
-                <span v-if="errors.phonenumber" class="error">{{ errors.phonenumber[0] }}</span>
-
-            </div>
-
-            <!-- Gender -->
-            <div class="mb-3 px-4">
-                <label for="gender" class="form-label">Gender</label>
-                <select id="gender" name="gender" v-model="gender" class="form-select"
-                    style="border: 2px solid #4edce2 ;" required>
-                    <option value="">-- Select Gender --</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                </select>
-                <span class="error" v-if="errors.gender">{{ errors.gender[0] }}</span>
-            </div>
-
-            <!-- Address Fields -->
-            <div class="row px-4">
-                <!-- Region -->
-                <div class="col-md-4 mb-3">
-                    <label for="region" class="form-label">Region</label>
-                    <select id="region" name="region" v-model="selectedRegion" class="form-select "
-                        style="border: 2px solid #4edce2 ;" @change="updateProvinces">
-                        <option value="">-- Select Region --</option>
-                        <option v-for="(name, code) in regions" :key="code" :value="code">{{ name }}</option>
-                    </select>
-                    <span class="error" v-if="errors.selectedRegion">{{ errors.selectedRegion[0] }}</span>
+                    <label for="show-password" class="form-check-label small text-muted">Show Password</label>
                 </div>
 
-                <div class="col-md-4 mb-3">
-                    <label for="province" class="form-label">Province</label>
-                    <select id="province" name="province" v-model="selectedProvince" class="form-select "
-                        style="border: 2px solid #4edce2 ;" @change="updateCities">
-                        <option value="">-- Select Province --</option>
-                        <option v-if="provinces.length === 0" disabled>No provinces available</option>
-                        <option v-for="province in provinces" :key="province" :value="province">{{ province }}</option>
-                    </select>
-                    <span class="error" v-if="errors.selectedProvince">{{ errors.selectedProvince[0] }}</span>
-
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small fw-bold text-muted">PHONE NUMBER</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"
+                                style="border-radius: 12px 0 0 12px; border-color: #dee2e6;">
+                                <i class="bi bi-phone text-muted"></i>
+                            </span>
+                            <input type="tel" v-model="phonenumber" class="form-control border-start-0 custom-field"
+                                style="border-radius: 0 12px 12px 0;" placeholder="09xxxxxxxxx">
+                        </div>
+                        <span v-if="errors.phonenumber" class="text-danger small mt-1 d-block">{{ errors.phonenumber[0]
+                        }}</span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small fw-bold text-muted">GENDER</label>
+                        <select v-model="gender" class="form-select custom-field">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
                 </div>
 
+                <h6 class="fw-bold mb-4 mt-5 text-uppercase tracking-wider" style="color: #003C87; font-size: 0.85rem;">
+                    <i class="bi bi-geo-alt-fill me-2" style="color: #FC7D07;"></i>Address Details
+                </h6>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label small fw-bold text-muted">REGION</label>
+                        <select v-model="selectedRegion" class="form-select custom-field" @change="updateProvinces">
+                            <option value="">Select Region</option>
+                            <option v-for="(name, code) in regions" :key="code" :value="code">{{ name }}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label small fw-bold text-muted">PROVINCE</label>
+                        <select v-model="selectedProvince" class="form-select custom-field" @change="updateCities">
+                            <option value="">Select Province</option>
+                            <option v-for="province in provinces" :key="province" :value="province">{{ province }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label small fw-bold text-muted">CITY</label>
+                        <select v-model="selectedCity" class="form-select custom-field">
+                            <option value="">Select City</option>
+                            <option v-for="city in cities" :key="city" :value="city">{{ city }}</option>
+                        </select>
+                    </div>
+                </div>
 
-                <div class="col-md-4 mb-3">
-                    <label for="city" class="form-label">City</label>
-                    <select id="city" name="city" v-model="selectedCity" class="form-select " style="border: 2px solid #4edce2 ;">
-                        <option value="">-- Select City --</option>
-                        <option v-if="cities.length === 0" disabled>No City available</option>
-                        <option v-for="city in cities" :key="city" :value="city">{{ city }}</option>
-                    </select>
-                    <span class="error" v-if="errors.selectedCity">{{ errors.selectedCity[0] }}</span>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label small fw-bold text-muted">POSTAL CODE</label>
+                        <input type="text" v-model="postalcode" class="form-control custom-field"
+                            placeholder="e.g. 6000">
+                    </div>
+                    <div class="col-md-8 mb-4">
+                        <label class="form-label small fw-bold text-muted">CURRENT ADDRESS</label>
+                        <textarea v-model="currentaddress" class="form-control custom-field" rows="2"
+                            placeholder="Street, Building, House No."></textarea>
+                    </div>
+                </div>
+
+                <div class="text-center mb-5 mt-2">
+                    <button type="button" @click="openModal"
+                        class="btn rounded-pill py-3 px-5 fw-bold shadow-sm border-0 register-btn-main"
+                        style="background: #003C87; color: white; font-size: 1.1rem; transition: 0.3s;">
+                        Complete Registration <i class="bi bi-chevron-right ms-2"></i>
+                    </button>
+
+                    <p class="mt-4 text-muted small">
+                        Already have an account?
+                        <a href="/tenantLogin" class="fw-bold text-decoration-none" style="color: #FC7D07;">Login here
+                            &rarr;</a>
+                    </p>
                 </div>
             </div>
-            <div class="mb-3 px-4">
-                <label for="postal_code" class="form-label">Postal Code</label>
-                <input type="text" id="postalcode" name="postalcode" v-model="postalcode" class="form-control "
-                    style="border: 2px solid #4edce2 ;" placeholder="Postal Code" required>
-                <span class="error" v-if="errors.postalcode">{{ errors.postalcode[0] }}</span>
-            </div>
-
-            <div class="mb-3 px-4">
-                <label for="current_address" class="form-label">Current Address</label>
-                <textarea id="current_address" name="currentaddress" v-model="currentaddress" class="form-control "
-                    style="border: 2px solid #4edce2 ;" rows="3" placeholder="Current Address" required></textarea>
-                <span class="error" v-if="errors.currentaddress">{{ errors.currentaddress[0] }}</span>
-            </div>
-            <div class="d-flex justify-content-center mb-4">
-                <button type="button" @click="openModal" class="btn  w-50 sign-in-style">Sign-up</button>
-            </div>
-
-
-
-
-
         </form>
     </div>
-    <div v-if="modalVisible" class="custom-modal">
-        <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h5 class="modal-title text-center">Email OTP</h5>
-                <button type="button" class="btn-close" @click="closeModal">×</button>
+
+    <div v-if="modalVisible" class="otp-modal-overlay">
+        <div class="otp-modal-content animate__animated animate__zoomIn">
+            <div class="text-center mb-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+                    style="width: 70px; height: 70px; background: rgba(0, 60, 135, 0.1);">
+                    <i class="bi bi-shield-lock-fill" style="color: #003C87; font-size: 2rem;"></i>
+                </div>
+                <h4 class="fw-bold" style="color: #003C87;">Email Verification</h4>
+                <p class="text-muted small">Enter the 6-digit code sent to your email.</p>
             </div>
 
-            <!-- Modal Body -->
-            <div class="modal-body">
-                <p>Please enter the verification OTP sent to your email.</p>
-                <div class="otp-inputs">
-                    <input v-for="(digit, index) in otpdigits" :key="index" type="text" :ref="'otpInput' + index"
-                        maxlength="1" class="form-control" name="codeotp" v-model="otpdigits[index]"
-                        @input="handleInput(index)" @keydown.backspace="handleBackspace(index)" required />
-                </div>
-                <div class="otp_timer mb-3">
-                    <p class="primary" v-if="otpTimer > 0">OTP expires in: {{ formattedTime }}</p>
-                </div>
-                <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary" @click="submitTenant">Verify Email</button>
-                    <button type="button" @click="resendOtp" class="btn btn-success">Resend OTP</button>
-                </div>
+            <div class="otp-inputs-container mb-4">
+                <input v-for="(digit, index) in otpdigits" :key="index" type="text" :ref="'otpInput' + index"
+                    maxlength="1" class="otp-box" v-model="otpdigits[index]" @input="handleInput(index)"
+                    @keydown.backspace="handleBackspace(index)" />
+            </div>
+
+            <div class="text-center mb-4">
+                <p class="small fw-bold" style="color: #FC7D07;" v-if="otpTimer > 0">
+                    <i class="bi bi-clock-history me-1"></i> Expires in: {{ formattedTime }}
+                </p>
+                <button type="button" @click="resendOtp" class="btn btn-link text-decoration-none small fw-bold p-0"
+                    :disabled="otpTimer > 0" :style="{ color: otpTimer > 0 ? '#cbd5e0' : '#003C87' }">
+                    Resend Code
+                </button>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-light w-100 py-3 fw-bold" @click="closeModal"
+                    style="border-radius: 12px;">Cancel</button>
+                <button type="submit" class="btn w-100 py-3 fw-bold text-white shadow-sm" @click="submitTenant"
+                    style="background: #003C87; border: none; border-radius: 12px;">Verify</button>
             </div>
         </div>
-
     </div>
-
-    <!--Register Error Modal-->
-
-    <!--Register Success Modal-->
-
-
-
-
 </template>
+
+
+
 <script>
 import axios from 'axios';
 import loader from '@/components/loader.vue';
@@ -424,7 +436,7 @@ export default {
         },
         mounted() {
             this.startTimer();
-            
+
         },
         beforeUnmount() {
             this.stopTimer();
@@ -709,45 +721,5 @@ export default {
 
 
 };
-
-
-
 </script>
-<style scoped>
-.container-toast {
-    position: fixed;
-    bottom: 1.5rem;
-    /* near bottom */
-    right: 1.5rem;
-    /* align to right */
-    transform: none;
-    /* no horizontal centering */
-    width: 95%;
-    max-width: 30rem;
-    z-index: 1000;
-    opacity: 0;
-    transition: all 0.5s ease;
-}
-
-@keyframes slideUpBounce {
-    0% {
-        bottom: -10rem;
-        opacity: 0;
-    }
-
-    70% {
-        bottom: 1.5rem;
-    }
-
-    100% {
-        bottom: 1.5rem;
-        opacity: 1;
-    }
-}
-
-.container-toast.show {
-    bottom: 1.5rem;
-    opacity: 1;
-    animation: slideUpBounce 0.6s ease forwards;
-}
-</style>
+<style scoped src="./../../../css/accountprocess/tenantRegister.css"></style>

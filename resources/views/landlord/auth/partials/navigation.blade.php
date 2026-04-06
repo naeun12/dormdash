@@ -1,121 +1,98 @@
 @if (session('landlord_logged_in'))
-    <header class="bg-white nav-header py-3 px-4 d-flex justify-content-between align-items-center border-bottom">
-        <button class="btn btn-primary d-md-none" type="button" id="sidebarToggle" aria-label="Toggle sidebar">
-            <i class="fas fa-bars"></i>
-        </button>
+    <header class="modern-top-bar py-2 px-4 d-flex justify-content-between align-items-center">
+        
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn d-md-none p-0 border-0 text-primary-blue" type="button" id="sidebarToggle">
+                <i class="bi bi-text-left fs-1"></i>
+            </button>
+            
+            <div class="header-breadcrumb d-none d-sm-block">
+                <span class="text-muted small fw-medium text-uppercase tracking-wider">Workspace</span>
+                <h4 class="mb-0 fw-800 text-dark header-title-text">{{ $headerName }}</h4>
+            </div>
+        </div>
 
+        <div class="d-flex align-items-center gap-3 gap-md-4">
 
-        <h4 class="text-black fs-5">{{ $headerName }}</h4>
-
-
-        <div class="user-profile text-black d-flex align-items-center gap-3">
-
-
-            <!-- Notification Bell with Dropdown -->
-
+           
 
             <div class="dropdown">
-                <button class="btn position-relative p-0 border-0 bg-transparent" type="button"
-                    id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false"
-                    aria-label="Notifications">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
-                        class="bi bi-bell-fill" viewBox="0 0 16 16">
-                        <path
-                            d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901" />
-                    </svg>
-                    <!-- Notification badge -->
+                <button class="icon-btn-circle position-relative" type="button"
+                    id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-bell"></i>
                     @if ($unread_count > 0)
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <span class="pulse-orange-badge">
                             {{ $unread_count }}
-                            <span class="visually-hidden">unread notifications</span>
                         </span>
                     @endif
-
-
-
-
                 </button>
 
-
-                <ul class="dropdown-menu dropdown-menu-end shadow-lg mt-2" aria-labelledby="notificationDropdown"
-                    style="min-width: 300px;">
-                    <li class="dropdown-header fw-bold text-center text-primary">Notifications</li>
-
-
-                    @forelse($notifications as $notif)
-                        <li>
-                            <a href="{{ route('notifications.landlord', ['landlord_id' => session('landlord_id')]) }}" class="dropdown-item d-flex align-items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#0d6efd"
-                                    class="me-3 bi bi-bell-fill" viewBox="0 0 16 16">
-                                    <path
-                                        d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901" />
-                                </svg>
-                                <div>
-                                    <div class="fw-semibold">{{ $notif->title }}</div>
-                                    <small class="text-muted">{{ $notif->message }}</small>
-                                </div>
-                            </a>
-                        </li>
-                    @empty
-                        <li class="text-center text-muted px-3 py-2">
-                            No notifications yet.
-                        </li>
-                    @endforelse
-
-
-                    <li>
-                        <hr class="dropdown-divider">
+                <ul class="dropdown-menu dropdown-menu-end modern-dropdown mt-3" aria-labelledby="notificationDropdown">
+                    <li class="dropdown-header-box">
+                        <h6 class="mb-0 text-white">Notifications</h6>
+                        <span class="badge-count">{{ $unread_count }} New</span>
                     </li>
-                    <li class="text-center">
-                        <a href="{{ route('notifications.landlord', ['landlord_id' => session('landlord_id')]) }}" class="dropdown-item text-primary fw-bold">
-                            See All Notifications
+
+                    <div class="notif-scroll-area">
+                        @forelse($notifications as $notif)
+                            <li>
+                                <a href="{{ route('notifications.landlord', ['landlord_id' => session('landlord_id')]) }}" class="dropdown-item notif-item">
+                                    <div class="notif-status-dot"></div>
+                                    <div class="notif-content">
+                                        <p class="notif-title">{{ $notif->title }}</p>
+                                        <p class="notif-desc">{{ Str::limit($notif->message, 45) }}</p>
+                                    </div>
+                                </a>
+                            </li>
+                        @empty
+                            <div class="text-center py-4 text-muted">
+                                <i class="bi bi-cloud-check fs-2 d-block opacity-50"></i>
+                                <small>All caught up!</small>
+                            </div>
+                        @endforelse
+                    </div>
+
+                    <li><hr class="dropdown-divider"></li>
+                    <li class="p-2 pt-0">
+                        <a href="{{ route('notifications.landlord', ['landlord_id' => session('landlord_id')]) }}" class="view-all-btn">
+                            See all activity
                         </a>
                     </li>
                 </ul>
             </div>
 
+            <div class="dropdown">
+                <button class="profile-trigger" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="avatar-container">
+                        <img src="{{ asset(session('landlord_avatar')) }}" alt="Avatar">
+                        <div class="status-indicator"></div>
+                    </div>
+                    <div class="profile-info d-none d-md-block text-start">
+                        <p class="user-name mb-0">Landlord Panel</p>
+                        <p class="user-role mb-0">Online</p>
+                    </div>
+                    <i class="bi bi-chevron-down ms-2 d-none d-md-block opacity-50"></i>
+                </button>
 
-
-
-
-
-            <!-- User profile dropdown -->
-           <div class="dropdown">
-    <a class="d-flex align-items-center text-black text-decoration-none dropdown-toggle"
-       href="#"
-       role="button"
-       id="userDropdown"
-       data-bs-toggle="dropdown"
-       aria-expanded="false">
-        <img src="{{ asset(session('landlord_avatar')) }}"
-             alt="User Avatar"
-             width="45"
-             height="45"
-             class="rounded-circle me-2">
-
-
-       
-    </a>
-
-
-    <ul class="dropdown-menu dropdown-menu-end mt-2 shadow" aria-labelledby="userDropdown">
-        <li>
-            <a class="dropdown-item" href="{{ route('landlord.account.update', ['landlordId' => session('landlord_id')]) }}">
-                View Profile
-            </a>
-        </li>
-        <li><hr class="dropdown-divider"></li>
-        <li>
-            <form action="{{ route('logout') }}" method="POST" class="m-0 p-0">
-                @csrf
-                <button type="submit" class="dropdown-item" style="cursor: pointer;">Logout</button>
-            </form>
-        </li>
-    </ul>
-</div>
-
-
+                <ul class="dropdown-menu dropdown-menu-end modern-dropdown mt-3" aria-labelledby="userDropdown">
+                    <li>
+                        <a class="dropdown-item py-2" href="{{ route('landlord.account.update', ['landlordId' => session('landlord_id')]) }}">
+                            <i class="bi bi-person-badge me-2 text-primary-blue"></i> My Account
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="dropdown-item text-danger py-2">
+                                <i class="bi bi-box-arrow-right me-2"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
         </div>
-        <!--End Modal-->
     </header>
 @endif
+
+<link rel="stylesheet" href="{{ asset('css/landlord/navigation.css') }}">

@@ -1,89 +1,92 @@
 <template>
     <Loader ref="loader" />
 
-    <div class="notifications-container">
-        <!-- Header -->
-        <div class="header d-flex align-items-center justify-content-between mb-3">
-            <div class="d-flex align-items-center">
-                <h2 class="me-2 mb-0">Notifications</h2>
-                <i class="bi bi-bell-fill text-warning fs-4"></i>
+    <div class="notifications-wrapper py-5">
+        <div class="container">
+            <div class="glass-header d-flex align-items-center justify-content-between p-4 mb-5 shadow-sm">
+                <div class="d-flex align-items-center">
+                    <div class="modern-bell-icon me-3">
+                        <i class="bi bi-bell-fill"></i>
+                        <span v-if="notifications.some(n => !n.readAt)" class="pulse-dot"></span>
+                    </div>
+                    <div>
+                        <h2 class="fw-black mb-0">Notifications</h2>
+                        <small class="text-muted text-uppercase tracking-wider">Stay updated with DormDash</small>
+                    </div>
+                </div>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-modern-outline" @click="markAllAsRead"
+                        :disabled="notifications.length === 0">
+                        <i class="bi bi-check-all me-1"></i> Mark All
+                    </button>
+                    <button class="btn btn-modern-danger" @click="clearAllNotifications"
+                        :disabled="notifications.length === 0">
+                        <i class="bi bi-trash3"></i>
+                    </button>
+                </div>
             </div>
-            <div class="d-flex gap-2">
-                <button class="btn btn-success btn-sm" @click="markAllAsRead" :disabled="notifications.length === 0">
-                    <i class="bi bi-check2-all me-1"></i> Read All
-                </button>
 
-                <button class="btn btn-danger btn-sm" @click="clearAllNotifications"
-                    :disabled="notifications.length === 0">
-                    <i class="bi bi-trash me-1"></i> Clear All
-                </button>
-            </div>
+            <div class="notification-feed">
+                <div v-if="notifications.length === 0" class="empty-state-modern py-5">
+                    <div class="empty-icon-wrapper mb-3">
+                        <i class="bi bi-chat-dots-fill"></i>
+                    </div>
+                    <h5 class="fw-bold">All caught up!</h5>
+                    <p class="text-muted">No new notifications at the moment.</p>
+                </div>
 
-        </div>
+                <div v-for="notification in notifications" :key="notification.id"
+                    class="notification-card-modern mb-3 transition-all" :class="{ 'is-unread': !notification.readAt }">
+                    <div class="card-body p-4 d-flex align-items-center">
+                        <div class="indicator-column me-4">
+                            <div class="status-ring" :class="notification.readAt ? 'read' : 'unread'"></div>
+                        </div>
 
-        <!-- Notification List -->
-        <div class="notification-list scrollable-notifications">
-            <div v-if="notifications.length === 0" class="text-center text-muted py-5">
-                <i class="bi bi-bell-slash display-6 d-block mb-2"></i>
-                No notifications
-            </div>
-            <div v-for="notification in notifications" :key="notification.id"
-                class="notification-item card border-0 shadow-sm mb-3 rounded-4 hover-notification">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <!-- User Profile -->
-                        <div class="d-flex align-items-center flex-grow-1">
-                           
-                            <div class="flex-grow-1">
-                                <strong class="text-dark">
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center mb-1">
+                                <span class="sender-name fw-bold me-2">
                                     {{ notification.sender?.firstname }} {{ notification.sender?.lastname }}
-                                </strong>
-                                <div class="text-muted small">{{ notification.action }}</div>
+                                </span>
+                                <span class="action-pill shadow-sm">{{ notification.action }}</span>
+                            </div>
+                            <p class="mb-0 text-secondary message-preview">{{ notification.message }}</p>
+                            <div class="mt-2 d-flex align-items-center gap-3">
+                                <small class="timestamp-modern"><i class="bi bi-clock me-1"></i> {{
+                                    notification.created_at }}</small>
+                                <small v-if="notification.readAt" class="text-success fw-bold"><i
+                                        class="bi bi-check2-circle"></i> Seen</small>
                             </div>
                         </div>
 
-                        <!-- Status -->
-                        <div class="text-muted small d-flex align-items-center me-3">
-                            <i v-if="notification.readAt" class="bi bi-check2-circle text-success me-1"></i>
-                            <i v-else class="bi bi-clock text-secondary me-1"></i>
-                            {{ notification.readAt ? notification.readAt : "Unread" }}
+                        <div class="action-column ms-3">
+                            <button class="btn btn-view-modern shadow-sm"
+                                @click="markNotificationAsRead(notification.id)">
+                                View <i class="bi bi-chevron-right ms-1"></i>
+                            </button>
                         </div>
-
-                        <!-- Action -->
-                        <button class="btn btn-primary btn-sm rounded-pill px-3"
-                            @click="markNotificationAsRead(notification.id)">
-                            View
-                        </button>
                     </div>
-
-                    <!-- Message -->
-                    <p class="mt-2 mb-1">{{ notification.message }}</p>
-
-                    <!-- Timestamp -->
-                    <small class="text-muted">{{ notification.created_at }}</small>
                 </div>
             </div>
         </div>
 
-        <!-- Notification Modal -->
-        <div v-if="ismodalviewNotifications" class="modal fade show" tabindex="-1"
-            style="display: block; background-color: rgba(0, 0, 0, 0.5);">
+        <div v-if="ismodalviewNotifications" class="modern-modal-overlay">
             <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content rounded-3">
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h5 class="modal-title">{{ selectedNotification.title || "Notification" }}</h5>
-                        <button type="button" class="btn-close" @click="ismodalviewNotifications = false"></button>
+                <div
+                    class="modal-content border-0 shadow-2xl rounded-5 overflow-hidden animate__animated animate__zoomIn animate__faster">
+                    <div class="modal-header-blue p-4 text-white d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0">{{ selectedNotification.title || "Activity Details" }}</h5>
+                        <button type="button" class="btn-close-custom" @click="ismodalviewNotifications = false">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
                     </div>
-
-                    <!-- Modal Body -->
-                    <div class="modal-body">
-                        <p>{{ selectedNotification.message }}</p>
-                        <small class="text-muted">
-                            <i v-if="selectedNotification.isRead" class="bi bi-check2-circle text-success"></i>
-                            <i v-else class="bi bi-clock text-secondary"></i>
-                            {{ selectedNotification.readAt ? selectedNotification.readAt : "Unread" }}
-                        </small>
+                    <div class="modal-body p-4 bg-white">
+                        <div class="p-4 rounded-4 bg-light mb-4">
+                            <p class="fs-5 text-dark mb-0">{{ selectedNotification.message }}</p>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-orange-rounded px-5 py-2"
+                                @click="ismodalviewNotifications = false">Dismiss</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -137,19 +140,27 @@ export default {
                 const response = await axios.get(`/get/notifications/tenant/${this.tenant_id}`);
                 if (response.data.status === 'success') {
                     this.notifications = response.data.notifications;
+                    this.$refs.loader.loading = false;
+
                 }
             } catch (error) {
                 console.error(error);
             }
         },
         async markNotificationAsRead(id) {
+            
             try {
+                this.$refs.loader.loading = true;
+
                 const res = await axios.post(`/mark/read/tenant/${id}`);
                 this.ismodalviewNotifications = true;
                 this.selectedNotification = res.data.notification;
                 this.getNotificationsList();
             } catch (error) {
                 console.error(error);
+            }
+            finally {
+                this.$refs.loader.loading = false;
             }
         },
 
@@ -222,75 +233,4 @@ export default {
     }
 };
 </script>
-
-<style scoped>
-.notifications-container {
-    font-family: Arial, sans-serif;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.header h2 {
-    display: inline-block;
-    position: relative;
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.header h2::after {
-    content: "";
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: #007bff;
-}
-
-.notification-item {
-    border-left: 4px solid #007bff;
-}
-
-.avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-}
-
-.user-info strong {
-    font-size: 16px;
-}
-
-.user-info span {
-    font-size: 14px;
-    color: #666;
-}
-
-.card-body p {
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-/* Scrollable notifications container */
-.scrollable-notifications {
-    max-height: 700px;
-    /* Adjust height */
-    overflow-y: auto;
-    padding-right: 5px;
-    /* para di magka-cut scrollbar */
-}
-
-.scrollable-notifications::-webkit-scrollbar {
-    width: 6px;
-}
-
-.scrollable-notifications::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-}
-
-.scrollable-notifications::-webkit-scrollbar-track {
-    background: transparent;
-}
-</style>
+<style src="../../../../../css/tenant/notifications.css"></style>

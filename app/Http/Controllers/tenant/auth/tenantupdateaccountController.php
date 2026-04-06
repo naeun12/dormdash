@@ -31,7 +31,7 @@ class tenantupdateaccountController extends Controller
         if (!$tenant) {
             return redirect()->route('tenant-login')->with('error', 'Landlord not found.');
         }
-        return view('tenant.auth.tenantupdateaccount',['title' => 'Tenant update account  - Dormhub',
+        return view('tenant.auth.tenantupdateaccount',['title' => 'Tenant update account  - DormDash',
         'tenant_id',$tenant,'cssPath' => asset('css/tenantpage/auth/dormitorymap.css')
         ,'notifications' => $notifications,
         'unread_count' => $unreadCount,

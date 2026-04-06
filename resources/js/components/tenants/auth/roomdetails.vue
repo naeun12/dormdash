@@ -1,409 +1,361 @@
 <template>
-    <div v-if="this.is_deactivated === 0">
+    <div v-if="this.is_deactivated === 0" class="bg-light min-vh-100 pb-5">
 
         <Loader ref="loader" />
         <Toastcomponents ref="toast" />
         <NotificationList ref="toastRef" />
 
-        <div class="m-3 my-4" v-if="dorm">
-            <!-- Header -->
-            <div class="row mb-4 align-items-center border-bottom pb-3 shadow-sm rounded bg-light px-3 py-3">
-                <div class="col-12 col-md-8 mb-2 mb-md-0">
-                    <h2 class="fw-bold text-primary mb-1">{{ this.landlordname }}</h2>
-                    <p class="text-muted mb-0"><i class="bi bi-clock"></i> Posted {{ formatDate(dorm.dorm.created_at) }}
-                    </p>
-                </div>
-                <div class="col-12 col-md-4 d-flex flex-wrap gap-2 justify-content-md-end justify-content-start">
-                    <button class="btn btn-primary px-3 py-2 rounded-pill d-flex align-items-center" @click="askAI">
-                        <i class="bi bi-robot fs-5 me-2"></i> Smart Guide
-                    </button>
+        <div class="container-fluid px-lg-5 pt-4" v-if="dorm">
 
-                    <button class="btn btn-outline-success px-3 py-2 rounded-pill d-flex align-items-center"
-                        @click="messagePage">
-                        <i class="bi bi-envelope-fill fs-5 me-2"></i> Message
-                    </button>
-                </div>
-            </div>
-
-            <!-- Main Content -->
-            <div class="row gy-4">
-                <!-- Images Section -->
-                <div class="col-12 col-md-4">
-                    <div class="mb-3 border rounded overflow-hidden shadow-sm">
-                        <img :src="mainImage" alt="Main Image" class="rounded border w-100"
-                            style="height: 250px; object-fit: cover;" />
-                    </div>
-                    <div class="d-flex gap-2 flex-wrap">
-                        <div v-for="(img, index) in images" :key="index" class="flex-grow-1" style="max-width: 32%;">
-                            <img :src="img" :alt="'Thumbnail ' + (index + 1)"
-                                class="rounded border clickable-thumbnail w-100"
-                                :class="{ 'border-primary': mainImage === img }" @click="changeMainImage(img)"
-                                style="height: 80px; object-fit: cover; cursor: pointer;" />
+            <div
+                class="landlord-profile-card mb-4 p-4 rounded-4 shadow-sm bg-white border-0 animate__animated animate__fadeIn">
+                <div class="row align-items-center g-3">
+                    <div class="col-12 col-md-8 d-flex align-items-center gap-3">
+                        <div class="avatar-wrapper position-relative">
+                            <div class="landlord-avatar d-flex align-items-center justify-content-center bg-blue-soft text-dash-blue fw-bold fs-4 rounded-circle shadow-sm"
+                                style="width: 65px; height: 65px; border: 2px solid #fff;">
+                                {{ landlordname.charAt(0) }}
+                            </div>
+                            <div class="verified-check position-absolute bottom-0 end-0 bg-white rounded-circle text-primary lh-1 shadow-sm"
+                                style="font-size: 1.2rem;">
+                                <i class="bi bi-patch-check-fill"></i>
+                            </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Amenities and Room Features -->
-                <div class="col-12 col-md-4">
-                    <div class="bg-light rounded p-3 shadow-sm mb-3">
-                        <h5 class="fw-bold mb-3"><i class="bi bi-stars me-2 text-primary"></i>Amenities</h5>
-                        <ul class="ps-3 mb-0">
-                            <li v-for="(aminity, index) in displayedAmenities" :key="aminity.id">
-                                {{ aminity.aminityName }}
-                            </li>
-                        </ul>
-                        <div class="text-center mt-2" v-if="amenities.length > 3">
-                            <a href="#" class="text-decoration-none text-primary fw-semibold"
-                                @click.prevent="amenitiesShowMore = !amenitiesShowMore">
-                                {{ amenitiesShowMore ? '-- Show Less --' : '-- More --' }}
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="bg-light rounded p-3 shadow-sm">
-                        <h5 class="fw-bold mb-2"><i class="bi bi-door-open me-2"></i>Rating and Review</h5>
-                        <div class="text-muted mb-2" style="white-space: pre-line;">
-                            <div class="text-warning mb-1" style="font-size: 1.5rem;">
-                                <i v-for="n in 5" :key="n" :class="getStarClass(n)"></i>
-                                <span class="ms-2 fw-bold text-dark" style="font-size: 1rem;">
-                                    {{ averagePercentage }}%
+                        <div class="info-content">
+                            <h4 class="fw-bold text-dark mb-1">{{ landlordname }}</h4>
+                            <div class="d-flex flex-wrap gap-2 align-items-center">
+                                <span class="badge bg-light text-muted fw-normal border rounded-pill px-3 py-2">
+                                    <i class="bi bi-calendar3 me-1 text-primary"></i> Posted {{
+                                    formatDate(dorm.dorm.created_at) }}
+                                </span>
+                                <span
+                                    class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2">
+                                    <i class="bi bi-shield-check me-1"></i> Verified Landlord
                                 </span>
                             </div>
-                            <p class="mb-1" style="font-size: 1rem;">
-                                <i class="bi bi-people-fill text-secondary me-2"></i>
-                                <strong>Total Reviews:</strong> {{ totalReviewers }}
-                            </p>
                         </div>
-                        <button class="btn btn-warning btn-sm w-100" @click="clickRatingandReview()">
-                            Rating and Review
+                    </div>
+                    <div class="col-12 col-md-4 d-flex justify-content-md-end">
+                        <button
+                            class="btn btn-primary px-4 py-2 rounded-pill fw-bold shadow-sm d-flex align-items-center"
+                            @click="messagePage">
+                            <i class="bi bi-chat-dots-fill me-2"></i> Message Landlord
                         </button>
                     </div>
                 </div>
+            </div>
 
-                <!-- Rules and Contact -->
-                <div class="col-12 col-md-4">
-                    <div class="bg-light rounded p-3 shadow-sm mb-3">
-                        <h5 class="fw-bold mb-3"><i class="bi bi-info-circle me-2 text-primary"></i>Rules & Policies
-                        </h5>
-                        <ul class="ps-3 mb-0 text-muted">
-                            <li v-for="(rule, index) in displayedRulesAndPolicy" :key="rule.id">
-                                {{ rule.rulesName }}
-                            </li>
-                        </ul>
-                        <div class="text-center mt-2" v-if="rulesAndPolicy.length > 3">
-                            <a href="#" class="text-decoration-none text-primary fw-semibold"
-                                @click.prevent="rulesAndPolicyShowMore = !rulesAndPolicyShowMore">
-                                {{ rulesAndPolicyShowMore ? '-- Show Less --' : '-- More --' }}
-                            </a>
+            <div class="row g-4">
+                <div class="col-12 col-lg-8">
+
+                    <div class="bg-white rounded-4 shadow-sm border-0 p-3 mb-4 animate__animated animate__fadeInUp">
+                        <div class="main-image-wrapper mb-3 rounded-4 overflow-hidden position-relative shadow-sm">
+                            <img :src="mainImage" alt="Main Image" class="w-100 transition-img"
+                                style="height: 450px; object-fit: cover;" />
+                            <div class="position-absolute bottom-0 start-0 m-3 glass-effect px-3 py-2 rounded-pill text-white small fw-bold"
+                                style="background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);">
+                                <i class="bi bi-camera-fill me-2"></i> {{ images.length }} Photos
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 overflow-auto pb-2 custom-scrollbar">
+                            <div v-for="(img, index) in images" :key="index" class="flex-shrink-0">
+                                <img :src="img" :alt="'Thumbnail ' + (index + 1)"
+                                    class="rounded-3 border-2 clickable-thumbnail shadow-xs"
+                                    :class="{ 'border-primary active-thumb': mainImage === img, 'border-transparent': mainImage !== img }"
+                                    @click="changeMainImage(img)"
+                                    style="height: 80px; width: 100px; object-fit: cover; cursor: pointer;" />
+                            </div>
                         </div>
                     </div>
 
-                    <div class="bg-light rounded p-3 shadow-sm">
-                        <h5 class="fw-bold mb-3"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Contact
-                            Information</h5>
-                        <ul class="list-unstyled mb-0">
-                            <li class="mb-2"><i class="bi bi-telephone me-2 text-muted"></i>{{ dorm.dorm.contactPhone }}
-                            </li>
-                            <li><i class="bi bi-envelope me-2 text-muted"></i>{{ dorm.dorm.contactEmail }}</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Property Details and Form -->
-            <div class="row mt-3 gy-4">
-                <!-- Property Details -->
-                <div class="col-12 col-md-8">
-                    <div class="border rounded p-3 shadow-sm bg-white">
-                        <div class="row g-3">
-                            <div class="col-md-8">
-                                <h4 class="fw-bold text-primary mb-2">
-                                    <i class="bi bi-house-door-fill me-2"></i>{{ dorm.dorm.dormName }}
-                                </h4>
-                                <p class="text-muted mb-2"><i class="bi bi-geo-alt-fill me-2"></i>{{
+                    <div class="bg-white rounded-4 shadow-sm border-0 p-4 mb-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h3 class="fw-bold text-dark mb-1">{{ dorm.dorm.dormName }}</h3>
+                                <p class="text-muted"><i class="bi bi-geo-alt-fill text-danger me-1"></i> {{
                                     dorm.dorm.address.replace('at the back of ', '') }}</p>
-                                <div class="d-flex flex-wrap gap-2 mb-2">
-                                    <span class="badge d-inline-flex align-items-center px-2 py-1 fs-6" :class="{
-                                    'bg-success': dorm.dorm.availability === 'Available',
-                                    'bg-danger': dorm.dorm.availability === 'Not Available'
-                                }">
-                                        <i class="bi" :class="{
-                                        'bi-check-circle-fill me-1': dorm.dorm.availability === 'Available',
-                                        'bi-x-circle-fill me-1': dorm.dorm.availability === 'Not Available'
-                                    }"></i>
-                                        {{ dorm.dorm.availability }}
+                            </div>
+                            <span class="badge px-3 py-2 fs-6 rounded-pill"
+                                :class="dorm.dorm.availability === 'Available' ? 'bg-success' : 'bg-danger'">
+                                {{ dorm.dorm.availability }}
+                            </span>
+                        </div>
+
+                        <div class="row g-3 mb-4 text-center">
+                            <div class="col-6 col-md-3">
+                                <div class="p-3 bg-light rounded-4 border">
+                                    <i class="bi bi-people text-primary fs-4"></i>
+                                    <div class="small text-muted mt-1">Occupancy</div>
+                                    <div class="fw-bold">{{ dorm.dorm.occupancyType }}</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="p-3 bg-light rounded-4 border">
+                                    <i class="bi bi-building text-primary fs-4"></i>
+                                    <div class="small text-muted mt-1">Building</div>
+                                    <div class="fw-bold">{{ dorm.dorm.buildingType }}</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="p-3 bg-light rounded-4 border">
+                                    <i class="bi bi-door-open text-primary fs-4"></i>
+                                    <div class="small text-muted mt-1">Rooms</div>
+                                    <div class="fw-bold">{{ dorm.dorm.totalRooms }} Left</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="p-3 bg-light rounded-4 border">
+                                    <i class="bi bi-person-check text-primary fs-4"></i>
+                                    <div class="small text-muted mt-1">Tenants</div>
+                                    <div class="fw-bold">{{ dorm.dorm.totalCapacity }} Total</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5 class="fw-bold">Description</h5>
+                        <p class="text-muted">{{ dorm.dorm.description }}</p>
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="bg-white rounded-4 shadow-sm border-0 p-4 h-100">
+                                <h5 class="fw-bold mb-3 text-primary"><i class="bi bi-stars me-2"></i>Amenities</h5>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <span v-for="aminity in displayedAmenities" :key="aminity.id"
+                                        class="badge bg-light text-dark fw-medium border rounded-pill px-3 py-2">
+                                        <i class="bi bi-check2-circle text-success me-1"></i> {{ aminity.aminityName }}
                                     </span>
                                 </div>
-                                <p class="mb-1"><strong>Occupancy Type:</strong> {{ dorm.dorm.occupancyType }}</p>
-                                <p class="mb-1"><strong>Building Type:</strong> {{ dorm.dorm.buildingType }}</p>
-                                <p class="mb-1"><strong>Rooms Available:</strong> {{ dorm.dorm.totalRooms > 0 ?
-                                    dorm.dorm.totalRooms + ' room(s)' : 'No rooms available' }}</p>
-                                <p class="mb-2"><strong>Total tenants currently residing:</strong> {{
-                                    dorm.dorm.totalCapacity }} tenant(s)</p>
-                                <p><strong>Description: </strong>{{ dorm.dorm.description }}
-                                </p>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="ratio ratio-4x3">
-                                    <div id="map" style="width: 100%; height: 200px;"></div>
-                                </div>
+                                <button v-if="amenities.length > 3"
+                                    @click.prevent="amenitiesShowMore = !amenitiesShowMore"
+                                    class="btn btn-link text-primary btn-sm p-0 mt-3 text-decoration-none fw-bold">
+                                    {{ amenitiesShowMore ? '-- Show Less --' : '-- View All ' + amenities.length + ' --'
+                                    }}
+                                </button>
                             </div>
                         </div>
-
-                        <h5 class="fw-bold mt-3 mb-2"><i class="bi bi-cash-coin me-2"></i>Room Pricing</h5>
-                        <div class="card shadow-sm mb-3 p-2" style="max-height: 350px; overflow-y: auto;">
-                            <div class="d-flex align-items-center mb-2">
-                                <h6 class="mb-0 fw-bold">Room Types & Monthly Rates</h6>
-                                <i class="bi bi-building ms-2 fs-5 text-primary"></i>
-                            </div>
-                            <div v-if="rooms.length === 0" class="text-muted fst-italic">No rooms available</div>
-                            <div v-else class="row g-2">
-                                <div v-for="room in rooms" :key="room.roomID" class="col-12 col-sm-6 col-lg-4">
-                                    <div class="card h-100 border-primary shadow-sm" @click="roomDetails(room.roomID)">
-                                        <div class="card-body">
-                                            <h6 class="card-title fw-semibold">{{ room.roomType }}</h6>
-                                            <p class="card-text fs-6 text-success">₱{{ room.price.toLocaleString() }}
-                                            </p>
+                        <div class="col-md-6">
+                            <div class="bg-white rounded-4 shadow-sm border-0 p-4 h-100">
+                                <h5 class="fw-bold mb-3 text-warning"><i
+                                        class="bi bi-chat-left-heart-fill me-2"></i>Rating & Review</h5>
+                                <div
+                                    class="d-flex align-items-center justify-content-between mb-3 bg-light p-3 rounded-3">
+                                    <div>
+                                        <h2 class="fw-bold mb-0 text-dark">{{ averagePercentage }}%</h2>
+                                        <small class="text-muted fw-bold">Dorm Score</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="text-warning fs-5">
+                                            <i v-for="n in 5" :key="n" :class="getStarClass(n)"></i>
                                         </div>
+                                        <small class="text-muted">From {{ totalReviewers }} reviewers</small>
                                     </div>
                                 </div>
+                                <button class="btn btn-outline-dark btn-sm w-100 rounded-pill fw-bold py-2"
+                                    @click="clickRatingandReview()">
+                                    See All Reviews
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="bg-white rounded-4 shadow-sm border-0 p-4 h-100">
+                                <h5 class="fw-bold mb-3 text-danger"><i class="bi bi-shield-exclamation me-2"></i>Rules
+                                    & Policies</h5>
+                                <ul class="ps-3 mb-0 text-muted small">
+                                    <li v-for="rule in displayedRulesAndPolicy" :key="rule.id" class="mb-2">
+                                        {{ rule.rulesName }}
+                                    </li>
+                                </ul>
+                                <button v-if="rulesAndPolicy.length > 3"
+                                    @click.prevent="rulesAndPolicyShowMore = !rulesAndPolicyShowMore"
+                                    class="btn btn-link text-danger btn-sm p-0 mt-2 text-decoration-none fw-bold">
+                                    {{ rulesAndPolicyShowMore ? '− Show Less' : '+ View More Policies' }}
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="bg-white rounded-4 shadow-sm border-0 p-4 h-100">
+                                <h5 class="fw-bold mb-3"><i class="bi bi-map-fill text-primary me-2"></i>Exact Location
+                                </h5>
+                                <div class="rounded-3 overflow-hidden border" style="height: 180px;">
+                                    <div id="map" class="w-100 h-100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-4 shadow-sm border-0 p-4 mb-4">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-cash-coin text-success me-2"></i>Available Room Types
+                        </h5>
+                        <div v-if="rooms.length === 0" class="alert alert-light border text-center py-4">No rooms
+                            available</div>
+                        <div v-else class="row g-3">
+                            <div v-for="room in rooms" :key="room.roomID" class="col-12 col-md-6">
+                                <div class="card h-100 border-primary-subtle shadow-sm p-3 rounded-4"
+                                    @click="roomDetails(room.roomID)" style="cursor: pointer;">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="fw-bold mb-0 text-dark">{{ room.roomType }}</h6>
+                                        <span class="fs-5 fw-bold text-success">₱{{ room.price.toLocaleString()
+                                            }}</span>
+                                    </div>
+                                    <small class="text-muted mt-1">Click for more details</small>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Booking Form -->
-                <div class="col-12 col-md-4">
-                    <form class="border rounded p-3 shadow-sm bg-white">
-                        <h5 class="fw-bold mb-3 text-center text-primary"><i
-                                class="bi bi-calendar-check-fill me-2"></i>Fill
-                            up your Information</h5>
-                        <!-- Form Fields -->
-                        <div class="mb-2">
-                            <label class="form-label fw-semibold">First Name</label>
-                            <input type="text" v-model="firstname" class="form-control shadow-sm"
-                                placeholder="Enter your first name" />
-                            <span v-if="errors.firstname" class="text-danger small">{{ errors.firstname[0] }}</span>
-                        </div>
+                <div class="col-12 col-lg-4">
+                    <div class="sticky-top" style="top: 20px; z-index: 10;">
 
-                        <div class="mb-2">
-                            <label class="form-label fw-semibold">Last Name</label>
-                            <input type="text" v-model="lastname" class="form-control shadow-sm"
-                                placeholder="Enter your last name" />
-                            <span v-if="errors.lastname" class="text-danger small">{{ errors.lastname[0] }}</span>
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label fw-semibold">Contact Number</label>
-                            <input type="text" v-model="contactInfo" class="form-control shadow-sm"
-                                placeholder="Enter your phone number" />
-                            <span v-if="errors.contactInfo" class="text-danger small">{{ errors.contactInfo[0] }}</span>
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label fw-semibold">Email Address</label>
-                            <input type="email" v-model="email" class="form-control shadow-sm"
-                                placeholder="email@example.com" />
-                            <span v-if="errors.email" class="text-danger small">{{ errors.email[0] }}</span>
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label fw-semibold">Age</label>
-                            <input type="number" v-model.number="age" class="form-control shadow-sm" min="15" max="60"
-                                placeholder="Enter your age" />
-                            <span v-if="errors.age" class="text-danger small">{{ errors.age[0] }}</span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Sex</label>
-                            <select v-model="sex" class="form-select shadow-sm">
-                                <option value="" disabled>Select</option>
-                                <option>Male</option>
-                                <option>Female</option>
-                            </select>
-                            <span v-if="errors.sex" class="text-danger small">{{ errors.sex[0] }}</span>
-                        </div>
-
-                        <button type="button" @click="submitTenantInformation"
-                            class="btn btn-primary w-100 fw-bold">Submit</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div v-if="VisibleImagePostModal" class="modal fade show d-block w-100" tabindex="-1"
-            style="background-color: rgba(0,0,0,0.5);">
-            <div class="modal-dialog modal-xl modal-dialog-centered ">
-                <div class="modal-content shadow-lg rounded-4 overflow-hidden py-1">
-                    <!-- Header -->
-                    <div class="modal-header  text-black">
-                        <h5 class="modal-title">Upload ID PICTURE</h5>
-                        <button type="button" class="btn-close" @click="closeImageModal"></button>
-                    </div>
-                    <!-- Upload Container -->
-                    <div v-if="isImage" class="container border border-secondary rounded-3  p-4 mb-3 text-center"
-                        style="cursor: pointer;" @click="triggeridPictureImage">
-                        <!-- Hidden File Input -->
-                        <input ref="idPicturesInput" class="d-none" type="file" accept="image/*"
-                            @change="handleidPictre" />
-
-                        <!-- Upload Prompt -->
-                        <div class="d-flex flex-column align-items-center text-center mb-3">
-                            <img :src="id_picture" alt="Payment Icon" style="max-width: 60px; height: auto;"
-                                class="mb-2" />
-                            <h5 class="text-secondary mt-2">Upload ID Image</h5>
-                            <small class="text-muted">Click to browse and select an image file</small>
-                        </div>
-                    </div>
-
-                    <!-- Preview Container -->
-                    <div v-if="idPicturePreview" class="text-center mb-3">
-                        <img :src="idPicturePreview" alt="Uploaded ID Image" class="img-fluid rounded mb-2 shadow-sm"
-                            style="max-height: 250px;" />
-                        <div>
-                            <button type="button" @click="removeidPicture" class="btn  btn-sm"
-                                style="background-color: red; color: white;">
-                                Remove Uploaded Image
+                        <div class="bg-white rounded-4 shadow-lg border-0 p-4 mb-4">
+                            <h5 class="fw-bold mb-4 text-primary"><i class="bi bi-pencil-square me-2"></i>Book a Visit
+                            </h5>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Full Name</label>
+                                <div class="d-flex gap-2 mb-2">
+                                    <input type="text" v-model="firstname" class="form-control bg-light border-0 py-2"
+                                        placeholder="First">
+                                    <input type="text" v-model="lastname" class="form-control bg-light border-0 py-2"
+                                        placeholder="Last">
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <span v-if="errors.firstname" class="text-danger x-small">{{ errors.firstname[0]
+                                        }}</span>
+                                    <span v-if="errors.lastname" class="text-danger x-small">{{ errors.lastname[0]
+                                        }}</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Contact Info</label>
+                                <input type="text" v-model="contactInfo"
+                                    class="form-control bg-light border-0 py-2 mb-2" placeholder="Phone Number">
+                                <input type="email" v-model="email" class="form-control bg-light border-0 py-2"
+                                    placeholder="Email Address">
+                                <span v-if="errors.email" class="text-danger x-small">{{ errors.email[0] }}</span>
+                            </div>
+                            <div class="row g-2 mb-4">
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold">Age</label>
+                                    <input type="number" v-model.number="age"
+                                        class="form-control bg-light border-0 py-2">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-bold">Sex</label>
+                                    <select v-model="sex" class="form-select bg-light border-0 py-2">
+                                        <option value="" disabled>Select</option>
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="button" @click="submitTenantInformation"
+                                class="btn btn-primary w-100 py-3 rounded-4 fw-bold shadow">
+                                Submit Reservation
                             </button>
                         </div>
 
-
-                    </div>
-                    <div class="d-flex justify-content-center align-items-center">
-                        <button type="button" class="custom-btn mb-3 w-50" @click="tenantIdpicture">
-                            Select a room
-                        </button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-        <div v-if="roomDetailsModal" class="modal fade show d-block w-100" tabindex="-1"
-            style="background-color: rgba(0,0,0,0.5);">
-            <div class="modal-dialog modal-xl modal-dialog-centered">
-                <div class="modal-content shadow-lg rounded-4 overflow-hidden py-1">
-                    <!-- Header -->
-                    <div class="modal-header text-black border-bottom">
-                        <h5 class="modal-title">{{ selectedRoomDetails.roomType || 'Room Details' }}</h5>
-                        <button type="button" class="btn-close" @click="roomDetailsModal = false"></button>
-                    </div>
-
-                    <!-- Body -->
-                    <div class="modal-body">
-                        <div class="row g-4">
-                            <!-- Left: Room Images / Carousel -->
-                            <div class="col-md-6">
-                                <div v-if="selectedRoomDetails.roomImages" class="overflow-hidden rounded shadow-sm">
-                                    <img :src="selectedRoomDetails.roomImages"
-                                        class="img-fluid w-100 h-100 object-fit-cover" alt="Room Image">
-                                </div>
-                                <div v-else
-                                    class="border rounded d-flex align-items-center justify-content-center p-5 text-muted">
-                                    No image available
-                                </div>
+                        <div class="contact-card p-4 rounded-4 shadow-sm bg-dark text-white border-0">
+                            <h6 class="fw-bold mb-3 small text-uppercase opacity-75">Quick Contact</h6>
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-telephone-fill text-primary me-3 fs-5"></i>
+                                <span class="fw-bold">{{ dorm.dorm.contactPhone }}</span>
                             </div>
-
-                            <!-- Right: Room Info -->
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <h5 class="fw-bold mb-1">{{ selectedRoomDetails.roomType || 'Room Type' }}</h5>
-                                    <p class="text-success fs-5 mb-0">₱{{ selectedRoomDetails.price?.toLocaleString() }}
-                                    </p>
-                                    <small class="text-muted">{{ selectedRoomDetails.furnishing_status || 'Furnishing info not available' }}</small>
-                                </div>
-
-                                <hr class="my-3">
-
-                                <div class="mb-3">
-                                    <h6 class="fw-semibold">Area</h6>
-                                    <p>{{ selectedRoomDetails.areaSqm }} sqm</p>
-                                </div>
-
-                                <div class="mb-3">
-                                    <h6 class="fw-semibold">Features</h6>
-                                    <div v-if="selectedRoomDetails.features && selectedRoomDetails.features.length > 0"
-                                        class="d-flex flex-wrap gap-2 overflow-auto" style="max-height: 150px;">
-                                        <span v-for="feature in selectedRoomDetails.features" :key="feature.id"
-                                            class="badge bg-success text-white">
-                                            {{ feature.featureName }}
-                                        </span>
-                                    </div>
-                                    <div v-else class="text-muted fst-italic">
-                                        No features
-                                    </div>
-                                </div>
-
-
-                                <div class="mb-3">
-                                    <h6 class="fw-semibold">Availability</h6>
-                                    <span
-                                        :class="selectedRoomDetails.availability ? 'badge bg-success' : 'badge bg-danger'">
-                                        {{ selectedRoomDetails.availability ? 'Available' : 'Not Available' }}
-                                    </span>
-                                </div>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-envelope-at-fill text-primary me-3 fs-5"></i>
+                                <span class="fw-bold text-truncate">{{ dorm.dorm.contactEmail }}</span>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Footer -->
-                    <div class="modal-footer border-top">
-                        <button type="button" class="btn btn-secondary" @click="roomDetailsModal = false">Close</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div v-if="askAIModal" class="modal fade show d-block w-100" tabindex="-1"
-            style="background-color: rgba(0,0,0,0.5);">
+
+        <div v-if="VisibleImagePostModal" class="modal fade show d-block" tabindex="-1"
+            style="background: rgba(0,0,0,0.8);">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content rounded-5 border-0 p-4">
+                    <div class="modal-header border-0 pb-0">
+                        <h4 class="fw-bold">Upload ID Picture</h4>
+                        <button type="button" class="btn-close" @click="closeImageModal"></button>
+                    </div>
+                    <div class="modal-body text-center p-4">
+                        <div v-if="isImage" class="upload-zone border-dashed rounded-4 p-5 mb-3 bg-light"
+                            @click="triggeridPictureImage" style="cursor: pointer; border: 2px dashed #ddd;">
+                            <input ref="idPicturesInput" class="d-none" type="file" accept="image/*"
+                                @change="handleidPictre" />
+                            <i class="bi bi-cloud-arrow-up fs-1 text-muted"></i>
+                            <h5 class="fw-bold mt-2">Click to Browse</h5>
+                        </div>
+                        <div v-if="idPicturePreview" class="mb-3">
+                            <img :src="idPicturePreview" class="img-fluid rounded-4 shadow-sm mb-3"
+                                style="max-height: 250px;" />
+                            <br><button @click="removeidPicture" class="btn btn-danger btn-sm rounded-pill px-4">Remove
+                                Image</button>
+                        </div>
+                        <button class="btn btn-primary w-100 py-3 rounded-4 fw-bold mt-3"
+                            @click="tenantIdpicture">Select Room & Continue</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="roomDetailsModal" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.8);">
             <div class="modal-dialog modal-xl modal-dialog-centered">
-                <div class="modal-content shadow-lg rounded-4 overflow-hidden">
-
-                    <!-- Header -->
-                    <div class="modal-header bg-gradient ">
-                        <h5 class="modal-title d-flex align-items-center">
-                            <i class="bi bi-robot fs-4 me-2"></i> Smart Guide for {{ selectedDormAI.dormName }}
-                        </h5>
-                        <button type="button" class="btn-close btn-close-black" @click="askAIModal = false"></button>
-                    </div>
-
-                    <!-- Body -->
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="aiQuestion" class="form-label fw-semibold">Your Question</label>
-                            <textarea id="aiQuestion" v-model="aiQuestion" class="form-control rounded-3 shadow-sm"
-                                rows="4" placeholder="Type your question about dormitory..."></textarea>
+                <div
+                    class="modal-content rounded-5 border-0 overflow-hidden shadow-lg animate__animated animate__zoomIn">
+                    <div class="row g-0">
+                        <div class="col-md-6 bg-light d-flex align-items-center justify-content-center border-end">
+                            <img v-if="selectedRoomDetails.roomImages" :src="selectedRoomDetails.roomImages"
+                                class="img-fluid w-100 h-100 object-fit-cover">
+                            <div v-else class="text-muted p-5 text-center"><i class="bi bi-image fs-1"></i>
+                                <p>No Image Available</p>
+                            </div>
                         </div>
-                        <div v-if="aiResponse" class="alert alert-light border shadow-sm rounded-3">
-                            <h6 class="fw-bold mb-2"><i class="bi bi-cpu me-2 text-primary"></i> AI Response</h6>
-                            <p class="mb-0">{{ aiResponse }}</p>
-                        </div>
-                    </div>
+                        <div class="col-md-6 p-5">
+                            <button type="button" class="btn-close float-end"
+                                @click="roomDetailsModal = false"></button>
+                            <h2 class="fw-bold text-dark">{{ selectedRoomDetails.roomType }}</h2>
+                            <h3 class="text-success fw-bold mb-4">₱{{ selectedRoomDetails.price?.toLocaleString() }}
+                                <small class="fs-6 text-muted">/ month</small></h3>
 
-                    <!-- Footer -->
-                    <div class="modal-footer d-flex justify-content-between">
-                        <button type="button" class="btn btn-outline-secondary rounded-pill"
-                            @click="askAIModal = false">
-                            <i class="bi bi-x-circle me-2"></i> Close
-                        </button>
-                        <button type="button" class="btn btn-primary rounded-pill shadow-sm" @click="sendToAI">
-                            <i class="bi bi-send-fill me-2"></i> Ask AI
-                        </button>
+                            <div class="row mb-4">
+                                <div class="col-6"><small class="text-muted d-block">Area Size</small><strong>{{
+                                        selectedRoomDetails.areaSqm }} sqm</strong></div>
+                                <div class="col-6"><small class="text-muted d-block">Status</small><strong
+                                        :class="selectedRoomDetails.availability ? 'text-success' : 'text-danger'">{{
+                                            selectedRoomDetails.availability ? 'Available' : 'Occupied' }}</strong></div>
+                            </div>
+
+                            <h6 class="fw-bold mb-3">Room Features</h6>
+                            <div class="d-flex flex-wrap gap-2 mb-5">
+                                <span v-for="feature in selectedRoomDetails.features" :key="feature.id"
+                                    class="badge bg-success-subtle text-success border px-3 py-2 rounded-pill fw-normal">
+                                    {{ feature.featureName }}
+                                </span>
+                            </div>
+                            <button class="btn btn-dark w-100 rounded-pill py-2" @click="roomDetailsModal = false">Close
+                                Details</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
         <Modalconfirmation ref="modal" />
     </div>
-    <div v-else>
-        <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
-            <div class="card text-center p-5 shadow-lg" style="max-width: 500px; border-radius: 15px; opacity: 0.7;">
-                <div class="mb-4">
-                    <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 3rem;"></i>
-                </div>
-                <h2 class="text-danger mb-3">Dorm Temporarily Unavailable</h2>
-                <p class="text-muted mb-4">
-                    The landlord for this dorm is currently restricted or deactivated.
-                    Please check other available dorms or contact support.
-                </p>
-            </div>
+
+    <div v-else class="vh-100 d-flex align-items-center justify-content-center bg-white p-4">
+        <div class="text-center shadow p-5 rounded-5 border" style="max-width: 500px;">
+            <i class="bi bi-shield-lock-fill text-danger mb-4" style="font-size: 5rem;"></i>
+            <h2 class="fw-bold text-dark">Dorm Temporarily Unavailable</h2>
+            <p class="text-muted mt-3">The landlord for this property is restricted. Please check other verified dorms
+                in our listing.</p>
+            <a href="/" class="btn btn-dark px-5 py-2 rounded-pill fw-bold mt-4">Back to Home</a>
         </div>
     </div>
 </template>
@@ -475,10 +427,6 @@ export default {
             isImage: true,
             totalReviewers: 0,
             averagePercentage: 0,
-            askAIModal: false,
-            aiQuestion: '',
-            aiResponse: '',
-            selectedDormAI: [],
             roomDetailsModal: false,
             selectedRoomDetails: '',
             is_deactivated: 0,
@@ -551,6 +499,8 @@ export default {
                 this.landlord_id = res.data.landlord?.landlordID;
                 this.totalCapacity = res.data.totalcapacity;
                 this.is_deactivated = res.data.landlord?.is_deactivated;
+                this.$refs.loader.loading = false;
+
 
             } catch (error) {
                 console.error("Error fetching dormitory:", error);
@@ -780,56 +730,7 @@ export default {
             window.location.href = `/rating/reviews/${this.dormitory_id}/${this.tenant_id}`;
 
         },
-        async askAI() {
-            try {
-                this.$refs.loader.loading = true;
-
-                const res = await axios.get(`/get/dorm/askai/${this.dormitory_id}`)
-                if (res.data.status === 'success') {
-                    this.askAIModal = true;
-                    this.selectedDormAI = res.data.data;
-                    this.$refs.loader.loading = false;
-
-                    console.log(this.selectedDormAI);
-                }
-
-            } catch (error) {
-
-            }
-            finally {
-
-            }
-        },
-        async sendToAI() {
-            this.$refs.loader.loading = true;
-
-            if (this.aiQuestion.trim() === "") {
-                this.$refs.loader.loading = false;
-
-                this.aiResponse = "⚠️ Please enter a question before asking AI.";
-            } else {
-                try {
-                    const formdata = new FormData();
-                    formdata.append('question', this.aiQuestion);
-                    formdata.append('dormID', this.dormitory_id);
-
-                    const res = await axios.post('/send/ai', formdata);
-
-                    if (res.data.success) {   // ✅ 'success' instead of 'status'
-                        this.aiResponse = res.data.answer;
-                    } else {
-                        this.aiResponse = "⚠️ AI could not process your request.";
-                    }
-                } catch (error) {
-                    console.error(error);
-                    this.aiResponse = "❌ Something went wrong while contacting AI.";
-                }
-                finally {
-                    this.$refs.loader.loading = false;
-
-                }
-            }
-        },
+       
         async roomDetails(id) {
             try {
                 this.$refs.loader.loading = true;
@@ -838,6 +739,8 @@ export default {
                 if (response.data.success) {
                     this.selectedRoomDetails = response.data.roomDetail;
                     this.roomDetailsModal = true;
+                    this.$refs.loader.loading = false;
+
                 }
             } catch (error) {
                 console.error(error);
@@ -892,6 +795,6 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped src="../../../../css/tenant/roomdetails.css">
 /* Header styles */
 </style>

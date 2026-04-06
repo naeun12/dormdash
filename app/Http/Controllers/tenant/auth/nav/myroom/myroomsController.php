@@ -48,7 +48,7 @@ class myroomsController extends Controller
             if (!$tenant) {
                 return redirect()->route('tenant-login')->with('error', 'Landlord not found.');
             }
-            $title = 'Tenant My Rooms - Dormhub';
+            $title = 'Tenant My Rooms - DormDash';
             return view('tenant.auth.nav.rooms.myrooms',['title' => 'My Rooms',
             'tenant_id' => $tenant_id,
             'cssPath' => asset('css/tenantpage/auth/roomdetails.css'),

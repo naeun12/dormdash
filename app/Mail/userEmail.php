@@ -35,7 +35,7 @@ class userEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'DormHub Reminder'
+            subject: 'DormDash  Reminder'
         );
     }
     /**

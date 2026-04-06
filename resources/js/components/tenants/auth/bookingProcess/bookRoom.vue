@@ -4,108 +4,91 @@
     <Loader ref="loader" />
     <NotificationList ref="toastRef" />
 
-    <div class="container py-3">
-        <h2 class="fw-bold text-center mb-4 p-2 bg-light text-dark  -2 rounded" style="border:1px solid #4edce2">
-            ✨ Book Your Room Now
-        </h2>
-        <div class="row mb-1">
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label class="form-label fw-bold">
-                        <i class="bi bi-person-fill text-primary me-2"></i>Firstname:
-                    </label>
-                    <div class="p-2  rounded bg-light text-break" style="border:1px solid #4edce2">
-                        {{ firstname || 'N/A' }}
+    <div class="booking-container container py-5">
+        <div class="booking-header mb-5 text-center">
+            <h2 class="fw-bold">✨ Book Your Room Now</h2>
+            <div class="header-line mx-auto"></div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="booking-card personal-info-card p-4 h-100">
+                    <h5 class="section-title mb-4">
+                        <i class="bi bi-person-badge-fill me-2 text-orange"></i>Personal Information
+                    </h5>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="custom-label">Firstname</label>
+                            <div class="info-box border-blue">{{ firstname || 'N/A' }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="custom-label">Lastname</label>
+                            <div class="info-box border-blue">{{ lastname || 'N/A' }}</div>
+                        </div>
+                        <div class="col-12">
+                            <label class="custom-label">Contact Number</label>
+                            <div class="info-box border-blue">
+                                <i class="bi bi-telephone-fill me-2 text-orange"></i>{{ contactInfo || 'N/A' }}
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="custom-label">Email Address</label>
+                            <div class="info-box border-blue">
+                                <i class="bi bi-envelope-at-fill me-2 text-orange"></i>{{ email || 'N/A' }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label class="form-label fw-bold">
-                        <i class="bi bi-person-badge-fill text-primary me-2"></i>Lastname:
-                    </label>
-                    <div class="p-2  rounded bg-light text-break" style="border:1px solid #4edce2">
-                        {{ lastname || 'N/A' }}
+            <div class="col-lg-5">
+                <div class="booking-card room-details-card p-4">
+                    <h5 class="section-title mb-4">
+                        <i class="bi bi-house-lock-fill me-2 text-orange"></i>Room Summary
+                    </h5>
+
+                    <div class="room-summary-box p-3 rounded-3 mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-white-50">Room Number</span>
+                            <span class="fw-bold text-white">#{{ roomsDetail?.roomNumber || 'N/A' }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-white-50">Type</span>
+                            <span class="badge bg-white text-orange rounded-pill px-3 fw-bold">{{ roomsDetail?.roomType
+                                || 'N/A' }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between pt-2 border-top border-orange-light">
+                            <span class="text-white fw-bold">Monthly Rate</span>
+                            <span class="fw-bold fs-5 text-white">₱{{ Number(roomsDetail?.price).toLocaleString()
+                                }}</span>
+                        </div>
                     </div>
+
+                    <div class="date-section">
+                        <div class="mb-3">
+                            <label class="custom-label">Move-in Date</label>
+                            <input type="date" class="form-control custom-input input-focus-orange" v-model="moveInDate"
+                                @change="setMoveOutDate" :min="today" />
+                            <small v-if="errors.moveInDate" class="text-danger mt-1 d-block fw-bold">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i>{{ errors.moveInDate[0] }}
+                            </small>
+                        </div>
+                        <div class="mb-4">
+                            <label class="custom-label">Move-out Date (Auto)</label>
+                            <input type="date" class="form-control custom-input bg-light" v-model="moveOutDate"
+                                disabled />
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-book-now w-100 py-3 shadow" @click="bookRoom">
+                        <i class="bi bi-bookmark-check-fill me-2"></i>Confirm & Book Now
+                    </button>
                 </div>
             </div>
-
         </div>
-        <div class="mb-3">
-            <label class="form-label fw-bold">
-                <i class="bi bi-telephone-fill text-primary me-2"></i>Contact Number:
-            </label>
-            <div class="p-2  rounded bg-light text-break" style="border:1px solid #4edce2">
-                {{ contactInfo || 'N/A' }}
-            </div>
-        </div>
-
-        <!-- Contact Email -->
-        <div class="mb-3">
-            <label class="form-label fw-bold">
-                <i class="bi bi-envelope-fill text-primary me-2"></i>Contact Email:
-            </label>
-            <div class="p-2  rounded bg-light text-break" style="border:1px solid #4edce2">
-                {{ email || 'N/A' }}
-            </div>
-        </div>
-        <div class="mb-3">
-            <label class="form-label fw-bold">
-                <i class="bi bi-hash text-primary me-2"></i>Room Number:
-            </label>
-            <div class="p-2  rounded bg-light text-break" style="border:1px solid #4edce2">
-                {{ roomsDetail?.roomNumber || 'N/A' }}
-            </div>
-        </div>
-        <div class="mb-4">
-            <label class="form-label fw-bold">
-                <i class="bi bi-door-open-fill text-primary me-2"></i>Room Type:
-            </label>
-            <div class="p-2  rounded bg-light text-break" style="border:1px solid #4edce2">
-                {{ roomsDetail?.roomType || 'N/A' }}
-            </div>
-        </div>
-        <div class="mb-3">
-            <label class="form-label fw-bold">
-                <i class="bi bi-cash-coin text-primary me-2"></i>Monthly Rate:
-            </label>
-            <div class="p-2  rounded bg-light text-break" style="border:1px solid #4edce2">
-                ₱{{ Number(roomsDetail?.price).toLocaleString() || '0.00' }}
-            </div>
-        </div>
-        <div class="d-flex gap-3">
-            <!-- Move In -->
-            <div class="mb-3 flex-fill">
-                <label for="move_in_date" class="form-label fw-semibold">
-                    <i class="bi bi-calendar-event me-2 text-primary"></i>Move-in Date
-                </label>
-                <input type="date" style="border:1px solid #4edce2" class="form-control shadow-sm" v-model="moveInDate"
-                    @change="setMoveOutDate" id="move_in_date" :min="today" />
-                <span v-if="errors.moveInDate" style="border:1px solid #4edce2"
-                    class="error text-danger small mt-1 d-block">
-                    <i class="bi bi-exclamation-circle-fill me-1"></i>{{ errors.moveInDate[0] }}
-                </span>
-            </div>
-            <div class="mb-3 flex-fill">
-                <label for="move_out_date" class="form-label fw-semibold">
-                    <i class="bi bi-calendar-check me-2 text-primary"></i>Move-out Date
-                </label>
-                <input type="date" class="form-control shadow-sm" v-model="moveOutDate" id="move_out_date" disabled />
-                <span v-if="errors.moveOutDate" class="error text-danger small mt-1 d-block">
-                    <i class="bi bi-exclamation-circle-fill me-1"></i>{{ errors.moveOutDate[0] }}
-                </span>
-            </div>
-        </div>
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-success  w-100 py-2 fw-semibold shadow-sm" @click="bookRoom">
-            <i class="bi bi-calendar-check-fill me-2"></i>Make a Booking
-        </button>
-
     </div>
-
 </template>
-
 <script>
 import axios from 'axios'
 import Toastcomponents from '@/components/Toastcomponents.vue';
@@ -168,9 +151,13 @@ export default {
         },
         async getRoomDetails() {
             try {
+                this.$refs.loader.loading = true;
                 const response = await axios.get(`/get-room-details/${this.room_id}`);
                 this.roomsDetail = response.data.room;
+                this.$refs.loader.loading = false;
+
             } catch (error) {
+                this.$refs.loader.loading = false;
 
             }
         },
@@ -285,3 +272,4 @@ export default {
     }
 }
 </script>
+<style scoped src="../../../../../css/tenant/bookroom.css"></style>

@@ -37,8 +37,8 @@ class dormitoriesmapcontroller extends Controller
         if (!$tenant) {
             return redirect()->route('tenant-login')->with('error', 'Landlord not found.');
         }
-        return view('tenant.auth.dormitorieslocation',['title' => 'Dormitories Map  - Dormhub',
-        'tenant_id',$tenant,'cssPath' => asset('css/tenantpage/auth/dormitorymap.css')
+        return view('tenant.auth.dormitorieslocation',['title' => 'Dormitories Map  - DormDash',
+        'tenant_id',$tenant,'cssPath' => 'css/tenant/dormitoriesmap.css'
         ,'notifications' => $notifications,
              'unread_count' => $unreadCount,
     ]);

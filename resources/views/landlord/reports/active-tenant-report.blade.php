@@ -92,7 +92,7 @@
     <!-- Logo -->
     <div style="text-align: center; margin-bottom: 10px;">
         <img src="{{ $logoPath }}" style="width: 25%; display: block; margin: 0 auto;">
-        <div class="logo-text">DormHub</div>
+        <div class="logo-text">DormDash</div>
     </div>
 
     <h2>Active Tenants Report</h2>
@@ -145,7 +145,7 @@
        
     </table>
      <div class="footer">
-        &copy; {{ now()->year }} DormHub. All rights reserved.
+        &copy; {{ now()->year }} DormDash. All rights reserved.
     </div>
 </body>
 </html>

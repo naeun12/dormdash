@@ -3,112 +3,161 @@
     <NotificationList ref="toastRef" />
 
     <div class="p-4 mt-4">
-        <div class="input-group  w-100 shadow-sm rounded-pill overflow-hidden" style="border:2px solid #4edce2;">
-            <span class="input-group-text bg-white border-0">
-                <i class="bi bi-search text-primary"></i>
-            </span>
-            <input type="text" class="form-control border-0 shadow-none" placeholder="Search Tenants name"
-                aria-label="Search Tenant " v-model="searchTerm" style="border:2px solid #4edce2;" />
+        <div class="filter-bar-container p-2 bg-white shadow-sm rounded-4 border mb-4">
+            <div class="d-flex flex-column flex-md-row align-items-center gap-2">
+
+                <div class="input-group flex-grow-1 border-0 bg-light rounded-pill px-3 py-1">
+                    <span class="input-group-text bg-transparent border-0 pe-1">
+                        <i class="bi bi-search text-primary"></i>
+                    </span>
+                    <input type="text" class="form-control border-0 bg-transparent shadow-none"
+                        placeholder="Search Tenant Name..." v-model="searchTerm" />
+                </div>
+
+                <div class="d-none d-md-block border-end h-100 mx-1" style="height: 30px !important;"></div>
+
+                <div class="filter-dropdown">
+                    <div class="d-flex align-items-center gap-2 px-2">
+                        <i class="bi bi-building text-info"></i>
+                        <select class="form-select border-0 shadow-none bg-transparent fw-600 py-1"
+                            v-model="selectedDormId" @change="filterDorms"
+                            style="min-width: 140px; font-size: 0.85rem;">
+                            <option disabled value="">Select Dorm</option>
+                            <option value="all">All Dorms</option>
+                            <option v-for="dorm in dorms" :key="dorm.dormID" :value="dorm.dormID">
+                                {{ dorm.dormName }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filter-dropdown">
+                    <div class="d-flex align-items-center gap-2 px-2">
+                        <i class="bi bi-door-closed text-success"></i>
+                        <select class="form-select border-0 shadow-none bg-transparent fw-600 py-1"
+                            v-model="selectedroomNumber" @change="filterroomNumber"
+                            style="min-width: 140px; font-size: 0.85rem;">
+                            <option disabled value="">Select Room</option>
+                            <option value="all">All Rooms</option>
+                            <option v-for="room in uniqueRooms" :key="room.fkroomID" :value="room.room?.roomNumber">
+                                Room {{ room.room?.roomNumber }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filter-dropdown">
+                    <div class="d-flex align-items-center gap-2 px-2">
+                        <i class="bi bi-funnel text-warning"></i>
+                        <select class="form-select border-0 shadow-none bg-transparent fw-600 py-1"
+                            v-model="selectedapplicationStatus" @change="filterApplicationStatus"
+                            style="min-width: 150px; font-size: 0.85rem;">
+                            <option disabled value="">Select Status</option>
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="approved">Approved</option>
+                            <option value="paid">Paid</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
         </div>
-        <div class="row g-3 py-3">
-            <!-- Dorm Dropdown -->
-            <div class="col-12 col-md-4">
-                <select class="form-select form-select-sm rounded-3 shadow-sm rounded-3"
-                    style="border:2px solid #4edce2;" v-model="selectedDormId" @change="filterDorms">
-                    <option disabled value="">Select Dorm</option>
-                    <option value="all">All Dorms</option>
-                    <option v-for="dorm in dorms" :key="dorm.dormID" :value="dorm.dormID">
-                        {{ dorm.dormName }} (ID: {{ dorm.dormID }})
-                    </option>
-                </select>
+        <div v-if="!tenants.length"
+            class="empty-state-container d-flex flex-column justify-content-center align-items-center py-5">
+            <div class="empty-icon-wrapper mb-4">
+                <div class="blob-bg"></div>
+                <i class="bi bi-folder2-open"></i>
             </div>
 
-            <!-- Room Dropdown -->
-            <div class="col-12 col-md-4">
-                <select class="form-select form-select-sm rounded-3 shadow-sm rounded-3"
-                    style="border:2px solid #4edce2;" v-model="selectedroomNumber" @change="filterroomNumber">
-                    <option disabled value="">Select Room Number</option>
-                    <option value="all">All Rooms</option>
-                    <option v-for="room in uniqueRooms" :key="room.fkroomID" :value="room.room?.roomNumber">
-                        Room {{ room.room?.roomNumber }}
-                    </option>
-                </select>
-            </div>
+            <div class="text-center">
+                <h5 class="fw-800 text-dark mb-1">No Bookings Found</h5>
+                <p class="text-muted small px-4">We couldn't find any records matching your current filters. <br> Try
+                    adjusting your search or selection.</p>
 
-            <!-- Application Status Dropdown -->
-            <div class="col-12 col-md-4">
-                <select class="form-select form-select-sm rounded-3 shadow-sm rounded-3"
-                    style="border:2px solid #4edce2;" v-model="selectedapplicationStatus"
-                    @change="filterApplicationStatus">
-                    <option disabled value="">Select Application Status</option>
-                    <option value="all">All Status</option>
-                    <option value="pending">Pending</option>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="approved">Approved</option>
-                    <option value="cancelled">Cancelled</option>
-                    <option value="paid">Paid</option>
-                    <option value="rejected">Rejected</option>
-                    <option value="expired">Expired</option>
-                </select>
+                <button v-if="searchTerm || selectedDormId !== 'all'"
+                    class="btn btn-sm btn-outline-primary rounded-pill mt-2 px-4" @click="resetFilters">
+                    Clear all filters
+                </button>
             </div>
         </div>
-        <div v-if="!tenants.length" class="d-flex flex-column justify-content-center align-items-center"
-            style="height: 200px;">
-            <i class="bi bi-emoji-frown mb-2" style="font-size: 2rem; color: #6c757d;"></i>
-            <p class="text-muted fw-bold">No Bookings found.</p>
-        </div>
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 ">
-
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             <div class="col" v-for="booking in tenants" :key="booking.bookingID">
-                <div class="card shadow-sm rounded-4 h-100 w-100 border-2" style="border:2px solid #4edce2;">
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden"
+                    style="border-top: 5px solid #FC7D07 !important;">
 
-                    <div class="d-flex justify-content-between  card-header rounded-3 bg-info" >
-                        <!-- Booking ID -->
-                        <h5 class="fw-bold text-dark mb-0">Booking #{{ booking.bookingID }}</h5>
+                    <div class="d-flex justify-content-between align-items-center card-header border-0 p-3"
+                        style="background-color: #003C87;">
+                        <h6 class="fw-bold text-white mb-0">
+                            <span class="opacity-75 small fw-light">ID:</span> #{{ booking.bookingID }}
+                        </h6>
 
-                        <!-- Delete Button -->
-                        <button
-                            class="btn btn-outline-dark btn-sm d-flex align-items-center justify-content-center px-2"
+                        <button class="btn btn-link text-white p-0 opacity-75 text-decoration-none"
                             @click="deleteBooking(booking.bookingID)" title="Delete Booking">
-                            <i class="bi bi-x"></i>
+                            <i class="bi bi-trash3-fill"></i>
                         </button>
                     </div>
 
-                    <div class="card-body p-4 rounded-4">
-                        <statusMap :status="booking.status" />
-                        <ul class="list-unstyled text-secondary">
-                            <li class="mb-2"><i class="bi bi-person-fill me-2 text-dark"></i><strong class="text-dark">Name:</strong> {{
-                                booking.firstname }} {{ booking.lastname }}</li>
-                            <li class="mb-2"><i class="bi bi-envelope-fill me-2 text-dark"></i><strong class="text-dark">Email:</strong>
-                                {{ booking.contactEmail }}</li>
-                            <li class="mb-2"><i class="bi bi-building me-2 text-dark"></i><strong class="text-dark">Dorm:</strong> {{
-                                booking.room?.dorm?.dormName ?? 'N/A' }}</li>
-                            <li class="mb-2"><i class="bi bi-door-open-fill me-2 text-dark"></i><strong class="text-dark">Room:</strong>
-                                {{ booking.room?.roomNumber ?? 'N/A' }}</li>
-                            <li class="mb-2"><i class="bi bi-calendar-check-fill me-2 text-dark"></i><strong class="text-dark">Move-In
-                                    Date:</strong> {{ formatDate(booking.moveInDate) }}</li>
-                            <li class="mb-2">
-                                <i class="bi bi-credit-card-fill me-2 text-dark"></i>
-                                <strong class="text-dark">Payments: </strong>
-                                <span v-if="booking.payment.length">
-                                    <span v-for="(pay, index) in booking.payment" :key="index">
-                                        {{ pay.paymentType }}<span v-if="index !== booking.payment.length - 1">, </span>
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <statusMap :status="booking.status" />
+                        </div>
+
+                        <h5 class="card-title fw-bold text-dark mb-1">
+                            {{ booking.firstname }} {{ booking.lastname }}
+                        </h5>
+                        <p class="small text-muted mb-4 border-bottom pb-3">
+                            <i class="bi bi-envelope me-1"></i> {{ booking.contactEmail }}
+                        </p>
+
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <label class="text-uppercase x-small fw-bold text-muted d-block"
+                                    style="font-size: 0.7rem;">Dormitory</label>
+                                <span class="text-dark fw-medium"><i class="bi bi-building me-1"
+                                        style="color: #FC7D07;"></i> {{ booking.room?.dorm?.dormName ?? 'N/A' }}</span>
+                            </div>
+                            <div class="col-6">
+                                <label class="text-uppercase x-small fw-bold text-muted d-block"
+                                    style="font-size: 0.7rem;">Unit</label>
+                                <span class="text-dark fw-medium"><i class="bi bi-door-closed me-1"
+                                        style="color: #FC7D07;"></i> {{ booking.room?.roomNumber ?? 'N/A' }}</span>
+                            </div>
+
+                            <div class="col-12 mt-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-calendar3 me-2" style="color: #003C87;"></i>
+                                    <span class="text-secondary">Move-in: <strong class="text-dark">{{
+                                            formatDate(booking.moveInDate) }}</strong></span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-credit-card-2-front me-2" style="color: #003C87;"></i>
+                                    <span class="text-secondary">Method:
+                                        <strong class="text-dark" v-if="booking.payment.length">
+                                            <span v-for="(pay, index) in booking.payment" :key="index">
+                                                {{ pay.paymentType }}<span v-if="index !== booking.payment.length - 1">,
+                                                </span>
+                                            </span>
+                                        </strong>
+                                        <strong class="text-danger" v-else>Pending</strong>
                                     </span>
-                                </span>
-                                <span v-else>No payment yet</span>
-                            </li>
+                                </div>
+                            </div>
+                        </div>
 
-                        </ul>
-
-                        <div class="d-flex justify-content-center gap-2 mt-3">
-                            <button class="btn btn-primary btn-sm w-100 px-3" @click="openTenant(booking.bookingID)">
-                                <i class="bi bi-eye-fill me-1"></i>
+                        <div class="mt-4">
+                            <button class="btn w-100 fw-bold py-2 rounded-3 text-white"
+                                style="background-color: #003C87; transition: 0.3s;"
+                                @click="openTenant(booking.bookingID)">
+                                VIEW DETAILS
                             </button>
-
                         </div>
                     </div>
                 </div>
             </div>
+        
         </div>
 
         <div v-if="lastPage > 1" class="d-flex justify-content-center my-4">
@@ -135,114 +184,183 @@
 
         <!--Modal Tenant Appoval-->
         <!-- Use v-if to render the modal only if needed -->
-        <div v-if="VisibleModalApproval" class="modal fade show d-block" style="background: rgba(0, 0, 0, 0.5);"
-            tabindex="-1">
+        <div v-if="VisibleModalApproval" class="modal fade show d-block"
+            style="background: rgba(0, 30, 60, 0.6); backdrop-filter: blur(4px);" tabindex="-1">
             <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content shadow-lg rounded-4 border-0">
-                    <!-- Header -->
-                    <div class="modal-header bg-info border-bottom-0">
-                        <h5 class="modal-title text-white fw-bold">
-                            🧾 Tenant Profile
+                <div class="modal-content shadow-lg rounded-4 border-0 overflow-hidden">
+
+                    <div class="modal-header border-0 p-4" style="background-color: #003C87;">
+                        <h5 class="modal-title text-white fw-bold d-flex align-items-center">
+                            <i class="bi bi-person-badge me-2"></i> Tenant Profile Details
                         </h5>
-                        <button type="button" class="btn-close" @click="VisibleModalApproval = false"></button>
+                        <button type="button" class="btn-close btn-close-white"
+                            @click="VisibleModalApproval = false"></button>
                     </div>
 
-                    <!-- Body -->
-                    <div class="modal-body px-5">
-                        <!-- Profile Picture and Status -->
-                        <div class="text-center mb-4">
-                            <img :src="selectedtenant.pictureID"
-                                class="rounded-circle border border-3 border-light shadow-sm"
-                                style="width: 130px; height: 130px; object-fit: cover;" />
-                            <p class="mt-3">
-                                <statusMap :status="selectedtenant.status" />
+                    <div class="modal-body px-lg-5 py-4">
 
-                            </p>
+                        <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+                            <div class="position-relative">
+                                <img :src="selectedtenant.pictureID"
+                                    class="rounded-circle border border-4 border-white shadow"
+                                    style="width: 110px; height: 110px; object-fit: cover;" />
+                                <div class="position-absolute bottom-0 end-0 mb-1">
+                                    <statusMap :status="selectedtenant.status" />
+                                </div>
+                            </div>
+                            <div class="ms-4">
+                                <h3 class="fw-bold mb-0 text-dark">{{ selectedtenant.firstname }} {{
+                                    selectedtenant.lastname }}</h3>
+                                <p class="text-muted mb-0"><i class="bi bi-envelope-at me-1"></i> {{
+                                    selectedtenant.contactEmail }}</p>
+                            </div>
                         </div>
 
-                        <!-- Information Grid -->
-                        <div class="row g-4">
+                        <div class="row g-4 mb-4">
                             <div class="col-md-6">
-                                <p><strong>👤 First Name:</strong> {{ selectedtenant.firstname }}</p>
-                                <p><strong>🎂 Age:</strong> {{ selectedtenant.age }}</p>
-                                <p><strong>📧 Email:</strong> {{ selectedtenant.contactEmail }}</p>
-                                <p><strong>📍 Address:</strong> {{ selectedtenant.room?.dorm?.address }}</p>
-                                <p><strong>🚪 Room #:</strong> {{ selectedtenant.room?.roomNumber }}</p>
-                                <p><strong>🚪 Move in date #:</strong> {{ formatDate(selectedtenant.moveInDate) }}</p>
-
+                                <div class="mb-3">
+                                    <label class="small text-uppercase fw-bold text-muted mb-1 d-block">Personal
+                                        Details</label>
+                                    <div class="p-2 rounded-3 bg-light">
+                                        <p class="mb-1"><strong>Age:</strong> {{ selectedtenant.age }}</p>
+                                        <p class="mb-1"><strong>Gender:</strong> {{ selectedtenant.gender }}</p>
+                                        <p class="mb-0"><strong>Contact:</strong> {{ selectedtenant.contactNumber }}</p>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="small text-uppercase fw-bold text-muted mb-1 d-block">Stay
+                                        Duration</label>
+                                    <div class="p-2 rounded-3 bg-light border-start border-4"
+                                        style="border-color: #FC7D07 !important;">
+                                        <p class="mb-1"><strong>Move-in:</strong> {{
+                                            formatDate(selectedtenant.moveInDate) }}</p>
+                                        <p class="mb-0"><strong>Move-out:</strong> {{
+                                            formatDate(selectedtenant?.moveOutDate) }}</p>
+                                    </div>
+                                </div>
                             </div>
+
                             <div class="col-md-6">
-                                <p><strong>👤 Last Name:</strong> {{ selectedtenant.lastname }}</p>
-                                <p><strong>🚻 Gender:</strong> {{ selectedtenant.gender }}</p>
-                                <p><strong>📱 Contact:</strong> {{ selectedtenant.contactNumber }}</p>
-                                <p><strong>🏠 Dorm:</strong> {{ selectedtenant.room?.dorm?.dormName || 'N/A' }}</p>
-                                <p><strong>💰 Price:</strong> ₱{{
-                                    Number(selectedtenant.room?.price).toLocaleString(undefined, {
-                                    minimumFractionDigits: 2
-                                    }) }}</p>
-                                <p><strong>🚪 Move out date #:</strong> {{ formatDate(selectedtenant?.moveOutDate) }}
-                                </p>
-
+                                <div class="mb-3">
+                                    <label class="small text-uppercase fw-bold text-muted mb-1 d-block">Housing
+                                        Information</label>
+                                    <div class="p-2 rounded-3 bg-light">
+                                        <p class="mb-1"><strong>Dorm:</strong> {{ selectedtenant.room?.dorm?.dormName ||
+                                            'N/A' }}</p>
+                                        <p class="mb-1"><strong>Room Number:</strong> {{ selectedtenant.room?.roomNumber
+                                            }}</p>
+                                        <p class="mb-0 text-primary fw-bold"><strong>Monthly:</strong> ₱{{
+                                            Number(selectedtenant.room?.price).toLocaleString(undefined, {
+                                            minimumFractionDigits: 2 }) }}</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="small text-uppercase fw-bold text-muted mb-1 d-block">Location</label>
+                                    <p class="small text-dark px-2"><i class="bi bi-geo-alt-fill text-danger"></i> {{
+                                        selectedtenant.room?.dorm?.address }}</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="mb-2 mt-2">
-                            <select class="form-select" v-model="status">
-                                <option value="" disabled selected>Select Action</option>
-                                <option value="pending"
-                                    v-if="['cancelled', 'rejected'].includes(selectedtenant.status)">
-                                    Pending - Awaiting Confirmation
-                                </option>
 
-                                <option value="confirmed"
-                                    v-if="['cancelled', 'rejected', 'pending'].includes(selectedtenant.status)">
-                                    Confirmed - Tenant To Pay</option>
-                                <option value="approved"
-                                    v-if="['cancelled', 'rejected', 'paid'].includes(selectedtenant.status)">
-                                    Approved
-                                    - Booking Approved</option>
-                                <option value="rejected">Rejected - User Initiated</option>
-                            </select>
-                        </div>
+                        <div class="p-4 rounded-4 border" style="background-color: #f8fbff;">
+                            <label class="fw-bold text-dark mb-3">Update Booking Status</label>
+                            <div class="row align-items-center">
+                                <div class="col-md-12 mb-3">
+                                    <select class="form-select border-2" v-model="status"
+                                        style="border-color: #dee2e6;">
+                                        <option value="" disabled selected>Change status to...</option>
+                                        <option value="pending"
+                                            v-if="['cancelled', 'rejected'].includes(selectedtenant.status)">Pending -
+                                            Awaiting Confirmation</option>
+                                        <option value="confirmed"
+                                            v-if="['cancelled', 'rejected', 'pending'].includes(selectedtenant.status)">
+                                            Confirmed - Tenant To Pay</option>
+                                        <option value="approved"
+                                            v-if="['cancelled', 'rejected', 'paid'].includes(selectedtenant.status)">
+                                            Approved - Booking Approved</option>
+                                        <option value="rejected">Rejected - User Initiated</option>
+                                    </select>
+                                </div>
+                            </div>
 
-                        <!-- Payment Image -->
-                        <div class="mb-2" v-if="selectedtenant.status === 'paid'">
-                            <div class="text-center mt-4" v-if="selectedtenant.payment.length">
-                                <p><strong>💳 Payment Type:</strong> {{ selectedtenant.payment[0].paymentType }}</p>
-                                <img :src="selectedtenant.payment[0].paymentImage"
-                                    class="img-thumbnail rounded shadow-sm mt-2"
-                                    style="width: 220px; height: 220px; object-fit: cover; cursor: pointer;"
-                                    @click="showFullImage = true" />
+                            <div v-if="selectedtenant.status === 'paid' && selectedtenant.payment.length"
+                                class="text-center pt-3 border-top mt-2">
+                                <label class="small text-uppercase fw-bold text-muted mb-2 d-block">Payment
+                                    Verification</label>
+                                <div class="d-inline-block position-relative">
+                                    <img :src="selectedtenant.payment[0].paymentImage"
+                                        class="img-thumbnail rounded-3 shadow-sm"
+                                        style="width: 100%; max-width: 300px; height: auto; cursor: pointer;"
+                                        @click="showFullImage = true" />
+                                    <div class="mt-2 text-dark fw-bold small">
+                                        <i class="bi bi-wallet2 me-1"></i> {{ selectedtenant.payment[0].paymentType }}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="mt-2"></div>
-                        <BookingStatus :status="selectedtenant.status" role="landlord" />
+
+                        <div class="mt-4">
+                            <BookingStatus :status="selectedtenant.status" role="landlord" />
+                        </div>
                     </div>
-                    <!-- Footer -->
-                    <div class="modal-footer justify-content-between bg-light border-top-0 px-4 py-3">
-                        <button class="btn btn-outline-primary px-4" @click="messagePage(selectedtenant.fktenantID)">
-                            💬 Message Tenant
+
+                    <div class="modal-footer bg-light border-0 px-4 py-3">
+                        <button class="btn btn-outline-secondary fw-bold px-4 rounded-3"
+                            @click="messagePage(selectedtenant.fktenantID)">
+                            <i class="bi bi-chat-dots me-2"></i>MESSAGE
                         </button>
-                        <button class="btn btn-success" @click="handleBookingAction(selectedtenant.bookingID)">
-                            Update Booking</button>
+                        <button class="btn px-5 fw-bold rounded-3 text-white shadow-sm"
+                            style="background-color: #FC7D07;" @click="handleBookingAction(selectedtenant.bookingID)">
+                            UPDATE BOOKING
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade show" tabindex="-1" style="display: block;" v-if="showFullImage"
+    <div v-if="showFullImage" class="modal fade show d-block"
+        style="background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px); z-index: 1060;"
         @click.self="showFullImage = false">
+
         <div class="modal-dialog modal-dialog-centered modal-xl">
-            <div class="modal-content shadow-lg rounded-4 overflow-hidden">
-                <div class="modal-body p-0 position-relative bg-dark">
-                    <img :src="selectedtenant.payment[0].paymentImage" class="img-fluid w-100"
-                        style="object-fit: contain; max-height: 90vh;" />
+            <div class="modal-content bg-transparent border-0">
+
+                <div class="d-flex justify-content-between align-items-center mb-3 px-3">
+                    <div>
+                        <h5 class="text-white mb-0 fw-bold">
+                            <i class="bi bi-receipt me-2" style="color: #FC7D07;"></i>
+                            Payment Proof: {{ selectedtenant.firstname }} {{ selectedtenant.lastname }}
+                        </h5>
+                        <small class="text-white-50">Booking #{{ selectedtenant.bookingID }}</small>
+                    </div>
+
                     <button type="button"
-                        class="btn-close position-absolute top-0 end-0 m-3 bg-white p-2 rounded-circle"
-                        aria-label="Close" @click="showFullImage = false"></button>
+                        class="btn btn-light rounded-circle d-flex align-items-center justify-content-center shadow-lg"
+                        style="width: 45px; height: 45px; transition: 0.3s;" @click="showFullImage = false">
+                        <i class="bi bi-x-lg fs-5"></i>
+                    </button>
                 </div>
-                <div class="modal-footer justify-content-center bg-light border-top">
-                   
+
+                <div class="modal-body p-0 position-relative text-center">
+                    <img :src="selectedtenant.payment[0].paymentImage" class="img-fluid rounded-4 shadow-lg"
+                        style="max-height: 80vh; border: 2px solid rgba(255,255,255,0.1); object-fit: contain;"
+                        alt="Payment Receipt" />
                 </div>
+
+                <div class="mt-4 text-center">
+                    <div class="d-inline-flex align-items-center bg-white px-4 py-2 rounded-pill shadow">
+                        <span class="fw-bold me-3 text-dark">
+                            <i class="bi bi-credit-card-2-back me-2" style="color: #003C87;"></i>
+                            {{ selectedtenant.payment[0].paymentType }}
+                        </span>
+                        <div style="width: 1px; height: 20px; background: #dee2e6;" class="me-3"></div>
+                        <button class="btn btn-link text-decoration-none p-0 fw-bold"
+                            style="color: #003C87; font-size: 0.9rem;" @click="showFullImage = false">
+                            DONE VIEWING
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -665,3 +783,5 @@ export default {
 
 };
 </script>
+<style scoped src="../../../../css/landlord/booking.css">
+</style>

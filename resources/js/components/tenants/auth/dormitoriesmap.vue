@@ -3,97 +3,133 @@
     <Toastcomponents ref="toast" />
     <NotificationList ref="toastRef" />
 
-    <div class=" mt-5 mb-2">
-        <h1 class="text-center fs-3 fw-semibold text-primary">Explore Dorm Locations in Lapu-Lapu and Mandaue</h1>
-        <p class="text-center text-muted">Find the best places to stay near your location</p>
-    </div>
+    <div class="map-instruction-wrapper">
+        <div class="text-center mb-5 animate__animated animate__fadeIn">
+            <h2 class="fw-bold text-dash-blue display-6">Explore <span class="text-dash-orange">Surigao City</span></h2>
+            <p class="text-muted mx-auto" style="max-width: 600px;">
+                Discover the best places to stay near your desired location. Precision helps us find your perfect match.
+            </p>
+        </div>
 
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card instruction-card border-0 shadow-sm rounded-4 overflow-hidden">
+                        <div class="row g-0 align-items-center">
+                            <div
+                                class="col-sm-3 bg-dash-blue-soft d-flex align-items-center justify-content-center p-4">
+                                <div class="logo-pulse-wrapper">
+                                    <img :src="logoImage" alt="Pin Logo" class="floating-pin shadow-sm" />
+                                    <div class="pulse-ring"></div>
+                                </div>
+                            </div>
 
-
-    <!-- Right Column: Instructions -->
-    <div class="d-flex align-items-start gap-3">
-        <img :src="logoImage" alt="Pin Logo" width="50" height="50" class="rounded" />
-        <p class="mb-0">
-            <strong>Use this pin to locate your position.</strong><br>
-            Drag the pin on the left and drop it on your desired location. This helps us suggest nearby
-            dormitories more accurately.
-        </p>
-    </div>
-
-
-
-
-    <!-- Two-column layout -->
-    <div class="m-2 mt-4 mb-2">
-        <div class="row g-4">
-            <!-- Left section - Map -->
-            <div class="col-md-8">
-                <div class="bg-light border rounded shadow-sm" style="height: 760px; overflow: hidden;">
-                    <div id="map" style="width: 100%; height: 100%;"></div>
-                </div>
-            </div>
-
-            <!-- Right section - Info -->
-            <div class="col-md-4">
-                <div class="bg-white border rounded-4 shadow p-4 d-flex flex-column" style="height: 760px;">
-                    <!-- Section Header -->
-                    <h5
-                        class="text-dark fw-bold text-center mb-4 d-flex align-items-center justify-content-center gap-2">
-                        <img :src="logoImage" alt="Pin Logo" width="50" height="50" class="rounded" />
-                        Nearby Dormitories
-                    </h5>
-
-                    <!-- Scrollable List -->
-                    <div class="overflow-auto" style="flex-grow: 1; max-height: 640px;">
-                        <!-- No Results -->
-                        <div v-if="nearbyDorms.length === 0" class="text-center text-muted mt-5">
-                            <em>No dormitories found near this location.</em>
-                        </div>
-
-                        <!-- Dorm Cards -->
-                        <div v-else class="d-flex flex-column align-items-center gap-3">
-                            <div v-for="dorm in nearbyDorms" :key="dorm.id" class="w-100 d-flex justify-content-center">
-                                <div class="card shadow-sm rounded-4 p-3 w-100"
-                                    style="max-width: 500px; cursor: pointer;" @click="viewDormsDetails(dorm.dormID)">
-
-                                    <!-- Card Content: stacked vertically -->
-                                    <img :src="dorm.images?.mainImage || dorm.mainImage || '/images/default-dorm.webp'"
-                                        alt="Dorm Image" class="rounded-3 border mb-3"
-                                        style="width: 100%; height: 150px; object-fit: cover;" />
-
-                                    <div class="text-center mb-3">
-                                        <h6 class="fw-semibold text-primary mb-1">{{ dorm.dormName }}</h6>
-                                        <p
-                                            class="text-secondary small mb-1 d-flex align-items-center justify-content-center gap-1">
-                                            <img :src="logoImage" alt="Pin Logo" width="18" height="18"
-                                                class="rounded" />
-                                            <span>{{ dorm.address }}</span>
-                                        </p>
-                                        <p class="mb-2 text-secondary small">{{ dorm.occupancyType }}</p>
-                                        <div v-if="isPrice" class="mb-1">
-                                            <p class="mb-0 text-dark">₱{{ dorm.price ? dorm.price.toLocaleString() : '0'
-                                                }}</p>
+                            <div class="col-sm-9">
+                                <div class="card-body p-4">
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="step-number text-dash-orange fw-bold">01</div>
+                                        <div>
+                                            <h5 class="fw-bold text-dark mb-1">Set Your Location</h5>
+                                            <p class="text-muted mb-0 lh-sm small">
+                                                <strong>Drag and drop the pin</strong> on the map to mark where you want
+                                                to stay. This helps us calculate the distance to nearby dormitories
+                                                accurately.
+                                            </p>
                                         </div>
-                                        <span class="badge bg-success bg-opacity-75">
-                                            📍 {{ parseFloat(dorm.distance_km).toFixed(2) }} km away
+                                    </div>
+
+                                    <div class="mt-3 ps-5">
+                                        <span class="badge rounded-pill bg-light text-dash-blue border py-2 px-3">
+                                            <i class="bi bi-info-circle me-1"></i> Pro-tip: Drop it near your school or
+                                            workplace!
                                         </span>
                                     </div>
-
-                                    <!-- Action Button at bottom -->
-                                    <div class="d-flex justify-content-center">
-                                        <button class="btn btn-sm btn-primary rounded-pill w-75">View</button>
-                                    </div>
-
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-</div>
+        </div>
+    </div>
+    <!-- Two-column layout -->
+    <div class="map-dashboard-container m-4 ">
+        <div class="row g-4">
+            <div class="col-xl-8 col-lg-7">
+                <div class="map-wrapper shadow-lg border-0 rounded-5 overflow-hidden">
+                    <div id="map" class="main-map-frame"></div>
+                    <div class="map-overlay-badge animate__animated animate__fadeIn">
+                        <i class="bi bi-geo-fill text-dash-orange"></i>
+                        <span>Surigao City Interactive View</span>
+                    </div>
+                </div>
+            </div>
 
-    </div> <!-- End Right Column -->
-  
+            <div class="col-xl-4 col-lg-5">
+                <div class="info-sidebar bg-white border-0 shadow-lg rounded-5 d-flex flex-column overflow-hidden">
+
+                    <div class="sidebar-header p-4 border-bottom bg-light-subtle rounded-top-5">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="brand-circle shadow-sm">
+                                <img :src="logoImage" alt="DormDash" class="img-fluid p-2" />
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-0 text-dash-blue">Nearby Stays</h5>
+                                <small class="text-muted">Based on your pinned location</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-scrollable p-3">
+                        <div v-if="nearbyDorms.length === 0" class="empty-state text-center py-5">
+                            <div class="empty-icon mb-3">📍</div>
+                            <p class="text-muted fw-medium small">No dormitories found nearby.<br>Try dragging the pin
+                                to a new area.</p>
+                        </div>
+
+                        <div v-else class="dorm-list-stack d-flex flex-column gap-3">
+                            <div v-for="dorm in nearbyDorms" :key="dorm.id" class="sidebar-card rounded-4 p-3 shadow-sm"
+                                @click="viewDormsDetails(dorm.dormID)">
+
+                                <div class="d-flex gap-3">
+                                    <div class="thumb-container position-relative">
+                                        <img :src="dorm.images?.mainImage || dorm.mainImage || '/images/default-dorm.webp'"
+                                            class="rounded-3 shadow-sm" />
+                                        <div class="distance-tag">
+                                            {{ parseFloat(dorm.distance_km).toFixed(1) }} km
+                                        </div>
+                                    </div>
+
+                                    <div class="flex-grow-1 min-w-0">
+                                        <h6 class="fw-bold text-dark text-truncate mb-1">{{ dorm.dormName }}</h6>
+                                        <div class="d-flex align-items-center gap-1 text-muted mb-2">
+                                            <i class="bi bi-geo-alt-fill x-small text-dash-orange"></i>
+                                            <span class="x-small text-truncate">{{ dorm.address }}</span>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between align-items-center mt-2">
+                                            <span v-if="isPrice" class="fw-bold text-dash-blue">
+                                                ₱{{ dorm.price ? dorm.price.toLocaleString() : '0' }}
+                                            </span>
+                                            <button class="btn btn-dash-outline-sm rounded-pill">
+                                                View Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-footer p-3 text-center border-top bg-white rounded-bottom-5">
+                        <span class="badge rounded-pill text-dark bg-light border px-3 py-2">
+                            {{ nearbyDorms.length }} Dorms available in this area
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </template>
 <script>
@@ -298,4 +334,4 @@ export default {
     }
 }
 </script>
-<style></style>
+<style scoped src="../../../../css/tenant/dormitorymap.css"></style>

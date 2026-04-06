@@ -91,7 +91,7 @@
 </table>
 
     <div class="footer">
-        &copy; {{ now()->year }} DormHub. All rights reserved.
+        &copy; {{ now()->year }} DormDash. All rights reserved.
     </div>
 </body>
 </html>

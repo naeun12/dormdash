@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your OTP for DormHub</title>
+    <title>Your OTP for DormDash</title>
     <style>
         /* Reset default styles */
         body {
@@ -70,13 +70,13 @@
         <!-- Header Section -->
         <div class="header">
             <!-- Replace with your logo URL -->
-            {{-- <img src="https://your-domain.com/images/Logo/logo.png" alt="DormHub Logo"> --}}
-            <h1 style="font-size: 24px; margin: 0;">Welcome to DormHub!</h1>
+            {{-- <img src="https://your-domain.com/images/Logo/logo.png" alt="DormDash Logo"> --}}
+            <h1 style="font-size: 24px; margin: 0;">Welcome to DormDash!</h1>
         </div>
 
         <!-- Content Section -->
         <div class="content">
-            <p>Thank you for signing up with DormHub. To verify your email address, please use the One-Time Password
+            <p>Thank you for signing up with DormDash. To verify your email address, please use the One-Time Password
                 (OTP) below:</p>
             <div class="otp-code">{{ $otp }}</div>
             <p>If you did not request this verification, please disregard this email.</p>
@@ -84,7 +84,7 @@
 
         <!-- Footer Section -->
         <div class="footer">
-            <p>&copy; 2025 DormHub. All rights reserved.</p>
+            <p>&copy; 2025 DormDash. All rights reserved.</p>
             <p>
                 If you have any questions, feel free to contact us at
                 <a href="mailto:niiinaeun@gmail.com">niiinaeun@gmail.com</a>.

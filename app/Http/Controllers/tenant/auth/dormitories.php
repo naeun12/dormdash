@@ -41,7 +41,7 @@ class dormitories extends Controller
         if (!$tenant) {
             return redirect()->route('tenant-login')->with('error', 'Landlord not found.');
         }
-        return view('tenant.auth.dormitories',['title' => 'Dormitories  - Dormhub',
+        return view('tenant.auth.dormitories',['title' => 'Dormitories  - DormDash',
         'tenant_id',$tenant,'cssPath' => asset('css/tenantpage/auth/dormitory.css')
         ,'notifications' => $notifications,
              'unread_count' => $unreadCount,

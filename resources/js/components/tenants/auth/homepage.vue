@@ -3,115 +3,93 @@
     <NotificationList ref="toastRef" />
     <!-- Floating Button -->
 
-    <div class="offcanvas offcanvas-start rounded-4" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop"
-        aria-labelledby="staticBackdropLabel">
-        <div class="offcanvas-header bg-info text-white shadow-sm">
-            <h5 class="offcanvas-title fw-bold" id="staticBackdropLabel">
-                <i class="bi bi-house-fill me-2"></i>Recommended Dorms
+    <div class="offcanvas offcanvas-start rounded-end-4 shadow-lg border-0" data-bs-backdrop="static" tabindex="-1"
+        id="staticBackdrop" aria-labelledby="staticBackdropLabel" style="width: 400px;">
+
+        <div class="offcanvas-header text-white shadow-sm py-3 px-4" style="background-color: #003C87;">
+            <h5 class="offcanvas-title fw-bold d-flex align-items-center" id="staticBackdropLabel">
+                <div class="p-2 bg-white bg-opacity-10 rounded-3 me-3">
+                    <i class="bi bi-star-fill text-warning fs-5"></i>
+                </div>
+                Recommended for You
             </h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
                 aria-label="Close"></button>
         </div>
 
-        <div class="offcanvas-body p-3 bg-light">
-            <!-- Loader -->
-            <div v-if="loading" class="d-flex justify-content-center align-items-center" style="height: 200px;">
-                <div class="spinner-border text-info" role="status" style="width: 3rem; height: 3rem;">
+        <div class="offcanvas-body p-4 bg-light">
+            <div v-if="loading" class="d-flex justify-content-center align-items-center" style="height: 300px;">
+                <div class="spinner-grow text-primary" role="status" style="width: 3rem; height: 3rem;">
                     <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
 
-            <!-- Dorm Cards -->
-            <div v-else class="d-flex flex-column gap-3 overflow-auto" style="max-height: 300vh;">
+            <div v-else class="d-flex flex-column gap-4 overflow-auto pe-2" style="max-height: calc(100vh - 120px);">
 
                 <div v-for="(dorm, index) in genderPersonalized" :key="index"
-                    class="card dorm-card shadow-sm border-0 rounded-4 overflow-hidden hover-shadow transition-fast">
+                    class="card dorm-card shadow-sm border-0 rounded-4 overflow-hidden transition-all hover-translate-y bg-white">
 
-                    <!-- Dorm Image & Price -->
                     <div class="position-relative">
-                        <img :src="dorm?.images?.mainImage || dorm?.mainImage || 'https://via.placeholder.com/320x200'"
-                            class="card-img-top" style="height: 250px; object-fit: cover;">
+                        <img :src="dorm?.images?.mainImage || dorm?.mainImage || 'https://via.placeholder.com/400x250'"
+                            class="card-img-top object-fit-cover shadow-inner" style="height: 220px;">
 
-                        <span
-                            class="position-absolute top-0 start-0 m-2 px-3 py-1 bg-primary text-white rounded shadow-sm">
-                            ₱ {{
-                                dorm?.rooms?.length
-                                    ? Math.min(...dorm.rooms.map(r => r.price)).toFixed(2)
-                            : 'N/A'
-                            }}
-                        </span>
-
+                        <div class="position-absolute bottom-0 start-0 m-3 px-3 py-2 rounded-3 shadow-sm text-white fw-bold fs-5"
+                            style="background-color: #FC7D07; backdrop-filter: blur(2px);">
+                            ₱{{dorm?.rooms?.length ? Math.min(...dorm.rooms.map(r => r.price)).toLocaleString('en-US',
+                                {minimumFractionDigits: 2}) : 'N/A' }}
+                        </div>
                     </div>
 
-                    <div class="card-body d-flex flex-column gap-2">
-                        <!-- Dorm Name & Address -->
-                        <h6 class="fw-bold text-primary text-truncate">{{ dorm.dormName }}</h6>
-                        <p class="text-muted small mb-1 text-truncate">
-                            <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ dorm.address || 'No address  available.' }}
-                        </p>
-
-                        <!-- Occupancy Type -->
-                        <span class="badge rounded-pill px-2 py-1 mb-2" :class="{
-                            'bg-primary': dorm.occupancyType.includes('Male'),
-                            'bg-pink': dorm.occupancyType.includes('Female'),
-                            'bg-warning text-dark': dorm.occupancyType.includes('Mixed')
-                        }">
-                            <i class="bi bi-people-fill me-1"></i>{{ dorm.occupancyType || 'Unspecified' }}
-                        </span>
-
-                        <!-- Amenities -->
-                        <!-- Amenities -->
-                        <div class="mb-1">
-                            <small class="fw-semibold">Amenities:</small>
-                            <div class="d-flex flex-wrap gap-1 mt-1">
-                                <template v-if="dorm.amenities && dorm.amenities.length > 0">
-                                    <span v-for="amenity in dorm.amenities" :key="amenity.id"
-                                        class="badge rounded-pill px-2 py-1 text-truncate"
-                                        :class="tenant.preferred_amenities.includes(amenity.id) ? 'bg-success text-white' : 'bg-secondary text-white'">
-                                        {{ amenity.aminityName }}
-                                    </span>
-                                </template>
-                                <span v-else class="text-muted">N/A</span>
-                            </div>
+                    <div class="card-body p-4 d-flex flex-column gap-3">
+                        <div>
+                            <h5 class="fw-bold text-dark text-truncate mb-1">{{ dorm.dormName }}</h5>
+                            <p class="text-muted small mb-0 d-flex align-items-center text-truncate">
+                                <i class="bi bi-geo-alt-fill text-danger me-2"></i>{{ dorm.address || 'Location unavailable' }}
+                            </p>
                         </div>
 
-                        <!-- Room Features -->
-                        <div class="mb-1">
-                            <small class="fw-semibold">Features:</small>
-                            <div class="d-flex flex-wrap gap-1 mt-1">
-                                <template
-                                    v-if="dorm.rooms && dorm.rooms.some(r => r.features && r.features.length > 0)">
-                                    <template v-for="room in dorm.rooms" :key="room.roomID">
-                                        <span v-for="feature in room.features" :key="feature.id"
-                                            class="badge rounded-pill px-2 py-1 text-truncate" :class="tenant.preferred_features && tenant.preferred_features.includes(feature.id)
-                                                ? 'bg-success text-white'
-                                                : 'bg-secondary text-white'">
-                                            {{ feature.featureName }}
+                        <div class="row g-2 p-2 rounded-3 bg-light border">
+                            <div class="col-12 d-flex align-items-center justify-content-between mb-1">
+                                <small class="text-muted small-caps fw-bold">Occupancy</small>
+                                <span class="badge rounded-pill px-2 py-1" :class="{
+                                    'bg-primary bg-opacity-10 text-primary': dorm.occupancyType.includes('Male'),
+                                    'bg-danger bg-opacity-10 text-danger': dorm.occupancyType.includes('Female'),
+                                    'bg-warning bg-opacity-10 text-dark': dorm.occupancyType.includes('Mixed')
+                                }">
+                                    <i class="bi bi-people-fill me-1"></i>{{ dorm.occupancyType || 'Unspecified' }}
+                                </span>
+                            </div>
+
+                            <div class="col-12 border-top pt-2">
+                                <small class="text-muted small-caps fw-bold d-block mb-2">Highlights</small>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <template v-if="dorm.amenities && dorm.amenities.length > 0">
+                                        <span v-for="amenity in dorm.amenities.slice(0, 4)" :key="amenity.id"
+                                            class="badge rounded-pill px-2 py-1 text-truncate transition-all"
+                                            :class="tenant.preferred_amenities.includes(amenity.id) ? 'bg-success text-white' : 'bg-white text-secondary border'">
+                                            {{ amenity.aminityName }}
                                         </span>
                                     </template>
-                                </template>
-                                <span v-else class="text-muted">N/A</span>
+                                    <template
+                                        v-if="dorm.rooms && dorm.rooms.some(r => r.features && r.features.length > 0)">
+                                        <template v-for="room in dorm.rooms">
+                                            <span v-for="feature in room.features.slice(0, 2)" :key="feature.id"
+                                                class="badge rounded-pill px-2 py-1 text-truncate transition-all"
+                                                :class="tenant.preferred_features && tenant.preferred_features.includes(feature.id) ? 'bg-success text-white' : 'bg-white text-secondary border'">
+                                                {{ feature.featureName }}
+                                            </span>
+                                        </template>
+                                    </template>
+                                    <span
+                                        v-if="(!dorm.amenities || dorm.amenities.length === 0) && (!dorm.rooms || !dorm.rooms.some(r => r.features))"
+                                        class="text-muted small">None listed</span>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Rules & Policies -->
-                        <div class="mb-2">
-                            <small class="fw-semibold">Rules:</small>
-                            <div class="d-flex flex-wrap gap-1 mt-1">
-                                <template v-if="dorm.rules_and_policy && dorm.rules_and_policy.length > 0">
-                                    <span v-for="rule in dorm.rules_and_policy" :key="rule.id"
-                                        class="badge rounded-pill px-2 py-1 bg-success text-white">
-                                        {{ rule.rulesName }}
-                                    </span>
-                                </template>
-                                <span v-else class="text-muted">N/A</span>
-                            </div>
-                        </div>
-
-
-                        <!-- View Button -->
-                        <button class="btn btn-info rounded-pill mt-auto" @click="viewDorms(dorm.dormID)">
-                            <i class="bi bi-box-arrow-up-right me-1"></i>View Details
+                        <button class="btn btn-lg w-100 rounded-pill fw-bold text-white shadow-sm mt-2 transition-all"
+                            style="background-color: #003C87;" @click="viewDorms(dorm.dormID)">
+                            <i class="bi bi-info-circle me-2"></i>View Property Details
                         </button>
                     </div>
                 </div>
@@ -128,25 +106,43 @@
 
 
         <!-- Welcome message -->
-        <div v-if="showafterWelcome" class="text-center text-white p-4 rounded-4 welcome-card">
-            <div class="d-flex gap-3 justify-content-center mb-3 animated-header">
-                <h1 class="display-5 fw-bold text-white mb-2" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.5);">
-                    Successfully Updated Your Preferences
-                </h1>
-                <h2 class="h3 fw-semibold text-info" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">
-                    Choose your dorm based on your preferences!
-                </h2>
-            </div>
+        <div v-if="showafterWelcome" class="welcome-container py-5 animate__animated animate__fadeIn">
+            <div class="card welcome-card border-0 shadow-lg mx-auto text-center overflow-hidden">
+                <div class="accent-bar"></div>
 
-            <p class="lead mb-2 animated-text">
-                You’ve chosen <span class="fw-bold">{{ preferredLocation }}</span> as your preferred location.
-            </p>
-            <p class="lead mb-2 animated-text" style="animation-delay: 0.3s">
-                Your preferred budget is <span class="fw-bold">₱{{ preferredPrice }}</span>.
-            </p>
-            <p class="lead mt-3 animated-text" style="animation-delay: 0.8s">
-                Let’s help you find the perfect dormitory!
-            </p>
+                <div class="card-body p-4 p-md-5">
+                    <div class="success-icon-wrapper mb-4">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+
+                    <h1 class="fw-bold h2 mb-2 text-dark">Preferences <span class="text-dash-blue">Updated!</span></h1>
+                    <p class="text-muted mb-4">We've tailored your experience based on what you need.</p>
+
+                    <hr class="my-4 opacity-25">
+
+                    <div class="row g-3 mb-4 justify-content-center">
+                        <div class="col-6 col-md-5">
+                            <div class="preference-pill">
+                                <small class="d-block text-uppercase text-muted fw-bold">Location</small>
+                                <span class="fw-bold text-dash-blue">{{ preferredLocation }}</span>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-5">
+                            <div class="preference-pill">
+                                <small class="d-block text-uppercase text-muted fw-bold">Budget Limit</small>
+                                <span class="fw-bold text-dash-orange">₱{{ preferredPrice }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 animate__animated animate__pulse animate__infinite">
+                        <p class="lead fw-semibold text-dark mb-0">
+                            Ready to find your <span class="text-dash-blue">DormDash</span> home?
+                        </p>
+                        <i class="bi bi-chevron-double-down text-dash-orange"></i>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -160,199 +156,268 @@
             <!-- Loading Spinner -->
 
             <!-- Welcome message -->
-            <div v-if="showWelcome" class="text-center text-white">
-                <div class="d-flex gap-3">
-                    <h1 class="display-4 fw-bold mb-3 text-white">Welcome to </h1>
-                    <h1 class="display-4 fw-bold mb-3 text-info">DormHub!</h1>
-
+            <div v-if="showWelcome" class="hero-section text-center py-5">
+                <div class="d-flex flex-wrap justify-content-center align-items-center gap-2 mb-4 animate-fade-in">
+                    <h1 class="display-3 fw-extrabold text-white mb-0 tracking-tight">
+                        Welcome to
+                    </h1>
+                    <h1 class="display-3 fw-extrabold mb-0 tracking-tight glow-text" style="color: #FC7D07;">
+                        DormDash!
+                    </h1>
                 </div>
-                <p class="lead mb-2">Find your perfect dormitory and book your room hassle-free.</p>
 
-                <!-- Sequential text labels -->
-                <div class="sequential-text mt-4">
-                    <span v-if="showText[0]" class="fs-4 fw-bold me-3">Find Your Dorm</span>
-                    <span v-if="showText[1]" class="fs-4 fw-bold">Book Now</span>
+                <p class="lead text-white opacity-90 mb-5 fs-4 fw-medium animate-fade-in-delayed mx-auto"
+                    style="max-width: 600px;">
+                    Find your perfect dormitory and book your room <span
+                        class="text-info border-bottom border-2 border-info">hassle-free</span>.
+                </p>
+
+                <div class="d-flex justify-content-center align-items-center gap-4 mt-5 sequential-container">
+                    <transition name="slide-up">
+                        <div v-if="showText[0]"
+                            class="step-card d-flex align-items-center gap-3 px-4 py-3 rounded-4 shadow-sm">
+                            <div class="step-number">1</div>
+                            <span class="fs-5 fw-bold text-white">Find Your Dorm</span>
+                        </div>
+                    </transition>
+
+                    <transition name="fade">
+                        <i v-if="showText[1]"
+                            class="bi bi-chevron-right text-white fs-4 opacity-50 d-none d-md-block"></i>
+                    </transition>
+
+                    <transition name="slide-up">
+                        <div v-if="showText[1]"
+                            class="step-card d-flex align-items-center gap-3 px-4 py-3 rounded-4 shadow-sm highlight-step">
+                            <div class="step-number">2</div>
+                            <span class="fs-5 fw-bold text-white">Book Now</span>
+                        </div>
+                    </transition>
                 </div>
             </div>
         </div>
 
-        <div v-if="showModal" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.6);">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content rounded-4 shadow-lg border-0">
-                    <!-- Header -->
-                    <div class="modal-header bg-gradient text-white rounded-top-4"
-                        style="background: linear-gradient(135deg, #0dcaf0, #198754);">
-                        <h5 class="modal-title fs-5 fw-bold text-black">
-                            <i class="bi bi-gear-fill me-2"></i>Set Your Preferences
-                        </h5>
-                    </div>
+            <div v-if="showModal" class="modal fade show d-block" tabindex="-1"
+                style="background-color: rgba(0, 44, 100, 0.4); backdrop-filter: blur(4px);">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content rounded-5 shadow-lg border-0 overflow-hidden">
 
-                    <!-- Body -->
-                    <div class="modal-body">
-                        <!-- Preferred Room Price -->
-                        <div class="mb-4">
-                            <label for="price" class="form-label fw-semibold">
-                                <i class="bi bi-currency-dollar me-1"></i>Preferred Room Price
-                            </label>
-                            <div class="mb-3">
-
-                                <div
-                                    class="input-group shadow-sm rounded-pill overflow-hidden border border-1 border-light">
-                                    <span class="input-group-text bg-white border-0">
-                                         ₱ 
-                                    </span>
-                                    <input type="number" id="price" v-model.number="preferredPrice"
-                                        class="form-control border-0" placeholder="Enter your budget" required
-                                        style="box-shadow: none;">
+                        <div class="modal-header border-0 p-4 text-white"
+                            style="background: linear-gradient(135deg, #003C87 0%, #002554 100%);">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-white text-black bg-opacity-20 p-2 rounded-3 me-3">
+                                    <i class="bi bi-sliders2-vertical fs-4"></i>
                                 </div>
-                                <small class="text-muted">Set your preferred monthly budget for rooms.</small>
+                                <div>
+                                    <h5 class="modal-title fw-bold mb-0">Personalize Recommendations</h5>
+                                    <small class="opacity-75">Tell us what you're looking for in a home</small>
+                                </div>
                             </div>
-
+                            <button type="button" class="btn-close btn-close-white shadow-none"
+                                @click="showModal = false"></button>
                         </div>
 
-                        <!-- Preferred Location -->
-                        <div class="mb-4">
-                            <label for="location" class="form-label fw-semibold text-black">
-                                <i class="bi bi-geo-alt-fill me-1"></i>Preferred Location
-                            </label>
-                            <div
-                                class="input-group shadow-sm rounded-pill overflow-hidden border border-1 border-light">
-                                <span class="input-group-text bg-white border-0">
-                                    <i class="bi bi-pin-map-fill text-primary"></i>
-                                </span>
-                                <select id="location" v-model="preferredLocation" class="form-select border-0" required
-                                    style="box-shadow: none;">
-                                    <option value="" disabled>Select Location</option>
-                                    <option value="Mandaue">Mandaue</option>
-                                    <option value="Lapu-Lapu">Lapu-Lapu</option>
-                                </select>
+                        <div class="modal-body p-4 p-lg-5 bg-white">
+                            <div class="row g-4">
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-dark mb-3">
+                                        <i class="bi bi-wallet2 me-2 text-primary"></i>Monthly Budget
+                                    </label>
+                                    <div class="input-group input-group-lg shadow-sm rounded-4 overflow-hidden border">
+                                        <span
+                                            class="input-group-text bg-white border-0 ps-3 fw-bold text-muted">₱</span>
+                                        <input type="number" v-model.number="preferredPrice"
+                                            class="form-control border-0 fs-6" placeholder="Maximum price...">
+                                    </div>
+                                    <div class="form-text mt-2 ps-1">We'll show rooms within this range.</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-dark mb-3">
+                                        <i class="bi bi-geo-alt me-2 text-primary"></i>Preferred Area
+                                    </label>
+                                    <div class="input-group input-group-lg shadow-sm rounded-4 overflow-hidden border">
+                                        <span class="input-group-text bg-white border-0 ps-3">
+                                            <i class="bi bi-map text-muted"></i>
+                                        </span>
+                                        <select v-model="preferredLocation"
+                                            class="form-select border-0 fs-6 shadow-none">
+                                            <option value="" disabled>Select Area</option>
+                                            <option value="Surigao">Surigao City</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <hr class="my-4 opacity-25">
+
+                                    <div class="mb-4">
+                                        <label
+                                            class="fw-bold text-dark d-flex justify-content-between align-items-center mb-3">
+                                            <span><i class="bi bi-wifi me-2 text-primary"></i>Top Amenities</span>
+                                            <span class="badge bg-light text-primary rounded-pill fw-normal">{{
+                                                preferredAmenities.length }} selected</span>
+                                        </label>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <button v-for="amenity in aminitiesList" :key="amenity.id"
+                                                @click="toggleAmenity(amenity.id)"
+                                                class="btn tag-button rounded-pill px-3 py-2 transition-all shadow-sm"
+                                                :class="preferredAmenities.includes(amenity.id) ? 'tag-active' : 'tag-inactive'">
+                                                <i class="bi bi-check2-circle me-1"
+                                                    v-if="preferredAmenities.includes(amenity.id)"></i>
+                                                {{ amenity.aminityName }}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="fw-bold text-dark mb-3">
+                                            <i class="bi bi-door-open me-2 text-primary"></i>Room Features
+                                        </label>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <button v-for="feature in featuresList" :key="feature.id"
+                                                @click="toggleFeature(feature.id)"
+                                                class="btn tag-button rounded-pill px-3 py-2 transition-all shadow-sm"
+                                                :class="preferredFeature.includes(feature.id) ? 'tag-active' : 'tag-inactive'">
+                                                {{ feature.featureName }}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <label class="fw-bold text-dark mb-3">
+                                            <i class="bi bi-shield-check me-2 text-primary"></i>House Rules Preference
+                                        </label>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <button v-for="rule in rulesList" :key="rule.id"
+                                                @click="toggleRule(rule.id)"
+                                                class="btn tag-button rounded-pill px-3 py-2 transition-all shadow-sm"
+                                                :class="preferredRules.includes(rule.id) ? 'tag-active-orange' : 'tag-inactive'">
+                                                {{ rule.rulesName }}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <small class="text-muted">Choose the area you prefer for your room.</small>
                         </div>
 
-
-                        <!-- Amenities -->
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">
-                                <i class="bi bi-house-fill me-1"></i>Amenities
-                            </label>
-                            <div class="d-flex flex-wrap gap-2 p-3 border rounded-3 bg-light"
-                                style="max-height: 180px; overflow-y: auto;">
-                                <button v-for="amenity in aminitiesList" :key="amenity.id" type="button"
-                                    class="btn btn-sm rounded-pill px-3 py-1 shadow-sm"
-                                    :class="preferredAmenities.includes(amenity.id) ? 'btn-success text-white' : 'btn-outline-secondary'"
-                                    @click="toggleAmenity(amenity.id)">
-                                    <i class="bi bi-check-circle me-1"
-                                        v-if="preferredAmenities.includes(amenity.id)"></i>
-                                    {{ amenity.aminityName }}
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Room Features -->
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">
-                                <i class="bi bi-grid-fill me-1"></i>Room Features
-                            </label>
-                            <div class="d-flex flex-wrap gap-2 p-3 border rounded-3 bg-light"
-                                style="max-height: 180px; overflow-y: auto;">
-                                <button v-for="feature in featuresList" :key="feature.id" type="button"
-                                    class="btn btn-sm rounded-pill px-3 py-1 shadow-sm"
-                                    :class="preferredFeature.includes(feature.id) ? 'btn-success text-white' : 'btn-outline-danger'"
-                                    @click="toggleFeature(feature.id)">
-                                    <i class="bi bi-check-circle me-1" v-if="preferredFeature.includes(feature.id)"></i>
-                                    {{ feature.featureName }}
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Rules & Policies -->
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">
-                                <i class="bi bi-card-checklist me-1"></i>Rules & Policies
-                            </label>
-                            <div class="d-flex flex-wrap gap-2 p-3 border rounded-3 bg-light"
-                                style="max-height: 180px; overflow-y: auto;">
-                                <button v-for="rule in rulesList" :key="rule.id" type="button"
-                                    class="btn btn-sm rounded-pill px-3 py-1 shadow-sm"
-                                    :class="preferredRules.includes(rule.id) ? 'btn-success text-white' : 'btn-outline-info'"
-                                    @click="toggleRule(rule.id)">
-                                    <i class="bi bi-check-circle me-1" v-if="preferredRules.includes(rule.id)"></i>
-                                    {{ rule.rulesName }}
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Save Button -->
-                        <div class="d-flex justify-content-end mt-3">
-                            <button @click="updateSubmitPersonalized" class="btn btn-success btn-lg shadow-sm">
-                                <i class="bi bi-check-circle me-1"></i>Save Preferences
+                        <div class="modal-footer border-0 p-4 bg-light">
+                            <button type="button" class="btn btn-link text-muted fw-bold text-decoration-none me-auto"
+                                @click="showModal = false">
+                                Maybe Later
+                            </button>
+                            <button @click="updateSubmitPersonalized"
+                                class="btn btn-lg rounded-4 px-5 py-3 fw-bold text-white shadow-orange transition-all"
+                                style="background-color: #FC7D07; border: none;">
+                                Update My Results <i class="bi bi-arrow-right ms-2"></i>
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+      
     </div>
 
     <!-- Top Navigation -->
-    <div class="bg-white m-3 py-3 px-2 text-center shadow-sm border-custom rounded-4">
-        <ul class="nav justify-content-center gap-3 flex-wrap">
+    <div class="quick-actions-container mx-3 my-4 p-3 shadow-sm rounded-4 bg-white border border-light">
+        <p class="text-start small fw-bold text-muted text-uppercase mb-3 px-2 tracking-wider">Quick Services</p>
 
-            <li class="nav-item">
-                <a href="#" @click="viewBooking" class="nav-link nav-feature-link d-flex align-items-center gap-2">
-                    <i class="bi bi-calendar-check fs-5"></i>
-                    <span>View Bookings</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" @click="viewPayment" class="nav-link nav-feature-link d-flex align-items-center gap-2">
-                    <i class="bi bi-cash-coin fs-5"></i>
-                    <span>Next Payment</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" @click="viewMyrooms" class="nav-link nav-feature-link d-flex align-items-center gap-2">
-                    <i class="bi bi-house-door fs-5"></i>
-                    <span>My Rooms</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" @click="viewReservation" class="nav-link nav-feature-link d-flex align-items-center gap-2">
-                    <i class="bi bi-journal-text fs-5"></i>
-                    <span>My Reservations</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" @click="viewnotifications"
-                    class="nav-link nav-feature-link d-flex align-items-center gap-2">
-                    <i class="bi bi-bell fs-5"></i>
-                    <span>Notifications</span>
-                </a>
-            </li>
+        <div class="actions-grid">
+            <button @click="viewBooking" class="action-card">
+                <div class="icon-wrapper bg-blue-soft">
+                    <i class="bi bi-calendar2-check text-blue"></i>
+                </div>
+                <span class="action-label">Bookings</span>
+            </button>
 
-        </ul>
+            <button @click="viewPayment" class="action-card">
+                <div class="icon-wrapper bg-orange-soft">
+                    <i class="bi bi-credit-card text-orange"></i>
+                </div>
+                <span class="action-label">Payments</span>
+            </button>
 
+            <button @click="viewMyrooms" class="action-card">
+                <div class="icon-wrapper bg-success-soft">
+                    <i class="bi bi-door-open text-success"></i>
+                </div>
+                <span class="action-label">My Rooms</span>
+            </button>
+
+            <button @click="viewReservation" class="action-card">
+                <div class="icon-wrapper bg-info-soft">
+                    <i class="bi bi-bookmark-star text-info"></i>
+                </div>
+                <span class="action-label">Reservations</span>
+            </button>
+
+            <button @click="viewnotifications" class="action-card position-relative">
+                <div class="icon-wrapper bg-purple-soft">
+                    <i class="bi bi-bell text-purple"></i>
+                </div>
+                <span class="action-label">Alerts</span>
+            </button>
+        </div>
     </div>
     <!-- Content Section -->
-    <div class="container-fluid m-2 py-5">
+    <div class="map-section px-3 py-5">
+        <div class="text-center mb-5 animate-fade-in">
+            <span class="badge rounded-pill explorer-badge mb-2">
+                <i class="bi bi-geo-alt-fill me-1 text-dash-orange"></i> Local Explorer
+            </span>
+            <h2 class="fw-bold display-5 mb-0">Find Your Stay in <span class="text-dash-blue">Surigao City</span></h2>
+            <p class="text-muted tracking-wider mt-2">Discover verified dormitories across the City of Island Adventures
+            </p>
+        </div>
 
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card map-container border-0 shadow-lg rounded-5 overflow-hidden">
+                        <div
+                            class="card-header bg-white border-0 p-4 d-flex align-items-center justify-content-between flex-wrap gap-3">
+                            <div class="d-flex align-items-center">
+                                <div class="icon-box bg-blue-soft me-3">
+                                    <i class="bi bi-map-fill text-dash-blue"></i>
+                                </div>
+                                <div>
+                                    <h4 class="fw-bold mb-0">City Map Overview</h4>
+                                    <small class="text-muted">
+                                        <span class="pulse-dot"></span> Currently showing 15+ verified properties
+                                    </small>
+                                </div>
+                            </div>
 
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-dash-blue rounded-pill px-4 shadow-sm">
+                                    <i class="bi bi-list-ul me-1"></i> View All Listings
+                                </button>
+                                <button class="btn btn-outline-dash-orange rounded-pill px-3">
+                                    <i class="bi bi-filter"></i>
+                                </button>
+                            </div>
+                        </div>
 
-        <div class="row g-4">
-            <!-- Mandaue Map -->
-            <div class="col-md-6">
-                <div class="p-4 rounded-4 shadow-sm map-card">
-                    <h2 class="h5 fw-bold mb-3 text-center text-info">Dormitories in Mandaue City</h2>
-                    <div id="map-mandaue" class="rounded-3" style="height: 400px;"></div>
-                </div>
-            </div>
+                        <div class="card-body p-0 position-relative">
+                            <div id="map-surigao" class="map-frame" style="height: 550px;">
+                            </div>
 
-            <!-- Lapu-Lapu Map -->
-            <div class="col-md-6">
-                <div class="p-4 rounded-4 shadow-sm map-card">
-                    <h2 class="h5 fw-bold mb-3 text-center text-info">Dormitories in Lapu-Lapu City</h2>
-                    <div id="map" class="rounded-3" style="height: 400px;"></div>
+                            <div class="map-controls shadow">
+                                <div class="control-item border-bottom">
+                                    <i class="bi bi-plus-lg"></i>
+                                </div>
+                                <div class="control-item">
+                                    <i class="bi bi-dash-lg"></i>
+                                </div>
+                            </div>
+
+                            <div class="map-floating-label shadow-sm animate-bounce">
+                                <i class="bi bi-cursor-fill me-1"></i> Drag to explore Surigao City
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -365,76 +430,73 @@
     </div>
 
 
-    <div class="m-2 py-4">
-        <div class="row g-4">
-            <!-- Large Left Card -->
-            <div class="col-12 col-md-6" v-if="topDorms.length > 0">
-                <div class="card h-100 dorm-card text-white border-0 overflow-hidden shadow-lg"
-                    style="border-radius: 20px; cursor: pointer; position: relative; height: 400px;">
-                    <div :style="{
-                        backgroundImage: `url(${topDorms[0].dorm.images?.mainImage || '/default-image.jpg'})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        height: '100%',
-                        width: '100%',
-                        borderRadius: '20px',
-                        filter: 'brightness(0.7)'
-                    }"></div>
-                    <div style="position: absolute; bottom: 20px; left: 20px; z-index: 10;">
-                        <h4 class="fw-bold">{{ topDorms[0].dorm.dormName }}</h4>
-                        <p class="mb-1">{{ topDorms[0].dorm.address }}</p>
-                        <p class="mb-1">⭐ {{ Number(topDorms[0].avg_rating).toFixed(1) }}</p>
-                        <a @click="viewDorms(topDorms[0].dorm.dormID)" class="btn btn-outline-light btn-sm">View
-                            Details</a>
+    <div class="top-rated-section m-2 py-5">
+        <div class="section-header mb-4 px-2 d-flex justify-content-between align-items-end">
+            <div>
+                <h2 class="fw-bold mb-0">Top <span class="text-dash-orange">Rated</span> Dorms</h2>
+                <p class="text-muted mb-0">The most loved stays in Surigao City</p>
+            </div>
+            <a href="#" class="btn btn-link text-dash-blue fw-bold text-decoration-none">View All <i
+                    class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-lg-7 col-md-12" v-if="topDorms.length > 0">
+                <div class="card featured-card border-0 shadow-sm h-100 position-relative overflow-hidden bento-item"
+                    @click="viewDorms(topDorms[0].dorm.dormID)">
+                    <div class="bento-image"
+                        :style="{ backgroundImage: `url(${topDorms[0].dorm.images?.mainImage || '/default-image.jpg'})` }">
+                    </div>
+                    <div class="bento-overlay"></div>
+
+                    <div class="bento-content p-4">
+                        <span class="badge glass-badge mb-2"><i class="bi bi-trophy-fill text-warning me-1"></i> Top
+                            Choice</span>
+                        <h3 class="fw-bold text-white">{{ topDorms[0].dorm.dormName }}</h3>
+                        <p class="text-white-50 mb-3"><i class="bi bi-geo-alt me-1"></i> {{ topDorms[0].dorm.address }}
+                        </p>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rating-pill">
+                                <i class="bi bi-star-fill me-1"></i> {{ Number(topDorms[0].avg_rating).toFixed(1) }}
+                            </div>
+                            <span class="btn btn-light btn-sm rounded-pill px-3">Details</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-
-            <!-- Right Column -->
-            <div class="col-12 col-md-6">
-                <!-- Second Card -->
-                <div class="card mb-4 dorm-card text-white border-0 overflow-hidden shadow" v-if="topDorms.length > 1"
-                    style="border-radius: 20px; height: 190px; position: relative;">
-                    <div :style="{
-                        backgroundImage: `url(${topDorms[1].dorm.images?.mainImage || '/default-image.jpg'})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        height: '100%',
-                        width: '100%',
-                        borderRadius: '20px',
-                        filter: 'brightness(0.7)'
-                    }"></div>
-                    <div style="position: absolute; bottom: 10px; left: 15px; z-index: 10;">
-                        <h5 class="fw-bold mb-1">{{ topDorms[1].dorm.dormName }}</h5>
-                        <p class="mb-1">{{ topDorms[1].dorm.address }}</p>
-                        <p class="mb-0">⭐ {{ Number(topDorms[1].avg_rating).toFixed(1) }}</p>
-                        <a @click="viewDorms(topDorms[1].dorm.dormID)"
-                            class="btn btn-outline-light btn-sm mt-1">View</a>
-                    </div>
-                </div>
-
-
-                <!-- Two Smaller Cards -->
+            <div class="col-lg-5 col-md-12">
                 <div class="row g-3">
-                    <div class="col-12 col-md-6" v-for="(dorm, index) in topDorms.slice(2, 4)" :key="dorm.fkdormID">
-                        <div class="card dorm-card text-white border-0 overflow-hidden shadow-sm"
-                            style="border-radius: 15px; height: 140px; position: relative;">
-                            <div :style="{
-                                backgroundImage: `url(${dorm.dorm.images?.mainImage || '/default-image.jpg'})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                height: '100%',
-                                width: '100%',
-                                borderRadius: '15px',
-                                filter: 'brightness(0.7)'
-                            }"></div>
-                            <div style="position: absolute; bottom: 10px; left: 10px; z-index: 10;">
-                                <h6 class="fw-bold mb-0">{{ dorm.dorm.dormName }}</h6>
-                                <p class="mb-0 text-truncate">{{ dorm.dorm.address }}</p>
-                                <p class="mb-0">⭐ {{ Number(dorm.avg_rating).toFixed(1) }}</p>
-                                <a @click="viewDorms(dorm.dorm.dormID)"
-                                    class="btn btn-outline-light btn-sm mt-1">View</a>
+                    <div class="col-12" v-if="topDorms.length > 1">
+                        <div class="card secondary-card border-0 shadow-sm position-relative overflow-hidden bento-item"
+                            @click="viewDorms(topDorms[1].dorm.dormID)">
+                            <div class="bento-image"
+                                :style="{ backgroundImage: `url(${topDorms[1].dorm.images?.mainImage || '/default-image.jpg'})` }">
+                            </div>
+                            <div class="bento-overlay"></div>
+                            <div class="bento-content p-3">
+                                <h5 class="fw-bold text-white mb-1">{{ topDorms[1].dorm.dormName }}</h5>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="small text-white-50"><i class="bi bi-star-fill text-warning"></i> {{
+                                        Number(topDorms[1].avg_rating).toFixed(1) }}</span>
+                                    <span class="btn btn-glass-sm">View</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6" v-for="(dorm, index) in topDorms.slice(2, 4)" :key="dorm.fkdormID">
+                        <div class="card mini-card border-0 shadow-sm position-relative overflow-hidden bento-item"
+                            @click="viewDorms(dorm.dorm.dormID)">
+                            <div class="bento-image"
+                                :style="{ backgroundImage: `url(${dorm.dorm.images?.mainImage || '/default-image.jpg'})` }">
+                            </div>
+                            <div class="bento-overlay"></div>
+                            <div class="bento-content p-3 text-center">
+                                <div class="mini-rating mb-1">
+                                    <i class="bi bi-star-fill"></i> {{ Number(dorm.avg_rating).toFixed(1) }}
+                                </div>
+                                <h6 class="fw-bold text-white mb-0 text-truncate">{{ dorm.dorm.dormName }}</h6>
                             </div>
                         </div>
                     </div>
@@ -444,21 +506,25 @@
     </div>
     <!-- Fixed Bottom-Right Button -->
     <!-- Floating Button -->
-    <button type="button" class="btn btn-gradient btn-lg rounded-pill shadow-lg d-flex align-items-center gap-2"
-        style="position: fixed; bottom:90px; right: 30px; z-index: 1100; background: linear-gradient(135deg, #0dcaf0, #198754); color: #fff; font-weight: 600;"
-        data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
-        <i class="bi bi-house-fill fs-5"></i>
-        Recommended Dorms
-    </button>
+    <div class="fixed-actions-container">
 
-
-    <div v-if="isPersonalized === true">
-        <button @click="openPreferences"
-            class="btn btn-success btn-lg rounded-pill shadow-lg d-flex align-items-center justify-content-center gap-2 position-fixed"
-            style="bottom: 20px; right: 20px; z-index: 1100;">
-            <i class="bi bi-gear-fill fs-5"></i>
-            Update Your Preferences
+        <button type="button" class="btn-dash-float mb-3 shadow-lg animate__animated animate__fadeInRight"
+            data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
+            <div class="float-content">
+                <i class="bi bi-stars"></i>
+                <span class="btn-text">Recommended</span>
+            </div>
         </button>
+
+        <div v-if="isPersonalized === true" class="animate__animated animate__fadeInUp">
+            <button @click="openPreferences" class="btn-dash-sub-float shadow-lg">
+                <div class="float-content">
+                    <i class="bi bi-sliders2-vertical"></i>
+                    <span class="btn-text">Preferences</span>
+                </div>
+            </button>
+        </div>
+
     </div>
 
 
@@ -566,8 +632,8 @@ export default {
         initMap() {
             this.tenant_id = window.tenant_id;
 
-            const lapuLapu = { lat: 10.3090, lng: 123.9494 };
-            const mandaue = { lat: 10.3339, lng: 123.9222 };
+            // Surigao City Coordinates
+            const surigaoCity = { lat: 9.7915, lng: 125.4953 };
 
             const customStyle = [
                 {
@@ -577,32 +643,23 @@ export default {
                 }
             ];
 
-            const mapLapu = new google.maps.Map(document.getElementById("map"), {
-                zoom: 13,
-                center: lapuLapu,
-                draggable: false,
-                disableDoubleClickZoom: true,
-                mapTypeControl: false,
-                fullscreenControl: false,
-                mapTypeId: 'terrain',
-                styles: customStyle
-            });
-
-            const mapMandaue = new google.maps.Map(document.getElementById("map-mandaue"), {
+            // Initialize Surigao Map
+            const mapSurigao = new google.maps.Map(document.getElementById("map-surigao"), {
                 zoom: 14,
-                center: mandaue,
-                draggable: false,
-                disableDoubleClickZoom: true,
+                center: surigaoCity,
+                draggable: true, // Gihimo nakong true para ma-explore sa user
+                disableDoubleClickZoom: false,
                 mapTypeControl: false,
-                fullscreenControl: false,
-                mapTypeId: 'terrain',
+                fullscreenControl: true,
+                mapTypeId: 'roadmap', // 'roadmap' kasagaran mas limpyo tan-awon sa city
                 styles: customStyle
             });
 
             const infoWindow = new google.maps.InfoWindow();
 
-            // Fetch Lapu-Lapu Dorms
-            axios.get('/tenant/dorms/lapu-lapu')
+            // Fetch Surigao Dorms
+            // Siguroha nga ang imong backend route kay '/tenant/dorms/surigao'
+            axios.get('/tenant/dorms/surigao')
                 .then(response => {
                     response.data.forEach(dorm => {
                         const marker = new google.maps.Marker({
@@ -610,116 +667,51 @@ export default {
                                 lat: parseFloat(dorm.latitude),
                                 lng: parseFloat(dorm.longitude)
                             },
-                            map: mapLapu,
-                            title: dorm.dorm_name, // Shown on hover
+                            map: mapSurigao,
+                            title: dorm.dorm_name,
                             icon: {
                                 url: '/images/tenant/allimagesResouces/dormmap.webp',
-                                scaledSize: new google.maps.Size(40, 40)
-                            }
-                        });
-
-                        const content = `
-    <div style="
-        width: 250px;
-        height: 250px;
-        border-radius: 12px;
-        overflow: hidden;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        transition: transform 0.3s ease;
-        background: #fefefe;
-        display: flex;
-        flex-direction: column;">
-        
-        <img src="${dorm.images.mainImage}" alt="Dorm Image"
-            style="width: 100%; height: 150px; object-fit: cover; border-bottom: 1px solid #ddd;">
-        
-        <div class="mb-3" style=" flex: 1;">
-            <div style="font-size: 17px; font-weight: 600; color: #2c3e50;">
-                🏠 ${dorm.dormName}
-            </div>
-            <div class="mt-2">
-                <a href="/room-details/${dorm.dormID}/${this.tenant_id}" class="btn btn-primary w-100" style="font-size: 14px;">View Details</a>
-            </div>
-        </div>
-    </div>
-`;
-
-
-                        marker.addListener("click", () => {
-                            infoWindow.setContent(content);
-                            infoWindow.open(mapLapu, marker);
-                        });
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching Lapu-Lapu dorms:', error);
-                });
-
-            // Fetch Mandaue Dorms
-            axios.get('/tenant/dorms/mandaue')
-                .then(response => {
-                    response.data.forEach(dorm => {
-                        const marker = new google.maps.Marker({
-                            position: {
-                                lat: parseFloat(dorm.latitude),
-                                lng: parseFloat(dorm.longitude)
+                                scaledSize: new google.maps.Size(45, 45) // Slightly larger for better visibility
                             },
-                            map: mapMandaue,
-                            title: dorm.dorm_name, // Shown on hover
-                            icon: {
-                                url: '/images/tenant/allimagesResouces/dormmap.webp',
-                                scaledSize: new google.maps.Size(40, 40)
-                            }
+                            animation: google.maps.Animation.DROP
                         });
 
                         const content = `
-                      <div style="
-        width: 250px;
-        height: 250px;
-        border-radius: 12px;
-        overflow: hidden;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        transition: transform 0.3s ease;
-        background: #fefefe;
-        display: flex;
-        flex-direction: column;">
-
-        <img src="${dorm.images.mainImage}" alt="Dorm Image"
-            style="width: 100%; height: 150px; object-fit: cover; border-bottom: 1px solid #ddd;">
-        
-        <div class="mb-3" style=" flex: 1;">
-            <div style="font-size: 17px; font-weight: 600; color: #2c3e50;">
-                🏠 ${dorm.dormName}
-            </div>
-            <div class="mt-2">
-                <a href="/room-details/${dorm.dormID}/${this.tenant_id}" class="btn btn-primary w-100" style="font-size: 14px;">View Details</a>
-            </div>
-        </div>
-    </div>
-`;
+                    <div style="width: 220px; font-family: 'Poppins', sans-serif; padding: 5px;">
+                        <img src="${dorm.images.mainImage}" alt="${dorm.dormName}"
+                            style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;">
+                        <div style="font-weight: 700; color: #003C87; font-size: 16px; margin-bottom: 4px;">
+                            🏠 ${dorm.dormName}
+                        </div>
+                        <p style="font-size: 12px; color: #666; margin-bottom: 12px;">Verified Dormitory in Surigao</p>
+                        <a href="/room-details/${dorm.dormID}/${this.tenant_id}" 
+                           style="display: block; text-align: center; background: #FC7D07; color: white; 
+                                  text-decoration: none; padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 600;">
+                            View Details
+                        </a>
+                    </div>
+                `;
 
                         marker.addListener("click", () => {
                             infoWindow.setContent(content);
-                            infoWindow.open(mapMandaue, marker);
+                            infoWindow.open(mapSurigao, marker);
                         });
                     });
                 })
                 .catch(error => {
-                    console.error('Error fetching Mandaue dorms:', error);
+                    console.error('Error fetching Surigao dorms:', error);
                 });
         },
+
         async fetchTopRatedDorms() {
             try {
                 const response = await axios.get('/api/top-rated-dorms');
-                // Convert avg_rating to number
                 this.topDorms = response.data.map(dorm => ({
                     ...dorm,
                     avg_rating: Number(dorm.avg_rating)
                 }));
             } catch (error) {
-                console.error(error);
+                console.error('Error fetching top rated:', error);
             }
         },
         async getTenant() { 
@@ -857,100 +849,6 @@ export default {
     },
 }
 </script>
-<style scoped>
-.welcome-section {
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(11, 166, 177, 0.5));
-}
+<style scoped src="../../../../css/tenant/homepage.css">
 
-
-.sequential-text span {
-    opacity: 0;
-    transform: translateY(-10px);
-    animation: textFadeIn 0.5s forwards;
-}
-
-.sequential-text span:nth-child(1) {
-    animation-delay: 0.3s;
-}
-
-.sequential-text span:nth-child(2) {
-    animation-delay: 0.6s;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes textFadeIn {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-
-/* Header animation */
-.animated-header {
-    opacity: 0;
-    transform: translateY(-20px);
-    animation: fadeSlideIn 0.6s ease forwards;
-}
-
-/* Text sequential fade-in */
-.animated-text {
-    opacity: 0;
-    transform: translateY(10px);
-    animation: textFadeIn 0.6s forwards;
-}
-
-/* Keyframes */
-@keyframes fadeSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes textFadeIn {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Sequential animation using delay */
-.animated-text:nth-child(1) {
-    animation-delay: 0.2s;
-}
-
-.animated-text:nth-child(2) {
-    animation-delay: 0.5s;
-}
-
-.animated-text:nth-child(3) {
-    animation-delay: 0.8s;
-}
-.hover-shadow:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
-    transform: translateY(-2px);
-    transition: all 0.2s ease;
-}
-
-.card-body .badge {
-    font-size: 0.75rem;
-    max-width: 100%;
-}
 </style>

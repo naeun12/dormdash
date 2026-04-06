@@ -2,16 +2,28 @@
     <Loader ref="loader" />
     <NotificationList ref="toastRef" />
 
-    <div class="mt-5 py-3 px-5 d-flex justify-content-end align-items-end">
-        <button class="custom-btn" @click="viewPayment">View Payments History</button>
+    <div class="mt-5 py-3 px-5 d-flex justify-content-end align-items-center">
+        <button class="custom-btn" @click="viewPayment">
+            <span>View Payments History</span>
+            <i class="bi bi-arrow-right-short fs-5"></i>
+        </button>
     </div>
-    <div v-if="rooms.length === 0"
-        class="text-center p-5 bg-light rounded-4 shadow-lg position-relative overflow-hidden">
+    <div v-if="rooms.length === 0" class="empty-state-container text-center p-5 mx-3 mt-4">
+        <div class="py-4">
+            <div class="empty-icon-wrapper shadow-sm">
+                <i class="bi bi-house-exclamation fs-1"></i>
+            </div>
 
+            <h4 class="empty-title mb-2">No Room Found</h4>
+            <p class="empty-text mb-4">
+                It looks like you haven't booked a space yet.
+                Explore our curated dormitories to find your next home!
+            </p>
 
-        <h4 class="text-muted fw-bold mb-3">No Room found</h4>
-        <p class="text-muted fs-6 mb-4">You haven't made any Room yet. Explore dormitories and find your perfect
-            room!</p>
+            <button class="btn-explore shadow-sm" @click="$router.push('/explore')">
+                Explore Dormitories
+            </button>
+        </div>
     </div>
     <div class="container-fluid py-4" :class="{ 'card-slide': animate }"
         v-for="tenant in rooms.slice(currentIndex, currentIndex + 1)" :key="tenant.roomID">
@@ -20,52 +32,73 @@
             <div class="row row-cols-1 row-cols-md-3 g-4">
                 <!-- Left Card -->
                 <div class="col d-flex">
-                    <div class="card shadow-sm border-0 w-100" style="border: 1px solid #4edce2;">
-                        <div class="card-body text-center" style="border: 1px solid #4edce2;">
-                            <img :src="tenant.pictureID" class="rounded-circle mb-3 border border-2 border-primary"
-                                width="100" height="100" alt="User Image" />
-                            <h5 class="fw-bold mb-1">{{ tenant.firstname }} {{
-                                tenant.lastname }}</h5>
-                            <span v-if="tenant.status != 'pending'" class="badge rounded-pill px-3 py-2" :class="{
-                                'bg-success text-white': tenant.status === 'active',
-                                'bg-secondary text-white': tenant.status === 'moved_out',
-                                'bg-warning text-dark': tenant.status === 'pending_moveout',
-                                'bg-info text-white': tenant.status === 'transferring',
-                            }">
-                                {{ tenant.status?.replace('_', ' ').toUpperCase() }}
-                            </span>
-                            <span v-if="tenant.status === 'pending'" class="text-success d-block mt-2">
-                                <i class="bi bi-exclamation-triangle-fill me-1"></i>
-                                Note: Your reservation is pending. Please wait for your move-in date and present your
-                                receipt to the landlord.
-                            </span>
+                    <div class="card modern-profile-card h-100 w-100 p-3">
+                        <div class="card-body text-center p-4">
 
-
-                            <ul class="list-group list-group-flush text-start small">
-                                <li class="list-group-item">
-                                    <i class="bi bi-gender-male me-2 text-primary"></i>
-                                    <strong>Gender:</strong> {{ tenant.gender }}
-                                </li>
-                                <li class="list-group-item">
-                                    <i class="bi bi-person-fill me-2 text-secondary"></i>
-                                    <strong>Age:</strong> {{ tenant.age }}
-                                </li>
-                                <li class="list-group-item">
-                                    <i class="bi bi-envelope-fill me-2 text-danger"></i>
-                                    <strong>Email:</strong> {{ tenant.contactEmail }}
-                                </li>
-                                <li class="list-group-item">
-                                    <i class="bi bi-telephone-fill me-2 text-success"></i>
-                                    <strong>Contact #:</strong> {{ tenant.contactNumber }}
-                                </li>
-                            </ul>
-                            <div v-if="tenant.status === 'pending'">
-                                <button class="custom-btn" @click="viewReceipt(tenant.approvedID)">
-                                    <i class="bi bi-file-earmark-pdf"></i> View Receipt
-                                </button>
+                            <div class="profile-avatar-wrapper mb-3">
+                                <img :src="tenant.pictureID" class="profile-avatar-img" alt="User Image" />
+                                <div class="status-dot shadow-sm" :class="{
+                                    'bg-success': tenant.status === 'active',
+                                    'bg-secondary': tenant.status === 'moved_out',
+                                    'bg-warning': tenant.status === 'pending_moveout',
+                                    'bg-info': tenant.status === 'transferring',
+                                }"></div>
                             </div>
 
+                            <h5 class="tenant-name mb-1">{{ tenant.firstname }} {{ tenant.lastname }}</h5>
+                            <p class="text-muted small mb-3">ID: #{{ tenant.approvedID }}</p>
 
+                            <div class="mb-4">
+                                <span v-if="tenant.status != 'pending'" class="status-pill" :class="{
+                                    'bg-success-subtle text-success border border-success-subtle': tenant.status === 'active',
+                                    'bg-secondary-subtle text-secondary border border-secondary-subtle': tenant.status === 'moved_out',
+                                    'bg-warning-subtle text-warning-emphasis border border-warning-subtle': tenant.status === 'pending_moveout',
+                                    'bg-info-subtle text-info-emphasis border border-info-subtle': tenant.status === 'transferring',
+                                }">
+                                    {{ tenant.status?.replace('_', ' ').toUpperCase() }}
+                                </span>
+                            </div>
+
+                            <div v-if="tenant.status === 'pending'"
+                                class="alert alert-warning border-0 small rounded-4 p-3 mb-4 shadow-sm text-start">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-info-circle-fill fs-5 me-2 text-warning-emphasis"></i>
+                                    <div>
+                                        <strong>Reservation pending.</strong><br>
+                                        Present receipt to landlord on move-in.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modern-list-group text-start mb-4">
+                                <div class="modern-list-item">
+                                    <span class="modern-list-label"><i
+                                            class="bi bi-gender-ambiguous me-2 text-primary"></i>Gender</span>
+                                    <span class="modern-list-value">{{ tenant.gender }}</span>
+                                </div>
+                                <div class="modern-list-item">
+                                    <span class="modern-list-label"><i
+                                            class="bi bi-person-fill me-2 text-secondary"></i>Age</span>
+                                    <span class="modern-list-value">{{ tenant.age }} yrs</span>
+                                </div>
+                                <div class="modern-list-item border-0">
+                                    <span class="modern-list-label"><i
+                                            class="bi bi-envelope-fill me-2 text-danger"></i>Email</span>
+                                    <span class="modern-list-value text-truncate ms-3">{{ tenant.contactEmail }}</span>
+                                </div>
+                                <div class="modern-list-item d-none">
+                                    <span class="modern-list-label"><i
+                                            class="bi bi-telephone-fill me-2 text-success"></i>Contact</span>
+                                    <span class="modern-list-value">{{ tenant.contactNumber }}</span>
+                                </div>
+                            </div>
+
+                            <div v-if="tenant.status === 'pending'" class="mt-4">
+                                <button class="btn btn-dormdash-blue w-100 shadow-sm"
+                                    @click="viewReceipt(tenant.approvedID)">
+                                    <i class="bi bi-file-earmark-pdf-fill me-2"></i> View Receipt
+                                </button>
+                            </div>
 
                         </div>
                     </div>
@@ -73,84 +106,88 @@
 
                 <!-- Middle Card -->
                 <div class="col d-flex">
-                    <div class="card shadow-sm border-0 w-100">
-                        <img :src="tenant.room?.roomImages" class="card-img-top"
-                            style="height: 200px; object-fit: cover;" alt="Room Image" />
+                    <div class="card modern-room-card w-100 border-0">
+                        <div class="room-image-container">
+                            <img :src="tenant.room?.roomImages" class="card-img-top"
+                                style="height: 220px; object-fit: cover;" alt="Room Image" />
+                            <div class="room-price-float">
+                                ₱{{ tenant.room?.price }}<span class="small fw-normal text-muted">/mo</span>
+                            </div>
+                        </div>
 
-                        <div class="card-body" style="border: 1px solid #4edce2;">
-                            <h5 class="card-title mb-1">Room #{{ tenant.room?.roomNumber }}</h5>
-
-                            <div class="mb-2">
-                                <span class="badge bg-primary me-1">{{ tenant.room?.roomType }}</span>
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-extrabold mb-0" style="color: #1e293b;">Room #{{ tenant.room?.roomNumber
+                                    }}</h5>
+                                <span class="badge rounded-pill bg-primary-subtle text-primary px-3 py-2">
+                                    {{ tenant.room?.roomType }}
+                                </span>
                             </div>
 
-                            <ul class="list-group list-group-flush small">
-                                <li class="list-group-item">
-                                    <i class="bi bi-currency-peso text-success me-2"></i>
-                                    <strong>Monthly Payment:</strong> ₱{{ tenant.room?.price }}
-                                </li>
-                                <li class="list-group-item">
-                                    <i class="bi bi-house-door-fill text-info me-2"></i>
-                                    <strong>Furnishing:</strong> {{ tenant.room?.furnishing_status }}
-                                </li>
-                                <li class="list-group-item">
-                                    <i class="bi bi-box-fill text-warning me-2"></i>
-                                    <strong>Listing Type:</strong> {{ tenant.room?.listingType }}
-                                </li>
-                                <li class="list-group-item">
-                                    <i class="bi bi-rulers text-secondary me-2"></i>
-                                    <strong>Area:</strong> {{ tenant.room?.areaSqm }}
-                                </li>
-                                <li class="list-group-item">
-                                    <i class="bi bi-gender-male text-purple me-2"></i>
-                                    <strong>For:</strong> {{ tenant.room?.genderPreference }}
-                                </li>
-                            </ul>
-                            <div class="text-center"
-                                v-if="getDaysStayed(tenant.moveInDate) >= 2 && tenant.status === 'active'">
-                                <!-- If not yet reviewed -->
-                                <div v-if="alreadyReviewed === tenant.has_rated">
-                                    <h5 class="mb-3 text-primary fw-bold border-bottom pb-2">
-                                        <i class="bi bi-star-fill text-warning me-2"></i>
-                                        Rate Dorm
-                                    </h5>
+                            <div class="room-info-grid mb-4">
+                                <div class="info-item">
+                                    <span class="info-label">Furnishing</span>
+                                    <span class="info-value"><i class="bi bi-lamp me-1"></i> {{
+                                        tenant.room?.furnishing_status }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Area</span>
+                                    <span class="info-value"><i class="bi bi-aspect-ratio me-1"></i> {{
+                                        tenant.room?.areaSqm }} sqm</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Listing</span>
+                                    <span class="info-value"><i class="bi bi-tag me-1"></i> {{ tenant.room?.listingType
+                                        }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Gender Pref</span>
+                                    <span class="info-value"><i class="bi bi-people me-1"></i> {{
+                                        tenant.room?.genderPreference }}</span>
+                                </div>
+                            </div>
 
-                                    <div class="rating">
-                                        <i v-for="star in 5" :key="star" class="bi"
-                                            :class="star <= currentRating ? 'bi-star-fill text-warning' : 'bi-star text-secondary'"
-                                            style="font-size: 2rem; cursor: pointer;" @click="setRating(star)">
+                            <div v-if="getDaysStayed(tenant.moveInDate) >= 2 && tenant.status === 'active'">
+                                <div v-if="alreadyReviewed === tenant.has_rated"
+                                    class="star-rating-container text-center shadow-sm">
+                                    <h6 class="fw-bold mb-3">How's your stay?</h6>
+
+                                    <div class="rating-stars mb-2">
+                                        <i v-for="star in 5" :key="star" class="bi interactive-star mx-1"
+                                            :class="star <= currentRating ? 'bi-star-fill text-warning' : 'bi-star text-muted opacity-50'"
+                                            style="font-size: 1.8rem; cursor: pointer;" @click="setRating(star)">
                                         </i>
                                     </div>
 
-                                    <p class="mt-2">Your Rating: <strong>{{ currentRating }}</strong> / 5</p>
-                                    <textarea class="form-control" v-model="currentReview"
-                                        placeholder="Reviews"></textarea>
+                                    <p class="small text-muted mb-3" v-if="currentRating > 0">You're giving it
+                                        <strong>{{ currentRating }} stars</strong></p>
 
-                                    <button class="btn btn-primary mt-3" :disabled="currentRating === 0"
-                                        @click="reviewandrating(tenant)">
-                                        Submit Rating
+                                    <textarea class="form-control modern-textarea mb-3" v-model="currentReview"
+                                        placeholder="Write a quick review about the room..."></textarea>
+
+                                    <button class="btn btn-primary w-100 rounded-3 py-2 fw-bold"
+                                        :disabled="currentRating === 0" @click="reviewandrating(tenant)">
+                                        Submit Feedback
                                     </button>
                                 </div>
 
-                                <!-- If already reviewed -->
-                                <div v-else class="alert alert-success mt-3">
-                                    ✅ You have already reviewed this dorm.
+                                <div v-else
+                                    class="alert bg-success-subtle text-success border-0 rounded-4 text-center p-3">
+                                    <i class="bi bi-check-circle-fill me-2"></i> Feedback submitted!
                                 </div>
                             </div>
 
-                            <!-- If less than 3 days -->
-                            <div v-else v-if="tenant.status != 'pending' && tenant.status != 'moved_out'"
-                                class="alert alert-warning text-center shadow-sm p-3 mt-3">
-                                <i class="bi bi-hourglass-split me-2"></i>
-                                Please wait at least <strong>3 days</strong> before you can rate your Dorm.
+                            <div v-else-if="tenant.status != 'pending' && tenant.status != 'moved_out'"
+                                class="alert bg-warning-subtle text-warning-emphasis border-0 rounded-4 text-center p-3 small">
+                                <i class="bi bi-clock-history me-2"></i>
+                                Review available after <strong>3 days</strong> of stay.
                             </div>
 
-                            <!-- Reviews List -->
-
-                            <div v-if="tenant.status != 'pending'" class="mt-2 d-flex justify-content-center">
-                                <button class="custom-btn" @click="messageMaintenance()"> Report Maintenance Issue
+                            <div v-if="tenant.status != 'pending'" class="mt-3">
+                                <button class="btn btn-outline-danger w-100 border-2 rounded-3 py-2 small fw-bold"
+                                    @click="messageMaintenance()">
+                                    <i class="bi bi-tools me-2"></i> Report Issue
                                 </button>
-
                             </div>
                         </div>
                     </div>
@@ -158,310 +195,318 @@
 
                 <!-- Right Card -->
                 <div class="col d-flex">
-                    <div class="card shadow-sm border-0 w-100">
-                        <div class="card-body text-center" style="border: 1px solid #4edce2;">
-                            <h5 class="fw-bold mb-2">🏠 Tenant Lease Summary
+                    <div class="card modern-lease-card shadow-sm w-100 border-0">
+                        <div class="card-body p-4">
+                            <h6 class="fw-extrabold text-uppercase letter-spacing-1 mb-4"
+                                style="color: #64748b; font-size: 0.75rem;">
+                                <i class="bi bi-file-earmark-text-fill me-2 text-primary"></i> Lease Summary
+                            </h6>
 
-                            </h5>
+                            <div class="lease-timeline px-2">
+                                <div class="timeline-line"
+                                    style="position: absolute; top: 32px; left: 10%; right: 10%; height: 4px; background: #e2e8f0; border-radius: 2px;">
+                                </div>
 
-                            <ul class="list-group list-group-flush text-start small">
-                                <li class="list-group-item">
-                                    <i class="bi bi-calendar-event text-primary me-2"></i>
-                                    <strong>Lease Start:</strong> {{ formatDate(tenant.moveInDate) }}
-                                </li>
-                                <li class="list-group-item">
-                                    <i class="bi bi-calendar2-check-fill text-success me-2"></i>
-                                    <strong>Lease End:</strong> {{ formatDate(tenant.moveOutDate) }}
-                                </li>
-                                <li class="list-group-item">
-                                    <i class="bi bi-currency-peso text-info me-2"></i>
-                                    <strong class="">💸 Monthly Payment:</strong>
-                                    ₱{{ tenant.room?.price }}
-                                </li>
-                                <li v-if="tenant.status != 'pending'" class="list-group-item">
-                                    <i class="bi bi-clock-history text-warning me-2"></i>
-                                    <strong>Days Remaining: </strong>
-                                    <span class="text-success">
-                                        {{ getRemainingLeaseDays(tenant.moveInDate,
-                                            tenant.moveOutDate) }}
-                                    </span>
-                                </li>
+                                <div class="timeline-point text-start">
+                                    <div class="point-label">Start</div>
+                                    <div class="point-date">{{ formatDate(tenant.moveInDate) }}</div>
+                                </div>
 
-                            </ul>
-                            <div v-if="tenant.extension_payment_status === 'done'"
-                                class="alert alert-info text-center p-3 rounded shadow-sm">
-                                <p class="mb-0 fw-semibold">
-                                    <i class="bi bi-info-circle-fill me-2"></i>
-                                    Your rent extension has been successfully paid and approved. You may view the
-                                    details in your payment history.
-                                </p>
+                                <div class="timeline-point text-end">
+                                    <div class="point-label">End</div>
+                                    <div class="point-date text-danger">{{ formatDate(tenant.moveOutDate) }}</div>
+                                </div>
                             </div>
 
-                            <div class="mt-2 mb-4 p-3 border rounded  shadow-sm bg-light small"
-                                v-if="tenant.notifyRent == 1">
-                                <h6 class="fw-bold text-primary text-center mb-3">
-                                    💰 Please choose an option for the rent extension request
-                                </h6>
+                            <div v-if="tenant.status != 'pending'" class="text-center mb-4 p-3 rounded-4"
+                                style="background: #f8fafc; border: 1px solid #f1f5f9;">
+                                <div class="text-muted small fw-bold mb-1">Time Remaining</div>
+                                <h3 class="fw-black mb-0" style="color: #0d6efd;">
+                                    {{ getRemainingLeaseDays(tenant.moveInDate, tenant.moveOutDate) }}
+                                </h3>
+                            </div>
+
+                            <div v-if="tenant.notifyRent == 1" class="choice-container text-center mb-4">
+                                <h6 class="fw-bold mb-3">Your lease is expiring. Extend?</h6>
                                 <div class="d-flex justify-content-center gap-3">
-                                    <button class="btn btn-success btn-sm px-4"
+                                    <button class="btn-choice-extend shadow-sm"
                                         @click="updateRentStatus(tenant, 'extend')">
-                                        ✅ Extend
+                                        <i class="bi bi-check-circle-fill me-2"></i>Yes, Extend
                                     </button>
-
-                                    <button class="btn btn-danger btn-sm px-4"
+                                    <button class="btn-choice-decline shadow-sm"
                                         @click="updateRentStatus(tenant, 'not_extending')">
-                                        ❌ Not Extending
-                                    </button>
-                                </div>
-                                <!-- Extend Button -->
-                            </div>
-                            <div v-if="tenant.status !== 'moved_out'">
-                                <div class="mt-2 mb-4 p-3 border rounded shadow-sm bg-light small"
-                                    v-if="tenant.extension_decision === 'not_extending'">
-                                    <h6 class="fw-bold text-primary text-center mb-3">
-                                        ❌ You have chosen not to extend your lease.
-                                    </h6>
-                                    <p class="text-muted">
-                                        Please be reminded that your lease will end on
-                                        <strong>{{ formatDate(tenant.moveOutDate) }}</strong>. Kindly coordinate with
-                                        your
-                                        landlord for the move-out process.
-                                    </p>
-
-                                </div>
-
-                                <div class="mt-2 mb-4 p-3 border rounded shadow-sm bg-light small"
-                                    v-if="tenant.extension_decision === 'extend'">
-                                    <h6 class="fw-bold text-primary text-center mb-3">
-                                        💰 Extension Payment Details
-                                    </h6>
-
-                                    <p>
-                                        <i class="bi bi-calendar-event text-secondary"></i>
-                                        <strong> Billing Period:</strong>
-                                        {{ formatDate(tenant.moveInDate) }} – {{ formatDate(tenant.moveOutDate) }}
-                                    </p>
-
-                                    <p>
-                                        <i class="bi bi-cash-coin text-success"></i>
-                                        <strong> Room Monthly Rate:</strong>
-                                        <span class="text-danger fw-bold">₱{{ tenant.room.price }}</span>
-                                    </p>
-
-                                    <p v-if="tenant.payments[0]?.status === 'Approved'">
-                                        <i class="bi bi-wallet2 text-info"></i>
-                                        <strong> Amount Paid:</strong>
-                                        <span class="text-success fw-bold">
-                                            ₱{{ Number(tenant.payments[0]?.amount || 0).toLocaleString('en-PH', {
-                                                minimumFractionDigits: 2
-                                            }) }}
-                                        </span>
-                                    </p>
-                                    <p v-if="tenant.paymentOption === 'online'">
-                                        Payment Status:
-                                        <span class="badge" :class="{
-                                            'bg-success': tenant.payments[0]?.status === 'approved',
-                                            'bg-warning text-dark': tenant.payments[0]?.status === 'pending',
-                                            'bg-danger': tenant.payments[0]?.status === 'rejected'
-                                        }">
-                                            {{ tenant.payments[0]?.status || 'No Payment' }}
-                                        </span>
-                                    </p>
-                                    <button class="custom-btn" type="button" @click="extendrentModal(tenant)"> Extend
-                                        Rent
+                                        <i class="bi bi-x-circle-fill me-2"></i>No
                                     </button>
                                 </div>
                             </div>
 
-                            <div class="d-flex justify-content-center align-items-center mt-3"
-                                v-if="tenant.status === 'moved_out'">
-                                <div class="alert alert-secondary text-center shadow-sm px-4 py-3 rounded-3">
-                                    <i class="bi bi-door-closed me-2"></i>
-                                    <strong>This tenant has already moved out.</strong>
+                            <div v-if="tenant.extension_decision === 'not_extending' && tenant.status !== 'moved_out'"
+                                class="alert alert-danger border-0 rounded-4 p-3 mb-4">
+                                <div class="d-flex">
+                                    <i class="bi bi-exclamation-octagon-fill fs-4 me-3"></i>
+                                    <div class="small">
+                                        <strong class="d-block">Move-out Confirmed</strong>
+                                        Please clear the room by <strong>{{ formatDate(tenant.moveOutDate) }}</strong>.
+                                        Coordinate with the landlord for clearance.
+                                    </div>
                                 </div>
                             </div>
 
+                            <div v-if="tenant.extension_decision === 'extend' && tenant.status !== 'moved_out'"
+                                class="extension-info-box p-3 mb-4 shadow-sm">
+                                <h6 class="fw-bold text-primary mb-3 small text-uppercase">Extension Payment</h6>
+
+                                <div class="d-flex justify-content-between mb-2 small">
+                                    <span class="text-muted">Monthly Rate:</span>
+                                    <span class="fw-bold text-dark">₱{{ tenant.room.price }}</span>
+                                </div>
+
+                                <div v-if="tenant.payments[0]?.status === 'Approved'"
+                                    class="d-flex justify-content-between mb-2 small">
+                                    <span class="text-muted">Amount Paid:</span>
+                                    <span class="fw-bold text-success">₱{{ Number(tenant.payments[0]?.amount ||
+                                        0).toLocaleString() }}</span>
+                                </div>
+
+                                <div
+                                    class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top border-primary border-opacity-10">
+                                    <span class="badge rounded-pill" :class="{
+                                        'bg-success': tenant.payments[0]?.status === 'approved',
+                                        'bg-warning text-dark': tenant.payments[0]?.status === 'pending',
+                                        'bg-danger': tenant.payments[0]?.status === 'rejected'
+                                    }">
+                                        {{ tenant.payments[0]?.status || 'No Payment' }}
+                                    </span>
+
+                                    <button class="btn btn-link btn-sm fw-bold text-decoration-none"
+                                        @click="extendrentModal(tenant)">
+                                        Pay Extension <i class="bi bi-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div v-if="tenant.extension_payment_status === 'done'"
+                                class="alert bg-info-subtle text-info-emphasis border-0 rounded-4 text-center p-3 mb-0">
+                                <i class="bi bi-stars me-2"></i> Rent extension paid & approved!
+                            </div>
+
+                            <div v-if="tenant.status === 'moved_out'" class="text-center py-3">
+                                <span class="badge bg-secondary-subtle text-secondary px-4 py-2 rounded-pill">
+                                    <i class="bi bi-archive me-2"></i> Archived Lease
+                                </span>
+                            </div>
 
                         </div>
                     </div>
                 </div>
             </div>
-            <div v-if="extendRateModal" class="modal fade show radius-3 d-block" tabindex="-1"
-                style="background-color: rgba(0,0,0,0.5);" @click.self="extendRateModal = false">
-                <div class="modal-dialog">
-                    <div class="modal-content">
+            <div v-if="extendRateModal" class="modal fade show d-block" tabindex="-1"
+                style="background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);"
+                @click.self="extendRateModal = false">
 
-                        <div class="modal-header bg-info text-white">
-                            <h5 class="modal-title text-white">Extend Payment </h5>
-                            <button type="button" class="btn-close text-white"
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
+                        <div class="modal-header border-0 p-4 d-flex align-items-center"
+                            style="background-color: #0d6efd;">
+                            <h5 class="modal-title text-white fw-bold">
+                                <i class="bi bi-calendar-check me-2"></i>Extend Payment
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white"
                                 @click="extendRateModal = false"></button>
                         </div>
 
-                        <div class="modal-body">
-                            <!-- Payment Option (Online or On-site) -->
-                            <div class="card shadow-sm border-0 rounded-4 mb-3">
+                        <div class="modal-body p-4">
+
+                            <div class="card shadow-sm border-0 rounded-4 mb-4" style="background: #f8fafc;">
                                 <div class="card-body">
-                                    <h6 class="fw-bold text-primary mb-2">
+                                    <h6 class="fw-bold mb-3" style="color: #0d6efd;">
                                         <i class="bi bi-wallet2 me-2"></i> Choose Payment Option
                                     </h6>
                                     <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap mt-2">
-                                        <!-- Online Option -->
-                                        <div class="text-center p-3 border rounded shadow-sm d-flex flex-column align-items-center justify-content-between"
-                                            style="cursor: pointer; width: 120px; height: 120px;"
+
+                                        <div class="text-center p-3 border rounded-4 d-flex flex-column align-items-center justify-content-center transition-all"
+                                            :class="payment_option === 'online' ? 'border-primary bg-white shadow-sm' : 'bg-transparent text-muted'"
+                                            style="cursor: pointer; width: 120px; height: 120px; border-width: 2px !important;"
                                             @click="paymentOption('online')">
-                                            <i class="bi bi-globe2 fs-1 text-info mb-2"></i>
-                                            <small class="fw-semibold text-capitalize">Online</small>
+                                            <i class="bi bi-globe2 fs-1 mb-1"
+                                                :class="payment_option === 'online' ? 'text-primary' : 'text-secondary'"></i>
+                                            <small class="fw-bold text-capitalize">Online</small>
                                         </div>
 
-                                        <!-- On-site Option -->
-                                        <div class="text-center p-3 border rounded shadow-sm d-flex flex-column align-items-center justify-content-between"
-                                            style="cursor: pointer; width: 120px; height: 120px;"
+                                        <div class="text-center p-3 border rounded-4 d-flex flex-column align-items-center justify-content-center transition-all"
+                                            :class="payment_option === 'onsite' ? 'border-primary bg-white shadow-sm' : 'bg-transparent text-muted'"
+                                            style="cursor: pointer; width: 120px; height: 120px; border-width: 2px !important;"
                                             @click="paymentOption('onsite')">
-                                            <i class="bi bi-house-door fs-1 text-success mb-2"></i>
-                                            <small class="fw-semibold text-capitalize">On-site</small>
+                                            <i class="bi bi-house-door fs-1 mb-1"
+                                                :class="payment_option === 'onsite' ? 'text-primary' : 'text-secondary'"></i>
+                                            <small class="fw-bold text-capitalize">On-site</small>
                                         </div>
                                     </div>
-                                    <div class="justify-content-center d-flex mt-2">
-                                        <span v-if="errors.payment_option" class="text-danger small mt-1 d-block">
-                                            <i class="bi bi-exclamation-circle-fill me-1"></i>{{
-                                                errors.payment_option[0] }}
+
+                                    <div class="justify-content-center d-flex mt-3">
+                                        <span v-if="errors.payment_option" class="text-danger small fw-bold">
+                                            <i class="bi bi-exclamation-circle-fill me-1"></i>
+                                            {{ errors.payment_option[0] }}
                                         </span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="container py-4 mb-4" v-if="payment_option === 'online'">
-                                <div class="card shadow-sm border-0 rounded-4 mb-3">
-                                    <div class="card-body">
-                                        <h6 class="fw-bold text-primary mb-2">
-                                            <i class="bi bi-credit-card-2-front-fill me-2"></i> Landlord GCash Number
+
+                            <div v-if="payment_option === 'online'" class="fade-in">
+
+                                <div class="card border-0 rounded-4 mb-4"
+                                    style="background: #fff7ed; border: 1px solid #ffedd5 !important;">
+                                    <div class="card-body text-center">
+                                        <h6 class="fw-bold text-dark small text-uppercase mb-2">Landlord GCash Number
                                         </h6>
-                                        <div class="p-3 bg-light rounded-3 border text-center">
-                                            <span class="fw-semibold fs-5 text-dark">
+                                        <div class="p-3 bg-white rounded-3 shadow-sm d-inline-block px-4">
+                                            <span class="fw-bold fs-4" style="color: #fd7e14;">
                                                 {{ tenant.room?.dorm.gcashNumber }}
                                             </span>
                                         </div>
-                                        <p class="text-muted mt-2 mb-0 small">
-                                            Use this number when sending your payment via GCash.
-                                        </p>
+                                        <p class="text-muted mt-2 mb-0 small">Use this number when sending your payment
+                                            via GCash.</p>
                                     </div>
                                 </div>
-                                <!-- Payment Options -->
-                                <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap mt-3">
+
+                                <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap mt-3 mb-4">
                                     <div v-for="(src, name) in payment" :key="name"
-                                        class="text-center p-3 border rounded shadow-sm d-flex flex-column align-items-center justify-content-between"
-                                        :class="{ 'border-primary bg-light': payment_type === name }" role="button"
-                                        style="cursor: pointer; width: 120px; height: 130px;"
+                                        class="text-center p-3 border rounded-4 shadow-sm d-flex flex-column align-items-center justify-content-between transition-all"
+                                        :class="payment_type === name ? 'border-primary bg-white' : 'bg-light border-0 text-muted'"
+                                        style="cursor: pointer; width: 110px; height: 110px;"
                                         @click="paymentTypeSelection(name)">
                                         <img :src="src" :alt="name" class="img-fluid mb-2"
-                                            style="width: 50px; height: 50px; object-fit: contain;" />
-                                        <small class="fw-semibold text-capitalize text-center">
+                                            style="width: 45px; height: 45px; object-fit: contain;" />
+                                        <small class="fw-bold text-capitalize text-center">
                                             {{ name.replace('_', ' ') }}
                                         </small>
                                     </div>
-
                                 </div>
-                                <div class="justify-content-center d-flex mt-2">
-                                    <span v-if="errors.paymentType" class="text-danger small mt-1 d-block">
+
+                                <div class="justify-content-center d-flex mt-2 mb-3">
+                                    <span v-if="errors.paymentType" class="text-danger small fw-bold">
                                         <i class="bi bi-exclamation-circle-fill me-1"></i>{{ errors.paymentType[0] }}
                                     </span>
                                 </div>
-                                <div class="border border-secondary rounded-3 p-4 mb-3 text-center"
-                                    style="cursor: pointer;" v-if="isPaymentImage" @click="triggerPaymentImage">
+
+                                <div class="border-2 border-dashed rounded-4 p-4 mb-3 text-center transition-all"
+                                    style="cursor: pointer; border-color: #cbd5e1; background: #f8fafc;"
+                                    v-if="isPaymentImage" @click="triggerPaymentImage">
                                     <input ref="PaymentPicturesInput" class="d-none" type="file" accept="image/*"
                                         @change="handlePaymentPicture" />
-                                    <div class="d-flex flex-column align-items-center text-center mb-3">
-                                        <img :src="paymentIcon" alt="Payment Icon"
-                                            style="max-width: 60px; height: auto;" class="mb-2" />
-                                        <h5 class="text-secondary mt-2">Upload Payment Image</h5>
-                                        <small class="text-muted">Click to browse and select an image file</small>
+                                    <div class="d-flex flex-column align-items-center">
+                                        <i class="bi bi-cloud-arrow-up fs-2 text-primary mb-2"></i>
+                                        <h6 class="text-dark fw-bold mb-1">Upload Payment Image</h6>
+                                        <small class="text-muted">Click to browse and select your screenshot</small>
                                     </div>
                                 </div>
+
                                 <div class="justify-content-center d-flex mb-2">
-                                    <span v-if="errors.PaymentPictureFile" class="text-danger small mt-1 d-block">
+                                    <span v-if="errors.PaymentPictureFile" class="text-danger small fw-bold">
                                         <i class="bi bi-exclamation-circle-fill me-1"></i>{{
-                                            errors.PaymentPictureFile[0]
-                                        }}
+                                        errors.PaymentPictureFile[0] }}
                                     </span>
                                 </div>
+
                                 <div v-if="PaymentPicturePreview" class="text-center mb-3">
                                     <img :src="PaymentPicturePreview" alt="Uploaded Payment Image"
-                                        class="img-fluid rounded mb-2" style="max-height: 250px;" />
+                                        class="img-fluid rounded-4 mb-2 shadow-sm" style="max-height: 250px;" />
                                     <div>
                                         <button type="button" @click="removePaymentPicture"
-                                            class="btn btn-danger shadow-sm">
-                                            Remove Uploaded Image
+                                            class="btn btn-danger btn-sm rounded-pill px-3 fw-bold">
+                                            <i class="bi bi-trash me-1"></i> Remove Image
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div v-if="payment_option === 'onsite'" class="alert alert-warning mt-3 shadow-sm">
-                            <i class="bi bi-cash-stack me-2"></i>
-                            You chose <strong>On-Site Payment</strong>.
-                            Kindly meet your landlord to complete the payment process.
+
+                            <div v-if="payment_option === 'onsite'"
+                                class="alert border-0 rounded-4 p-3 d-flex align-items-center"
+                                style="background: #e0f2fe; color: #0369a1;">
+                                <i class="bi bi-cash-stack fs-4 me-3"></i>
+                                <div class="small fw-semibold">
+                                    You chose <strong>On-Site Payment</strong>. Kindly meet your landlord to complete
+                                    the payment process.
+                                </div>
+                            </div>
                         </div>
 
-
-                        <div class="modal-footer">
-                            <button class="btn btn-success" @click="submitRent(tenant)">Submit Extension Rent</button>
+                        <div class="modal-footer border-0 p-4 pt-0">
+                            <button class="btn w-100 py-3 text-white fw-bold shadow-sm"
+                                style="background-color: #0d6efd; border-radius: 14px; border: none; transition: 0.3s;"
+                                @click="submitRent(tenant)">
+                                Submit Extension Rent <i class="bi bi-check2-circle ms-2"></i>
+                            </button>
                         </div>
 
                     </div>
                 </div>
             </div>
             <Toastcomponents ref="toast" />
-            <div v-if="messageModal" class="modal fade show d-block" tabindex="-1"
-                style="background-color: rgba(0,0,0,0.5);" @click.self="messageModal = false">
-                <div class="modal-dialog modal-dialog-centered modal-md">
-                    <div class="modal-content shadow-lg rounded-4 border-0">
+         <div v-if="messageModal" class="modal fade show d-block" tabindex="-1"
+    style="background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);" @click.self="messageModal = false">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content shadow-lg rounded-4 border-0">
 
-                        <!-- Header -->
-                        <div class="modal-header  text-black border-0 rounded-top">
-                            <h5 class="modal-title">Report to Landlord</h5>
-                            <button type="button" class="btn-close btn-close-black"
-                                @click="messageModal = false"></button>
-                        </div>
+            <div class="modal-header border-0 p-4 pb-0">
+                <h5 class="fw-black text-dark mb-0">
+                    <i class="bi bi-megaphone-fill text-primary me-2"></i> Report to Landlord
+                </h5>
+                <button type="button" class="btn-close" @click="messageModal = false"></button>
+            </div>
 
-                        <!-- Body -->
-                        <div class="modal-body">
-                            <p class="text-muted small mb-3">Select the issue you want to report to your landlord:</p>
+            <div class="modal-body p-4">
+                <p class="text-muted small mb-4">Select the issue you want to report to your landlord:</p>
 
-                            <div class="list-group mb-3">
-                                <button v-for="(label, key) in issues" :key="key"
-                                    class="list-group-item list-group-item-action rounded-3 mb-2 shadow-sm"
-                                    @click="selectIssue(label)">
-                                    {{ label }}
-                                </button>
-                            </div>
+                <div class="list-group border-0">
+                    <button v-for="(label, key) in issues" :key="key"
+                        class="list-group-item list-group-item-action rounded-4 mb-2 border-0 p-3 d-flex align-items-center justify-content-between shadow-sm transition-all"
+                        :class="selectedIssue === label ? 'selected-issue-item' : 'bg-light'"
+                        @click="selectIssue(label)">
+                        <span class="fw-bold" :class="selectedIssue === label ? 'text-white' : 'text-dark'">{{ label }}</span>
+                        <i v-if="selectedIssue === label" class="bi bi-check-circle-fill text-white"></i>
+                        <i v-else class="bi bi-circle text-muted"></i>
+                    </button>
+                </div>
 
-                            <div v-if="selectedIssue" class="alert alert-info text-center fw-bold">
-                                Selected Issue: <span class="text-dark">{{ selectedIssue }}</span>
-                            </div>
-                        </div>
-
-                        <!-- Footer -->
-                        <div class="modal-footer border-0 justify-content-between">
-                            <button class="btn btn-outline-secondary rounded-pill" @click="messageModal = false">
-                                Cancel
-                            </button>
-                            <button class="btn btn-primary rounded-pill px-4" :disabled="!selectedIssue"
-                                @click="sendIssue(tenant)">
-                                Send to Landlord
-                            </button>
-                        </div>
-
-                    </div>
+                <div v-if="selectedIssue" class="mt-4 p-3 rounded-4 border-0 d-flex align-items-center" 
+                     style="background: #fff7ed; border: 1px solid #ffedd5 !important;">
+                    <i class="bi bi-info-circle-fill text-orange me-2 fs-5"></i>
+                    <span class="small fw-semibold text-dark">
+                        Reporting: <span class="text-orange fw-bold">{{ selectedIssue }}</span>
+                    </span>
                 </div>
             </div>
+
+            <div class="modal-footer border-0 p-4 pt-0 gap-2">
+                <button class="btn btn-light rounded-pill px-4 fw-bold text-muted border-0" @click="messageModal = false">
+                    Cancel
+                </button>
+                <button class="custom-btn" :disabled="!selectedIssue" @click="sendIssue(tenant)"
+                        style="border-radius: 50px; padding: 10px 30px;">
+                    Send Report <i class="bi bi-send-fill ms-2"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 
         </div>
         <div class="mt-4 d-flex justify-content-center gap-3">
-            <button class="btn btn-danger " @click="prevCard(tenant.approvedID)" :disabled="currentIndex === 0">⬅️
-                Prev</button>
-            <button class="btn btn-primary" @click="nextCard(tenant.approvedID)"
-                :disabled="currentIndex >= rooms.length - 1">Next
-                ➡️</button>
+            <button class="btn text-white fw-bold px-4"
+                style="background-color: #fd7e14; border-radius: 14px; border: none; transition: 0.3s;"
+                @click="prevCard(tenant.approvedID)" :disabled="currentIndex === 0">
+                <i class="bi bi-arrow-left me-1"></i> Prev
+            </button>
+
+            <button class="btn text-white fw-bold px-4"
+                style="background-color: #0d6efd; border-radius: 14px; border: none; transition: 0.3s;"
+                @click="nextCard(tenant.approvedID)" :disabled="currentIndex >= rooms.length - 1">
+                Next <i class="bi bi-arrow-right ms-1"></i>
+            </button>
         </div>
 
 
@@ -847,25 +892,4 @@ export default {
 
 }
 </script>
-<style>
-.rating i:hover {
-    transform: scale(1.2);
-    transition: transform 0.2s;
-}
-
-.card-slide {
-    animation: slideIn 0.3s ease-in-out;
-}
-
-@keyframes slideIn {
-    0% {
-        transform: translateX(30px);
-        opacity: 0;
-    }
-
-    100% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-</style>
+<style scoped src="/resources/css/tenant/myrooms.css"></style>

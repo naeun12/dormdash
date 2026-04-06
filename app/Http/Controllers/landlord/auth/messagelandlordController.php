@@ -46,8 +46,8 @@ class messagelandlordController extends Controller
     })->sortByDesc('sent_at')->values();
 
     return view('landlord.auth.messagingCenter', [
-        'title'        => 'DormHub Message',
-        'headerName'   => 'DormHub Message',
+        'title'        => 'DormDash Message',
+        'headerName'   => 'DormDash Message',
         'landlord_id'  => $landlord_id,
         'history'      => $history,
          'notifications' => $notifications,
@@ -104,8 +104,8 @@ public function selecttenantToMessage(Request $request, $landlord_id)
     ]);
 
     return view('landlord.auth.messagingCenter', [
-        'title'        => 'DormHub Message',
-        'headerName'   => 'DormHub Message',
+        'title'        => 'DormDash Message',
+        'headerName'   => 'DormDash Message',
         'landlord_id'  => $landlord_id,
         'history'      => $history,
         'notifications' => $notifications,

@@ -40,7 +40,7 @@ class dormdetailscontroller extends Controller
             if (!$tenant) {
                 return redirect()->route('tenant-login')->with('error', 'Landlord not found.');
             }
-            $title = 'Tenant Dorm Details - Dormhub';
+            $title = 'Tenant Dorm Details - DormDash';
             return view('tenant.auth.roomdetails',['title' => $title,
             'dormitory_id' => $dormitory_id,
             'tenant_id' => $tenant_id,

@@ -37,7 +37,7 @@ class reviewandfeedbackController extends Controller
             if (!$tenant) {
                 return redirect()->route('tenant-login')->with('error', 'Landlord not found.');
             }
-            return view('tenant.auth.ratingandreview',['title' => 'Review and Rating - Dormhub ',
+            return view('tenant.auth.ratingandreview',['title' => 'Review and Rating - DormDash ',
             'dormitory_id' => $dormitory_id,
             'tenant_id' => $tenant_id,
             'tenant' => $tenant,

@@ -23,7 +23,7 @@ class reservationsDetailsController extends Controller
             if (!$tenant) {
                 return redirect()->route('tenant-login')->with('error', 'Landlord not found.');
             }
-            $title = 'Tenant room Details - Dormhub';
+            $title = 'Tenant room Details - DormDash';
             return view('tenant.auth.nav.reservations.reservation',['title' => 'Reservations',
             'tenant_id' => $tenant_id,
             'cssPath' => asset('css/tenantpage/auth/roomdetails.css'),

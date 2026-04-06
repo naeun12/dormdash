@@ -1,103 +1,98 @@
 <template>
     <Loader ref="loader" />
 
-    <div class="container-fluid vh-150 d-flex flex-column bg-light">
-        <div class="row flex-grow-1 h-100 overflow-hidden">
-            <!-- Sidebar -->
-            <div class="col-md-3 bg-white border-end shadow-sm d-flex flex-column">
-                <div class="p-3">
-                    <h5 class="fw-bold text-primary mb-3">Inbox</h5>
-                    <div class="list-group bg-transparent overflow-auto" style="max-height: 80vh;">
-                        <a v-for="convo in conversations" :key="convo.conversation_id" href="#"
-                            class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-2 px-3 shadow-sm rounded mb-2 transition"
-                            :class="[
-                                convo.is_read === 0
-                                    ? 'bg-primary text-white'
-                                    : 'bg-info text-dark'
-                            ]" @click.prevent="selectConversation(convo)"
-                            style="border: none; cursor: pointer; position: relative;">
-                            <!-- Profile Picture -->
-                            <div class="position-relative">
-                                <img :src="convo.receiver_profile || 'default-profile.png'" alt="Profile"
-                                    class="rounded-circle border"
-                                    style="width: 48px; height: 48px; object-fit: cover;" />
+    <div class="container-fluid vh-100 d-flex flex-column bg-light p-0 overflow-hidden">
+        <div class="row g-0 flex-grow-1 overflow-hidden">
 
-                                <!-- Red dot for unread -->
-                                <span v-if="convo.is_read === 0"
-                                    class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
-                                </span>
-
-                            </div>
-
-
-                            <!-- Conversation Details -->
-                            <div class="flex-grow-1 ms-2">
-                                <h6 class="mb-0 fw-semibold text-truncate">
-                                    {{ convo.receiver_name }}
-                                </h6>
-                                <small :class="convo.is_read === 0 ? 'fw-bold text-white-50' : 'text-dark'">
-                                    {{ convo.last_message }}
-                                </small>
-                            </div>
-                        </a>
-
-                    </div>
+            <div class="col-md-3 bg-white border-end d-flex flex-column shadow-sm">
+                <div class="p-4 border-bottom">
+                    <h4 class="fw-bold mb-0" style="color: #003C87;">Inbox</h4>
+                    <small class="text-muted fw-medium">Active Conversations</small>
                 </div>
 
+                <div class="flex-grow-1 overflow-auto p-2" style="background-color: #f8f9fa;">
+                    <div v-for="convo in conversations" :key="convo.conversation_id"
+                        @click.prevent="selectConversation(convo)"
+                        class="d-flex align-items-center gap-3 p-3 mb-2 rounded-4 transition-all border-0 shadow-sm"
+                        :style="convo.is_read === 0
+                            ? 'background-color: #003C87; color: white; cursor: pointer;'
+                            : 'background-color: white; color: #333; border: 1px solid #eee !important; cursor: pointer;'">
 
+                        <div class="position-relative">
+                            <img :src="convo.receiver_profile || 'default-profile.png'"
+                                class="rounded-circle border border-2 border-white shadow-sm"
+                                style="width: 52px; height: 52px; object-fit: cover;" />
+
+                            <span v-if="convo.is_read === 0"
+                                class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-2 border-white rounded-circle">
+                            </span>
+                        </div>
+
+                        <div class="flex-grow-1 overflow-hidden">
+                            <h6 class="mb-0 fw-bold text-truncate">{{ convo.receiver_name }}</h6>
+                            <p class="mb-0 small text-truncate opacity-75"
+                                :class="convo.is_read === 0 ? 'text-white' : 'text-secondary'">
+                                {{ convo.last_message }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Chat Area -->
-            <div class="col-md-9 d-flex flex-column p-3 bg-light">
-                <!-- Header -->
-                <div class="d-flex align-items-center bg-white shadow-sm rounded p-3 mb-3 border">
-                    <img :src="activeLandlord.profilePicUrl" alt="Landlord" class="rounded-circle me-3 border"
-                        style="width: 50px; height: 50px; object-fit: cover;" />
+            <div class="col-md-9 d-flex flex-column bg-white">
 
-
+                <div class="d-flex align-items-center p-3 border-bottom shadow-sm bg-white" style="z-index: 10;">
+                    <img :src="activeLandlord.profilePicUrl" class="rounded-circle me-3 border shadow-sm"
+                        style="width: 48px; height: 48px; object-fit: cover;" />
                     <div>
                         <h6 class="mb-0 fw-bold text-dark">
                             {{ activeLandlord.firstname ? activeLandlord.firstname + ' ' + activeLandlord.lastname :
-                                'Loading...' }}
+                            'Select a conversation' }}
                         </h6>
-                        <small class="text-muted">Tenant</small>
+                        <span class="badge rounded-pill px-2 py-1"
+                            style="background-color: #eef2f7; color: #003C87; font-size: 0.7rem;">TENANT</span>
                     </div>
                 </div>
 
-                <!-- Chat Messages -->
-                <!-- Chat Messages -->
-                <div ref="chatContainer" class="p-3 bg-white shadow-sm rounded border flex-grow-1 mb-3 overflow-auto"
-                    style="height: 600px;">
-                    <div v-for="msg in messages" :key="msg.id" class="d-flex mb-3"
-                        :class="msg.senderID === currentUserID ? 'justify-content-end text-end' : 'justify-content-start text-start'">
-                        <div class="d-flex align-items-end w-100"
-                            :class="msg.senderID === currentUserID ? 'flex-row-reverse' : ''">
-                            <div :class="msg.senderID === currentUserID ? 'bg-primary text-white' : 'bg-light text-dark'"
-                                class="rounded p-3 shadow-sm" style="max-width: 60%;">
-                                <p class="mb-1">{{ msg.message }}</p>
-                                <small class="text-secondary-50">
-                                    {{ formatRole(msg.senderRole) }} • {{ formatTime(msg.sentAt) }}
-                                </small>
+                <div ref="chatContainer" class="flex-grow-1 p-4 overflow-auto bg-light"
+                    style="background-image: radial-gradient(#dee2e6 0.5px, transparent 0.5px); background-size: 20px 20px;">
+
+                    <div v-for="msg in messages" :key="msg.id" class="mb-4 d-flex"
+                        :class="msg.senderID === currentUserID ? 'justify-content-end' : 'justify-content-start'">
+
+                        <div style="max-width: 65%;">
+                            <div class="p-3 shadow-sm mb-1"
+                                :style="msg.senderID === currentUserID
+                                    ? 'background-color: #003C87; color: white; border-radius: 18px 18px 0px 18px;'
+                                    : 'background-color: white; color: #333; border-radius: 18px 18px 18px 0px; border: 1px solid #eee;'">
+                                <p class="mb-0" style="line-height: 1.5;">{{ msg.message }}</p>
+                            </div>
+
+                            <div class="small opacity-50 d-flex align-items-center"
+                                :class="msg.senderID === currentUserID ? 'justify-content-end text-end' : 'justify-content-start text-start'">
+                                <span style="font-size: 0.7rem;">{{ formatTime(msg.sentAt) }}</span>
+                                <i v-if="msg.senderID === currentUserID" class="bi bi-check2-all ms-1 text-primary"></i>
                             </div>
                         </div>
                     </div>
-
                 </div>
 
+                <div class="p-3 bg-white border-top">
+                    <div class="input-group bg-light rounded-pill p-1 border">
+                        <input type="text" v-model="message" class="form-control border-0 bg-transparent px-4 py-2"
+                            placeholder="Write a message..." @keyup.enter="pushMessage" />
 
-                <!-- Message Input -->
-                <div class="input-group shadow-sm">
-                    <input type="text" v-model="message" class="form-control rounded-start"
-                        placeholder="Type a message..." />
-                    <button type="button" class="btn btn-primary rounded-end px-4" @click="pushMessage">
-                        <i class="bi bi-send-fill"></i> Send
-                    </button>
+                        <button class="btn rounded-pill px-4 shadow-sm text-white fw-bold"
+                            style="background-color: #FC7D07; transition: 0.2s;" @click="pushMessage">
+                            <i class="bi bi-send-fill me-1"></i> Send
+                        </button>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
 </template>
-
 
 <script>
 import axios from 'axios';

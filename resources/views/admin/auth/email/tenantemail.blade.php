@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DormHub Tenant Email</title>
+    <title>DormDash Tenant Email</title>
     <style>
         body {
             margin: 0;
@@ -81,9 +81,9 @@
 
         <!-- Footer -->
         <div class="footer">
-            <p>&copy; 2025 DormHub. All rights reserved.</p>
+            <p>&copy; 2025 DormDash. All rights reserved.</p>
             <p>
-                Questions? Email us at <a href="supportdormhub@gmail.com">support@dormhub.com</a>
+                Questions? Email us at <a href="supportdormdash@gmail.com">support@dormdash.com</a>
             </p>
         </div>
     </div>

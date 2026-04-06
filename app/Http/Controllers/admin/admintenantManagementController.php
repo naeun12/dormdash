@@ -35,7 +35,7 @@ class admintenantManagementController extends Controller
          $tenant->is_deactivated = 1;
          $tenant->save();
           $tenantName = $tenant->firstname . ' ' . $tenant->lastname;
-          $messageBody = "Your tenant account has been deactivated. Please contact DormHub support if you believe this is an error.";
+          $messageBody = "Your tenant account has been deactivated. Please contact DormDash support if you believe this is an error.";
 
     // Send email
     Mail::to($tenant->email)->send(new AdminTenantEmail($tenantName, $messageBody));
@@ -53,7 +53,7 @@ class admintenantManagementController extends Controller
          $tenant->is_deactivated = 0;
          $tenant->save();
            $tenantName = $tenant->firstname . ' ' . $tenant->lastname;
-    $messageBody = "Your tenant account has been reactivated successfully. You can now log in to DormHub.";
+    $messageBody = "Your tenant account has been reactivated successfully. You can now log in to DormDash.";
 
     // Send the email
     Mail::to($tenant->email)->send(new AdminTenantEmail($tenantName, $messageBody));

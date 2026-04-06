@@ -36,7 +36,7 @@ class adminlandlordManagementController extends Controller
          $landlord->is_deactivated = 1;
          $landlord->save();
           $landlordName = $landlord->firstname . ' ' . $landlord->lastname;
-          $messageBody = "Your Landlord account has been deactivated. Please contact DormHub support if you believe this is an error.";
+          $messageBody = "Your Landlord account has been deactivated. Please contact DormDash support if you believe this is an error.";
 
     // Send email
     Mail::to($landlord->email)->send(new AdminTenantEmail($landlordName, $messageBody));
@@ -54,7 +54,7 @@ class adminlandlordManagementController extends Controller
          $landlord->is_deactivated = 0;
          $landlord->save();
            $landlordName = $landlord->firstname . ' ' . $landlord->lastname;
-    $messageBody = "Your landlord account has been reactivated successfully. You can now log in to DormHub.";
+    $messageBody = "Your landlord account has been reactivated successfully. You can now log in to DormDash.";
 
     // Send the email
     Mail::to($landlord->email)->send(new AdminTenantEmail($landlordName, $messageBody));

@@ -1,32 +1,57 @@
 <template>
-    <div :class="['container-toast mt-5', { show: toaster }]">
-        <!-- Toast Container -->
-        <div :class="['toast-child', `bg-${toastColor}`]">
-            <div class="toast-body d-flex justify-content-between align-items-center text-white fw-bold py-3 px-4">
-                <span class="text-wrap">{{ messageToaster }}</span>
-                <button type="button" class="btn-close btn-close-white ms-3" @click="ExitToaster"
-                    aria-label="Close"></button>
+    <div :class="['premium-toast-container', { 'show': toaster }]">
+        <div class="premium-toast-card shadow-lg" :class="`border-accent-${toastColor}`">
+            <div class="toast-content d-flex align-items-center py-3 px-4">
+                <div class="icon-box me-3" :class="`text-${toastColor}`">
+                    <i :class="getIcon"></i>
+                </div>
+
+                <div class="flex-grow-1">
+                    <span class="toast-message text-dark fw-700">{{ messageToaster }}</span>
+                </div>
+
+                <button type="button" class="btn-close-custom ms-3" @click="ExitToaster" aria-label="Close">
+                    <i class="bi bi-x"></i>
+                </button>
             </div>
+
+            <div v-if="toaster" class="toast-progress-bar" :class="`bg-${toastColor}`"></div>
         </div>
     </div>
 </template>
+
 <script>
 export default {
+    name: "ToastComponent",
     data() {
         return {
             toaster: false,
-            toastColor: 'success', // Default color
+            toastColor: 'success', // success, danger, warning, info
             messageToaster: '',
+            timer: null
         };
+    },
+    computed: {
+        getIcon() {
+            const icons = {
+                success: 'bi bi-check-circle-fill',
+                danger: 'bi bi-exclamation-octagon-fill',
+                warning: 'bi bi-exclamation-triangle-fill',
+                info: 'bi bi-info-circle-fill'
+            };
+            return icons[this.toastColor] || icons.success;
+        }
     },
     methods: {
         showToast(message, color = 'success') {
+            // Clear existing timer if any
+            if (this.timer) clearTimeout(this.timer);
+
             this.messageToaster = message;
             this.toastColor = color;
             this.toaster = true;
 
-            // Auto-hide after 3 seconds
-            setTimeout(() => {
+            this.timer = setTimeout(() => {
                 this.ExitToaster();
             }, 3000);
         },
@@ -36,34 +61,6 @@ export default {
     }
 };
 </script>
-<style>
-.container-toast {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    width: 95%;
-    max-width: 30rem;
-    z-index: 1000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
 
-/* Slide up just a bit from the bottom-right */
-@keyframes slideUpBounce {
-    0% {
-        transform: translateY(20px);
-        opacity: 0;
-    }
 
-    100% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-.container-toast.show {
-    pointer-events: auto;
-    animation: slideUpBounce 0.4s ease forwards;
-}
-</style>
+<style src="../../css/partials/toast.css"></style>

@@ -40,7 +40,7 @@ class nextpaymentController extends Controller
             if (!$tenant) {
                 return redirect()->route('tenant-login')->with('error', 'Landlord not found.');
             }
-            $title = 'Tenant Payments History - Dormhub';
+            $title = 'Tenant Payments History - DormDash';
             return view('tenant.auth.nav.nextpayment.nextpaymentdue',['title' => $title,
             'tenant_id' => $tenant_id,
             'cssPath' => asset('css/tenantpage/auth/roomdetails.css'),

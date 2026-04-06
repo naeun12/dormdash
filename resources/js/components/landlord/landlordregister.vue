@@ -2,233 +2,254 @@
     <Loader ref="loader" />
     <Toastcomponents ref="toast" />
 
-    <form @submit.prevent="nextStep">
-        <!-- Steps Navigation -->
-        <div class="nav-pills w-100 ">
-            <ul class="nav mb-3 justify-content-center flex-wrap">
-                <li class="" v-for="(step, index) in steps" :key="index">
-                    <button class="btn btn-primary m-2" :class="{ active: currentStep === index }"
-                        :disabled="index > currentStep">
-                        {{ step }}
-                    </button>
-                </li>
-            </ul>
-        </div>
-        <!-- Step Content -->
-        <div class="tab-content">
-            <!-- Step 1: Information -->
-            <div v-if="currentStep === 0">
-                <h2 class="text-center mb-4 text-create  mt-5">Create Your Landlord Account</h2>
+    <div class="container py-5 d-flex justify-content-center animate__animated animate__fadeIn">
+        <div class="card border-0 shadow-lg overflow-hidden w-100"
+            style="max-width: 800px; border-radius: 30px; background: #ffffff;">
 
-                <div class="d-flex justify-content-center container-image ">
+            <div style="height: 8px; background: linear-gradient(90deg, #003C87, #FC7D07);"></div>
 
-                    <div class="avatar-wrapper text-center">
-                        <img class="profile-pic rounded-circle" :src="previewPic" alt="Profile Picture" width="150" />
-                        <div class="upload-button btn btn-primary mt-3" @click="triggerProfileInput">
-                            Upload Image
-                            <input ref="fileInput" class="file-input" name="profile_pic" id="profile-pic" type="file"
-                                accept="image/*" style="display: none;" @change="handleImageUpload" />
+            <div class="card-body p-4 p-md-5">
+                <div class="mb-5">
+                    <div class="d-flex justify-content-between position-relative">
+                        <div class="position-absolute top-50 start-0 end-0 translate-middle-y"
+                            style="height: 2px; background: #edf2f7; z-index: 0;"></div>
+
+                        <div class="position-absolute top-50 start-0 translate-middle-y transition-all"
+                            style="height: 2px; background: #003C87; z-index: 0;"
+                            :style="{ width: (currentStep / (steps.length - 1)) * 100 + '%' }">
+                        </div>
+
+                        <div v-for="(step, index) in steps" :key="index" class="position-relative text-center"
+                            style="z-index: 1;">
+                            <button
+                                class="btn rounded-circle d-flex align-items-center justify-content-center border-2 p-0 mx-auto transition-all step-bubble"
+                                :class="currentStep >= index ? 'active-step' : 'inactive-step'"
+                                :disabled="index > currentStep" style="width: 40px; height: 40px; font-weight: 700;">
+                                <i v-if="currentStep > index" class="bi bi-check-lg"></i>
+                                <span v-else>{{ index + 1 }}</span>
+                            </button>
+                            <p class="small mt-2 mb-0 d-none d-md-block fw-bold text-uppercase"
+                                :style="{ color: currentStep === index ? '#003C87' : '#adb5bd', fontSize: '10px', letterSpacing: '1px' }">
+                                {{ step }}
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <form @submit.prevent="nextStep">
+                    <div class="tab-content">
+
+                        <div v-if="currentStep === 0" class="animate__animated animate__fadeIn">
+                            <div class="text-center mb-4">
+                                <h2 class="fw-bold" style="color: #003C87;">Create <span
+                                        style="color: #FC7D07;">Landlord</span> Account</h2>
+                                <p class="text-muted">Start by setting up your professional profile.</p>
+                            </div>
+
+                            <div class="d-flex justify-content-center mb-5">
+                                <div class="position-relative">
+                                    <div class="avatar-wrapper rounded-circle border border-4 border-white shadow-sm overflow-hidden"
+                                        style="width: 130px; height: 130px; background: #f8fafc;">
+                                        <img class="profile-pic w-100 h-100 object-fit-cover" :src="previewPic"
+                                            alt="Profile Picture" />
+                                    </div>
+                                    <button type="button"
+                                        class="btn position-absolute bottom-0 end-0 rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+                                        @click="triggerProfileInput"
+                                        style="width: 38px; height: 38px; background: #003C87; color: white; border: 3px solid white;">
+                                        <i class="bi bi-camera-fill"></i>
+                                    </button>
+                                    <input ref="fileInput" class="d-none" name="profile_pic" id="profile-pic"
+                                        type="file" accept="image/*" @change="handleImageUpload" />
+                                </div>
+                            </div>
+
+                            <div v-if="errors.profilePic"
+                                class="alert alert-danger border-0 rounded-3 small py-2 text-center mb-4">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errors.profilePic[0] }}
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted">FIRST NAME</label>
+                                    <input type="text" class="form-control custom-input" placeholder="John"
+                                        v-model="firstname" />
+                                    <span v-if="errors.firstname" class="text-danger small mt-1 d-block">{{
+                                        errors.firstname[0] }}</span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted">LAST NAME</label>
+                                    <input type="text" class="form-control custom-input" placeholder="Doe"
+                                        v-model="lastname" />
+                                    <span v-if="errors.lastname" class="text-danger small mt-1 d-block">{{
+                                        errors.lastname[0] }}</span>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold text-muted">EMAIL ADDRESS</label>
+                                    <input type="email" class="form-control custom-input"
+                                        placeholder="example@email.com" v-model="email" />
+                                    <span v-if="errors.email" class="text-danger small mt-1 d-block">{{ errors.email[0]
+                                    }}</span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted">PASSWORD</label>
+                                    <input id="password" type="password" class="form-control custom-input"
+                                        placeholder="••••••••" v-model="password" />
+                                    <span v-if="errors.password" class="text-danger small mt-1 d-block">
+                                        {{ errors.password[0] }}
+                                    </span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted">CONFIRM PASSWORD</label>
+                                    <input id="password_confirmation" type="password" class="form-control custom-input"
+                                        placeholder="••••••••" v-model="password_confirmation" />
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-check form-switch mb-2 ms-1">
+                                        <input class="form-check-input" type="checkbox" id="showpassword"
+                                            @click="showpassword" style="cursor: pointer;">
+                                        <label class="form-check-label small text-muted" for="showpassword">Show
+                                            Passwords</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="form-label small fw-bold text-muted">PHONE NUMBER</label>
+                                    <input type="tel" class="form-control custom-input" placeholder="09XX XXX XXXX"
+                                        v-model="phonenumber" />
+                                    <span v-if="errors.phonenumber" class="text-danger small mt-1 d-block">{{
+                                        errors.phonenumber[0] }}</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold text-muted">GENDER</label>
+                                    <select class="form-select custom-input" v-model="gender">
+                                        <option value="">Select</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                    </select>
+                                </div>
+                            </div>
+
 
                         </div>
 
+                        <div v-if="currentStep === 1" class="animate__animated animate__fadeIn text-center py-4">
+                            <h2 class="fw-bold mb-3" style="color: #003C87;">Identity Verification</h2>
+                            <p class="text-muted mb-5">Please upload a valid government-issued ID.</p>
 
+                            <div class="upload-area p-5 border-2 border-dashed rounded-4 transition-all"
+                                @click="triggerGovIdInput"
+                                style="cursor: pointer; background: #f8fafc; border-color: #cbd5e0;">
+                                <input ref="govIdInput" class="d-none" type="file" accept="image/*"
+                                    @change="handleGovermentIdUpload" />
+                                <div class="mb-3">
+                                    <i class="bi bi-card-heading" style="font-size: 3.5rem; color: #003C87;"></i>
+                                </div>
+                                <h5 class="fw-bold">Upload Government ID</h5>
+                                <p class="text-muted small">Click to browse or drag and drop</p>
+                            </div>
+
+                            <div v-if="govermentIdPicPreview" class="mt-4 animate__animated animate__zoomIn">
+                                <div class="position-relative d-inline-block">
+                                    <img :src="govermentIdPicPreview" class="img-fluid rounded-3 shadow-sm border"
+                                        style="max-height: 200px;" />
+                                    <button type="button" @click="removeGovermentPermitPic"
+                                        class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 rounded-circle shadow">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-if="currentStep === 2" class="animate__animated animate__fadeIn text-center py-4">
+                            <h2 class="fw-bold mb-3" style="color: #003C87;">Business Accreditation</h2>
+                            <p class="text-muted mb-5">Upload your valid Business Permit to start listing.</p>
+
+                            <div class="upload-area p-5 border-2 border-dashed rounded-4 transition-all"
+                                @click="triggerBusinessPermitInput"
+                                style="cursor: pointer; background: #f8fafc; border-color: #cbd5e0;">
+                                <input ref="businessPermitInput" class="d-none" type="file" accept="image/*"
+                                    @change="handleBusinessPermitUpload" />
+                                <div class="mb-3">
+                                    <i class="bi bi-file-earmark-check" style="font-size: 3.5rem; color: #003C87;"></i>
+                                </div>
+                                <h5 class="fw-bold">Upload Business Permit</h5>
+                                <p class="text-muted small">Click to browse or drag and drop</p>
+                            </div>
+
+                            <div v-if="businessIdPicPreview" class="mt-4 animate__animated animate__zoomIn">
+                                <div class="position-relative d-inline-block">
+                                    <img :src="businessIdPicPreview" class="img-fluid rounded-3 shadow-sm border"
+                                        style="max-height: 200px;" />
+                                    <button type="button" @click="removeBusinessPermitPic"
+                                        class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 rounded-circle shadow">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-if="currentStep === 3" class="animate__animated animate__fadeIn text-center py-5">
+                            <div class="mb-4">
+                                <div class="d-inline-block p-4 rounded-circle mb-3"
+                                    style="background: rgba(0, 60, 135, 0.05);">
+                                    <i class="bi bi-shield-lock-fill" style="font-size: 2.5rem; color: #003C87;"></i>
+                                </div>
+                                <h2 class="fw-bold" style="color: #003C87;">OTP Verification</h2>
+                                <p class="text-muted">We've sent a 6-digit code to your email.</p>
+                            </div>
+
+                            <div class="d-flex justify-content-center gap-2 mb-4">
+                                <input v-for="(digit, index) in otpdigits" :key="index" type="text"
+                                    :ref="'otpInput' + index" maxlength="1"
+                                    class="form-control text-center fw-bold fs-3 otp-input-box"
+                                    v-model="otpdigits[index]" @input="handleInput(index, $event)"
+                                    @keydown.backspace="handleBackspace(index, $event)" />
+                            </div>
+
+                            <div class="mb-5">
+                                <div class="badge rounded-pill px-3 py-2 fw-bold"
+                                    style="background: #fff4e6; color: #FC7D07;" v-if="otpTimer > 0">
+                                    <i class="bi bi-clock-history me-2"></i>Expires in: {{ formattedTime }}
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                                <button type="button" @click="RegisterLandlord"
+                                    class="btn px-5 py-3 rounded-pill fw-bold text-white shadow-sm register-submit-btn"
+                                    style="background: #003C87; border: none;">
+                                    Verify & Register Account
+                                </button>
+                                <button type="button" @click="resendOtp"
+                                    class="btn btn-link text-decoration-none fw-bold align-self-center"
+                                    :disabled="otpTimer > 0" :style="{ color: otpTimer > 0 ? '#cbd5e0' : '#003C87' }">
+                                    Resend Code
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
-
-
-                </div>
-                <div v-if="errors.profilePic" class="alert alert-danger text-center">
-                    <span class="text-black  fs-bold">
-                        {{ errors.profilePic[0] }}
-                    </span>
-                </div>
-
-
-                <div class=" row mb-3">
-                    <div class="col">
-                        <label for="firstname" class="form-label">Firstname</label>
-                        <input type="text" class="form-control" placeholder="Enter your firstname" v-model="firstname"
-                            style="border: 2px solid #4edce2;" id="firstname" name="firstname" />
-
-                        <span v-if="errors.firstname" class="text-danger">
-                            {{ errors.firstname[0] }}
-                        </span>
-
-
-                    </div>
-                    <div class="col">
-                        <label for="lastname" class="form-label">Lastname</label>
-                        <input type="text" class="form-control" placeholder="Enter your lastname" v-model="lastname"
-                            style="border: 2px solid #4edce2;" name="lastname" id="lastname" />
-                        <span v-if="errors.lastname" class="text-danger">
-                            {{ errors.lastname[0] }}
-                        </span>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email"
-                        placeholder="Enter your Email Address" v-model="email" autocomplete="email"
-                        style="border: 2px solid #4edce2;" />
-                    <span v-if="errors.email" class="text-danger">
-                        {{ errors.email[0] }}
-                    </span>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" placeholder="Enter your Password" v-model="password"
-                            style="border: 2px solid #4edce2;" name="password" id="password" />
-                        <span v-if="errors.password" class="text-danger">
-                            {{ errors.password[0] }}
-                        </span>
-                    </div>
-                    <div class="col">
-                        <label for="password_confirmation" class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control" placeholder="Confirm Password"
-                            v-model="password_confirmation" name="password_confirmation"
-                            style="border: 2px solid #4edce2;" id="password_confirmation" />
-                        <span v-if="errors.password_confirmation" class="text-danger">
-                            {{ errors.password_confirmation[0] }}
-                        </span>
-
-                    </div>
-                </div>
-                <div class="mb-3 d-flex align-items-center">
-                    <input class="form-check-input me-2" type="checkbox" id="showpassword" @click="showpassword" />
-                    <label for="showpassword" class="mb-0">Show Password</label>
-                </div>
-
-                <div class=" mb-3">
-                    <label for="phonenumber" class="form-label">Phone Number</label>
-                    <input type="tel" id="phonenumber" class="form-control" placeholder="Enter your Phone Number"
-                        v-model="phonenumber" style="border: 2px solid #4edce2;" name="phonenumber" />
-                    <span v-if="errors.phonenumber" class="text-danger">
-                        {{ errors.phonenumber[0] }}
-                    </span>
-                </div>
-                <div class="mb-3">
-                    <label for="gender" class="form-label">Gender</label>
-                    <select class="form-select" aria-label="Select Gender" name="gender" v-model="gender" id="gender"
-                        style="border: 2px solid #4edce2;">
-                        <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                    </select>
-                    <span v-if="errors.gender" class="text-danger">
-                        {{ errors.gender[0] }}
-                    </span>
-                </div>
-
-            </div>
-            <!-- Step 2: Government ID -->
-            <!-- Step 1: Upload Government ID -->
-            <div v-if="currentStep === 1">
-                <h2 class="text-center mb-2 text-create">Upload Government ID</h2>
-
-                <!-- Upload Box -->
-                <div class="border border-secondary rounded-3 p-4 mb-3 text-center" style="cursor: pointer;"
-                    @click="triggerGovIdInput">
-                    <input ref="govIdInput" class="d-none" id="gov-id" type="file" accept="image/*"
-                        @change="handleGovermentIdUpload" />
-
-                    <!-- Icon + Text -->
-                    <div class="d-flex flex-column align-items-center text-center mb-3">
-                        <h5 class="text-secondary mt-2">Upload Government ID</h5>
-                        <small class="text-muted">Click to browse and select an image file</small>
-                    </div>
-                </div>
-
-                <!-- Image Preview -->
-                <div v-if="govermentIdPicPreview" class="text-center mb-3">
-                    <img :src="govermentIdPicPreview" alt="Uploaded ID" class="img-fluid rounded mb-2"
-                        style="max-height: 250px;" />
-                    <div>
-                        <button type="button" @click="removeGovermentPermitPic" class="btn btn-sm">
-                            Remove Uploaded Image
+                    <div v-if="currentStep < 3" class="d-flex justify-content-between mt-5 pt-4 border-top">
+                        <button type="button" class="btn btn-light px-4 py-2 rounded-3 fw-bold text-muted border"
+                            @click="prevStep" :disabled="currentStep === 0">
+                            <i class="bi bi-chevron-left me-2"></i>Back
+                        </button>
+                        <button type="button" class="btn px-5 py-2 rounded-3 fw-bold shadow-sm text-white next-step-btn"
+                            @click="nextStep" :disabled="currentStep === steps.length - 1"
+                            style="background: #003C87; border: none;">
+                            Next Step<i class="bi bi-chevron-right ms-2"></i>
                         </button>
                     </div>
+                </form>
+                <div class="text-center mt-4">
+                    <p class="text-muted">Do you already have an account? <a :href="LoginLink"
+                            class="text-decoration-none">Login here</a></p>
                 </div>
             </div>
-
-
-            <!-- Step 3: Business Permit -->
-            <div v-if="currentStep === 2">
-                <h2 class="text-center mb-2 text-create">Upload Business Permit</h2>
-
-                <!-- Upload Box -->
-                <div class="border border-secondary rounded-3 p-4 mb-3 text-center" style="cursor: pointer;"
-                    @click="triggerBusinessPermitInput">
-                    <input ref="businessPermitInput" class="d-none" id="business-permit" type="file" accept="image/*"
-                        @change="handleBusinessPermitUpload" />
-
-                    <!-- Icon + Text -->
-                    <div class="d-flex flex-column align-items-center text-center mb-3">
-                        <h5 class="text-secondary mt-2">Upload Business Permit</h5>
-                        <small class="text-muted">Click to browse and select an image file</small>
-                    </div>
-                </div>
-
-                <!-- Image Preview -->
-                <div v-if="businessIdPicPreview" class="text-center mb-3">
-                    <img :src="businessIdPicPreview" alt="Uploaded ID" class="img-fluid rounded mb-2"
-                        style="max-height: 250px;" />
-                    <div>
-                        <button type="button" @click="removeBusinessPermitPic" class="btn btn-sm">
-                            Remove Uploaded Image
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 4: OTP -->
-            <div v-if="currentStep === 3" class="custom-modal d-flex justify-content-center align-items-center w-100 ">
-                <div class="modal-wrapper text-center w-75">
-
-                    <h2 class="mb-4 text-create">OTP Verification</h2>
-                    <p class="mb-4">Please enter the verification OTP sent to your email.</p>
-                    <!-- OTP Inputs -->
-                    <div class="otp-inputs d-flex justify-content-center gap-2 mb-5">
-                        <input v-for="(digit, index) in otpdigits" :key="index" type="text" :ref="'otpInput' + index"
-                            maxlength="1" class="form-control text-center fs-4" name="codeotp"
-                            v-model="otpdigits[index]" @input="handleInput(index, $event)"
-                            @keydown.backspace="handleBackspace(index, $event)"
-                            style="width: 50px; height: 50px; border: 2px solid #4edce2;" />
-                    </div>
-
-
-                    <!-- OTP Timer -->
-                    <div class=" otp_timer mb-4">
-                        <p class="primary" v-if="otpTimer > 0">OTP expires in: {{ formattedTime }}</p>
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="modal-actions d-flex justify-content-center gap-3 mb-3">
-                        <button type="button" @click="RegisterLandlord" class="btn px-4">Register</button>
-                        <button type="button" @click="resendOtp" class="btn t px-4">Resend
-                            OTP</button>
-
-
-                    </div>
-                </div>
-            </div>
-
 
         </div>
-
-        <!-- Navigation Buttons -->
-        <div class="d-flex justify-content-between mt-4  text-create">
-            <button type="button" class="btn " @click="prevStep" :disabled="currentStep === 0">
-                Previous
-            </button>
-            <button type="button" class="btn" @click="nextStep" :disabled="currentStep === steps.length - 1">
-                Next
-            </button>
-        </div>
-
-    </form>
-
+    </div>
 </template>
 <script>
 import Loader from '@/components/loader.vue';
@@ -245,6 +266,7 @@ export default {
     name: 'LandlordRegister',
     data() {
         return {
+            LoginLink: '/landlordLogin',
             //images
             previewPic: "/images/registertenant/Profile-PNG-Photo.png",
             govermentIdPicPreview: "",
@@ -273,7 +295,7 @@ export default {
         };
     },
     //timer
-  
+
     methods: {
         showToast(message, color = 'success') {
             this.messageToaster = message;
@@ -295,23 +317,23 @@ export default {
             return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
         },
         //Steps 1 to 4
-       async nextStep() {
+        async nextStep() {
             if (this.currentStep < this.steps.length - 1) {
-                let isValid = true;
+                let isValid = false;
 
                 if (this.currentStep === 0) {
-                    isValid = this.PersonalDetails();
-
-
-
-                } else if (this.currentStep === 1) {
-                    isValid = this.IdentityVerification();
+                    isValid = await this.PersonalDetails();
+                }
+                else if (this.currentStep === 1) {
+                    isValid = await this.IdentityVerification();
                 }
                 else if (this.currentStep === 2) {
-                    isValid = this.BusinessDocumentation();
+                    isValid = await this.BusinessDocumentation();
                 }
 
-
+                if (isValid) {
+                    this.currentStep++;
+                }
             }
         },
 
@@ -407,7 +429,6 @@ export default {
         //personal Details
         async PersonalDetails() {
             this.$refs.loader.loading = true;
-
             const formData = new FormData();
             formData.append('firstname', this.firstname.trim());
             formData.append('lastname', this.lastname.trim());
@@ -420,7 +441,6 @@ export default {
             try {
                 const response = await axios.post('/personalDetails', formData, {
                     headers: {
-                        // DON'T set Content-Type when using FormData
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     }
                 });
@@ -429,12 +449,10 @@ export default {
                     this.currentStep = 1;
                     this.$refs.loader.loading = false;
                     this.errors = {};
-
                     return true;
                 }
             } catch (error) {
                 this.$refs.loader.loading = false;
-                console.clear();
                 if (error.response) {
                     if (error.response.status === 422) {
                         this.errors = error.response.data.errors || {};
@@ -750,16 +768,8 @@ export default {
             passwordField.type = type;
             confirmPasswordField.type = type;
         }
-
-
     },
-    computed: {
-        formattedTime() {
-            const minutes = Math.floor(this.otpTimer / 60);
-            const seconds = this.otpTimer % 60;
-            return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        },
-    },
+
     mounted() {
         this.$nextTick(() => {
             if (this.currentStep === 3) {
@@ -767,8 +777,6 @@ export default {
             }
         });
     }
-
-
-
 };
 </script>
+<style scoped src="./../../../css/accountprocess/landlordRegister.css"></style>

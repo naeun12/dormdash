@@ -12,7 +12,7 @@
    <div style="text-align: center; margin-bottom: 10px;">
     <img src="{{ $logoPath }}" class="logo" style="width: 25%; display: block; margin: 0 auto;">
     <div class="logo-text">
-        DormHub
+        DormDash
     </div>
 </div>
 
@@ -102,7 +102,7 @@
     Combined Total Income: PHP {{ number_format($bookingTotal + $reservationTotal, 2) }}
 </div>
 <div class="footer">
-    &copy; {{ now()->year }} DormHub. All rights reserved.
+    &copy; {{ now()->year }} DormDash. All rights reserved.
 </div>
 <style>
     body {

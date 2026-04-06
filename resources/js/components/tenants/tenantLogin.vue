@@ -1,76 +1,91 @@
 <template>
-    <div class="card border-0 shadow-lg mt-5 py-4 px-3 mx-auto w-100"
-        style="max-width: 700px; border-radius: 25px; background: #ffffff;">
+    <div class="card border-0 shadow-lg mt-5 py-5 px-4 mx-auto w-100 animate__animated animate__fadeIn"
+        style="max-width: 550px; border-radius: 30px; background: #ffffff;">
 
-
-        <!-- Header -->
-        <div class="text-center mb-4 px-2">
-            <h1 class="fw-bold text-primary mb-2">🏠 Hello Tenant</h1>
-            <p class="text-muted fs-6 mb-0">
-                Welcome back! Please log in to explore available dorms and manage your bookings.
+        <div class="text-center mb-5 px-2">
+            <div class="d-inline-block p-3 rounded-circle mb-3" style="background-color: rgba(0, 60, 135, 0.1);">
+                <i class="bi bi-person-badge-fill fs-1" style="color: #003C87;"></i>
+            </div>
+            <h1 class="fw-bold text-dark mb-2" style="letter-spacing: -1.5px;">Hello <span
+                    style="color: #FC7D07;">Tenant!</span></h1>
+            <p class="text-muted mb-0 px-md-4" style="font-size: 15px;">
+                Welcome back to <strong>DormDash</strong>. Please log in to explore available dorms and manage your
+                stay.
             </p>
         </div>
 
-
-        <!-- Tenant Login Form -->
-        <form @submit.prevent="TenantLogin" class="px-3">
-            <!-- Email -->
-            <div class="mb-3">
-                <label for="email" class="form-label fw-semibold text-dark">Email Address</label>
-                <input type="email" id="email" v-model="email" class="form-control p-3 shadow-sm rounded border-2"
-                    placeholder="Enter your email" style="border-color: #4edce2;">
-                <span v-if="errors.email" class="text-danger small mt-1 d-block">
-                    {{ errors.email[0] }}
-                </span>
-            </div>
-
-
-            <!-- Password -->
-            <div class="mb-3">
-                <label for="password" class="form-label fw-semibold text-dark">Password</label>
-                <div class="input-group shadow-sm rounded border-2" style="border-color: #4edce2;">
-                    <input :type="showPassword ? 'text' : 'password'" id="password" v-model="password"
-                        class="form-control border-0 p-3" placeholder="Enter your password">
+        <form @submit.prevent="TenantLogin" class="px-md-3">
+            <div class="mb-4">
+                <label for="email" class="form-label small fw-bold text-muted text-uppercase ms-1">Email Address</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-2 border-end-0"
+                        style="border-color: #edf2f7; border-radius: 12px 0 0 12px;">
+                        <i class="bi bi-envelope text-muted"></i>
+                    </span>
+                    <input type="email" id="email" v-model="email"
+                        class="form-control p-3 border-2 border-start-0 custom-input" placeholder="name@example.com"
+                        style="border-color: #edf2f7; border-radius: 0 12px 12px 0;">
                 </div>
-                <span v-if="errors.password" class="text-danger small mt-1 d-block">
-                    {{ errors.password[0] }}
+                <span v-if="errors.email" class="text-danger small mt-2 d-block animate__animated animate__headShake">
+                    <i class="bi bi-exclamation-circle me-1"></i>{{ errors.email[0] }}
                 </span>
             </div>
 
-
-            <!-- Show Password -->
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="show-password" @click="toggleShowPassword">
-                <label class="form-check-label" for="show-password">Show Password</label>
+            <div class="mb-3">
+                <label for="password" class="form-label small fw-bold text-muted text-uppercase ms-1">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-2 border-end-0"
+                        style="border-color: #edf2f7; border-radius: 12px 0 0 12px;">
+                        <i class="bi bi-lock text-muted"></i>
+                    </span>
+                    <input :type="showPassword ? 'text' : 'password'" id="password" v-model="password"
+                        class="form-control border-2 border-start-0 p-3 custom-input" placeholder="••••••••"
+                        style="border-color: #edf2f7; border-radius: 0 12px 12px 0;">
+                </div>
+                <span v-if="errors.password"
+                    class="text-danger small mt-2 d-block animate__animated animate__headShake">
+                    <i class="bi bi-exclamation-circle me-1"></i>{{ errors.password[0] }}
+                </span>
             </div>
 
+            <div class="d-flex justify-content-between align-items-center mb-4 ms-1">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input shadow-none" id="show-password"
+                        @click="toggleShowPassword" style="cursor: pointer; border-color: #cbd5e0;">
+                    <label class="form-check-label small text-muted" for="show-password" style="cursor: pointer;">
+                        Show Password
+                    </label>
+                </div>
+            </div>
 
-            <!-- Sign In Button -->
-            <div class="d-grid mt-3">
-                <button type="submit" class="btn btn-primary rounded-pill py-2 shadow-sm"
-                    style="background: linear-gradient(135deg, #4edce2, #1fb6ff); border: none; font-weight: 600;">
-                    Sign In
+            <div class="d-grid pt-2">
+                <button type="submit"
+                    class="btn rounded-pill py-3 shadow border-0 fw-bold transition-all text-white login-btn"
+                    style="background: #003C87; font-size: 1.1rem;">
+                    Sign In <i class="bi bi-arrow-right ms-2"></i>
                 </button>
             </div>
         </form>
 
+        <div class="text-center mt-5">
+            <p class="mb-0 text-muted">
+                Don’t have an account yet?
+                <a @click="clickSignupLink" class="text-decoration-none fw-bold ms-1"
+                    style="cursor: pointer; color: #FC7D07;">
+                    Create Account
+                </a>
+            </p>
+        </div>
 
-        <!-- Signup Link -->
-        <p class="text-center mt-4 mb-2 text-muted">
-            Don’t have an account?
-            <a @click="clickSignupLink" class="text-decoration-none text-primary fw-semibold" style="cursor: pointer;">
-                Sign up here
-            </a>
-        </p>
-
-
-        <!-- Toast Notification -->
-        <div :class="['container-toast mt-4', { show: toaster }]" v-show="toaster">
-            <div :class="['toast-child', `bg-${toastColor}`]" style="border-radius: 12px; overflow: hidden;">
-                <div class="toast-body d-flex justify-content-between align-items-center text-white fw-bold py-3 px-4">
-                    <span class="text-wrap">{{ messageToaster }}</span>
-                    <button type="button" class="btn-close btn-close-white ms-3" @click="ExitToaster"
-                        aria-label="Close"></button>
+        <div v-show="toaster"
+            :class="['container-toast position-fixed bottom-0 start-50 translate-middle-x mb-4 z-3 animate__animated', toaster ? 'animate__backInUp' : 'animate__fadeOutDown']">
+            <div :class="['shadow-lg border-0']"
+                :style="{ borderRadius: '15px', minWidth: '300px', backgroundColor: toastColor === 'danger' ? '#e53e3e' : '#003C87' }">
+                <div class="d-flex align-items-center text-white py-3 px-4">
+                    <i class="bi bi-info-circle-fill me-3 fs-4"></i>
+                    <div class="flex-grow-1 fw-medium">{{ messageToaster }}</div>
+                    <button type="button" class="btn-close btn-close-white shadow-none ms-3"
+                        @click="ExitToaster"></button>
                 </div>
             </div>
         </div>
@@ -200,3 +215,4 @@ export default {
 }
 
 </script>
+<style scoped src="./../../../css/accountprocess/tenantLogin.css"></style>

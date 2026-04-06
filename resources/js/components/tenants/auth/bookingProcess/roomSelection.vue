@@ -4,335 +4,224 @@
     <Modalconfirmation ref="modal" />
     <NotificationList ref="toastRef" />
 
+    <div class="container-fluid py-4 px-lg-5 bg-light min-vh-100">
 
-    <div class="container-fluid py-3 m-0">
-
-
-        <div
-            class="d-flex flex-column flex-sm-row align-items-stretch align-sm-items-center justify-content-center gap-2 gap-sm-3 my-4">
-            <button :class="['btn', isAvailable, 'fw-bold']" @click="ClickavailableRooms()">
-                <i class="bi bi-door-open-fill me-2"></i>Available Rooms
-            </button>
-
-
-            <button :class="['btn', isOccupied, 'fw-bold']" @click="ClickoccupiedRooms()">
-                <i class="bi bi-door-open-fill me-2"></i>Occupied Rooms
-            </button>
+        <div class="d-flex justify-content-center mb-4">
+            <div class="bg-white p-2 rounded-pill shadow-sm d-inline-flex gap-2 border">
+                <button
+                    :class="['btn rounded-pill px-4 fw-bold transition-all', chooseStatus === 'Available' ? 'btn-primary shadow' : 'btn-light text-muted']"
+                    @click="ClickavailableRooms()">
+                    <i class="bi bi-door-open-fill me-2"></i>Available
+                </button>
+                <button
+                    :class="['btn rounded-pill px-4 fw-bold transition-all', chooseStatus === 'Occupied' ? 'btn-primary shadow' : 'btn-light text-muted']"
+                    @click="ClickoccupiedRooms()">
+                    <i class="bi bi-person-workspace me-2"></i>Occupied
+                </button>
+            </div>
         </div>
-        <div class="d-flex flex-column flex-sm-row align-items-stretch align-sm-items-center gap-2 gap-sm-3 my-3">
-            <select class="form-select w-100 w-sm-auto" v-model="selectPriceRange" @change="filterByPriceRange($event)"
-                style="border:1px solid #4edce2">
-                <option value="" disabled>Select Price Range</option>
-                <option value="all">All Price</option>
-                <option value="0-100">0-100</option>
-                <option value="101-300">101-300</option>
-                <option value="301-99999">300+</option>
-            </select>
 
-
-            <select class="form-select w-100 w-sm-auto" v-model="selectedGender" @change="filterByGender($event)"
-                style="border:1px solid #4edce2">
-                <option value="" disabled>Select Gender Preferences</option>
-                <option value="all">All Gender</option>
-                <option value="Male Only">Male</option>
-                <option value="Female Only">Female</option>
-            </select>
-        </div>
-        <div v-if="!rooms.length" class="text-center p-5 bg-light rounded shadow-sm">
-            <i class="bi bi-door-closed text-secondary" style="font-size: 3rem;"></i>
-            <h5 class="mt-3 text-dark">No Rooms Available</h5>
-            <p class="text-muted">Please check back later or explore other dormitories.</p>
-        </div>
-        <div class="card shadow-lg rounded-4 overflow-hidden p-3 m-2" v-for="(room, index) in visibleRooms"
-            :key="room.room_id">
-            <div class="row g-3 align-items-center">
-
-
-                <!-- Image Section -->
-                <div class="col-12 col-md-4" style="min-width: 200px;">
-                    <img :src="room.roomImages" :alt="`Image of ${room.dorm?.dorm_name || 'Dorm'}`"
-                        class="img-fluid rounded" style="object-fit: cover; width: 100%; height: 180px;" />
+        <div class="row g-3 mb-5 justify-content-center">
+            <div class="col-12 col-md-4 col-lg-3">
+                <div class="input-group shadow-sm rounded-4 overflow-hidden border-0">
+                    <span class="input-group-text bg-white border-0 text-primary"><i class="bi bi-tags-fill"></i></span>
+                    <select class="form-select border-0 py-2 fw-medium" v-model="selectPriceRange"
+                        @change="filterByPriceRange($event)">
+                        <option value="" disabled>Price Range</option>
+                        <option value="all">All Prices</option>
+                        <option value="0-100">₱0 - ₱100</option>
+                        <option value="101-300">₱101 - ₱300</option>
+                        <option value="301-99999">₱300+</option>
+                    </select>
                 </div>
-
-
-                <!-- Details Section -->
-                <div class="col-12 col-md-8 d-flex flex-column justify-content-between">
-
-
-                    <!-- Title -->
-                    <div class="text-black px-2 py-1">
-                        <h5 class="mb-0 fw-semibold">
-                            <i class="bi bi-house-door-fill me-2 text-primary"></i>
-                            {{ room.listingType || 'Available Dorm' }}
-                        </h5>
-                    </div>
-
-
-                    <!-- Tags -->
-                    <div class="d-flex flex-wrap gap-2 mt-2 px-2">
-                        <span class="badge bg-light border text-dark">
-                            <i class="bi bi-aspect-ratio me-1 text-secondary"></i>
-                            {{ room.areaSqm || 'N/A' }} sqm
-                        </span>
-                        <span class="badge bg-light border text-dark">
-                            <i class="bi bi-gender-ambiguous me-1 text-secondary"></i>
-                            {{ room.genderPreference || 'N/A' }}
-                        </span>
-                        <span class="badge bg-light border text-dark">
-                            <i class="bi bi-lamp-fill me-1 text-secondary"></i>
-                            {{ room.furnishing_status || 'N/A' }}
-                        </span>
-                    </div>
-
-
-                    <!-- Price -->
-                    <div class="d-flex justify-content-between align-items-center mt-3 px-2 flex-wrap">
-                        <span class="fw-bold text-success fs-5">
-                            <i class="bi bi-cash-coin me-1"></i> ₱{{ Number(room.price).toLocaleString() || 'N/A' }} /
-                            Head
-                        </span>
-                    </div>
-
-
-                    <!-- Action Buttons -->
-                    <div class="d-flex justify-content-between align-items-center mt-3 mb-2 px-2 flex-wrap">
-                        <a @click="openRoomDetails(room.roomID)"
-                            class="text-primary text-decoration-none px-3 py-2 fw-semibold" style="cursor: pointer;">
-                            <i class="bi bi-eye me-1"></i>View Details
-                        </a>
-                        <div class="d-flex gap-2 mt-2 mt-md-0">
-                            <button v-if="chooseStatus === 'Occupied'" type="button"
-                                class="btn btn-outline-primary btn-sm px-3" @click="openReservationModal(room)">
-                                <i class="bi bi-calendar-check me-1"></i>Reserve this room
-                            </button>
-                            <button v-if="chooseStatus === 'Available'" type="button"
-                                class="btn btn-primary btn-sm px-3" @click="bookRoom(room)">
-                                <i class="bi bi-calendar-check me-1"></i>Book
-                            </button>
-                        </div>
-                    </div>
-
-
+            </div>
+            <div class="col-12 col-md-4 col-lg-3">
+                <div class="input-group shadow-sm rounded-4 overflow-hidden border-0">
+                    <span class="input-group-text bg-white border-0 text-primary"><i
+                            class="bi bi-gender-ambiguous"></i></span>
+                    <select class="form-select border-0 py-2 fw-medium" v-model="selectedGender"
+                        @change="filterByGender($event)">
+                        <option value="" disabled>Gender Preference</option>
+                        <option value="all">All Genders</option>
+                        <option value="Male Only">Male Only</option>
+                        <option value="Female Only">Female Only</option>
+                    </select>
                 </div>
             </div>
         </div>
 
-
-        <div class="d-flex justify-content-center mb-3 mt-3" v-if="rooms.length > 3">
-            <a href="#" @click.prevent="toggleShowMore">
-                {{ showAll ? 'Show Less' : 'Show More' }}
-            </a>
+        <div v-if="!rooms.length"
+            class="text-center py-5 bg-white rounded-5 shadow-sm border mx-auto animate__animated animate__fadeIn"
+            style="max-width: 600px;">
+            <div class="mb-3 text-muted display-1"><i class="bi bi-door-closed"></i></div>
+            <h4 class="fw-bold">No Rooms Found</h4>
+            <p class="text-muted px-4">We couldn't find any rooms matching your current filters. Try adjusting your
+                preferences or check back later.</p>
         </div>
-        <div v-if="openRoomDetailsModal" class="modal fade show d-block w-100" tabindex="-1"
-            style="background-color: rgba(0,0,0,0.5);">
+
+        <div class="row g-4">
+            <div class="col-12" v-for="(room, index) in visibleRooms" :key="room.room_id">
+                <div
+                    class="card border-0 shadow-sm rounded-4 overflow-hidden hover-lift animate__animated animate__fadeInUp">
+                    <div class="row g-0">
+                        <div class="col-md-4 position-relative">
+                            <img :src="room.roomImages" :alt="room.listingType" class="h-100 w-100"
+                                style="object-fit: cover; min-height: 220px;" />
+                            <div class="position-absolute top-0 start-0 m-3">
+                                <span class="badge glass-effect text-white rounded-pill px-3 py-2 shadow-sm"
+                                    style="background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);">
+                                    <i class="bi bi-camera me-1"></i> Featured
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-8 p-4 d-flex flex-column justify-content-between bg-white">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h4 class="fw-bold text-dark mb-0">
+                                        <i class="bi bi-house-heart text-primary me-2"></i>
+                                        {{ room.listingType || 'Available Dorm' }}
+                                    </h4>
+                                    <h4 class="fw-bold text-success mb-0">₱{{ Number(room.price).toLocaleString()
+                                        }}<small class="fs-6 text-muted">/head</small></h4>
+                                </div>
+
+                                <div class="d-flex flex-wrap gap-2 my-3">
+                                    <span class="badge bg-light text-dark border rounded-pill px-3 py-2 fw-normal">
+                                        <i class="bi bi-arrows-fullscreen text-primary me-1"></i> {{ room.areaSqm ||
+                                        'N/A' }} sqm
+                                    </span>
+                                    <span class="badge bg-light text-dark border rounded-pill px-3 py-2 fw-normal">
+                                        <i class="bi bi-person-check text-primary me-1"></i> {{ room.genderPreference }}
+                                    </span>
+                                    <span class="badge bg-light text-dark border rounded-pill px-3 py-2 fw-normal">
+                                        <i class="bi bi-lamp text-primary me-1"></i> {{ room.furnishing_status }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                                <a @click="openRoomDetails(room.roomID)"
+                                    class="btn btn-link text-primary text-decoration-none fw-bold p-0">
+                                    <i class="bi bi-info-circle me-1"></i> Full Details
+                                </a>
+                                <div class="d-flex gap-2">
+                                    <button v-if="chooseStatus === 'Occupied'" @click="openReservationModal(room)"
+                                        class="btn btn-outline-primary rounded-pill px-4 fw-bold shadow-sm">
+                                        <i class="bi bi-calendar-event me-2"></i>Reserve Room
+                                    </button>
+                                    <button v-if="chooseStatus === 'Available'" @click="bookRoom(room)"
+                                        class="btn btn-primary rounded-pill px-4 fw-bold shadow">
+                                        <i class="bi bi-lightning-fill me-1"></i>Book Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5" v-if="rooms.length > 3">
+            <button @click.prevent="toggleShowMore"
+                class="btn btn-white border shadow-sm rounded-pill px-5 fw-bold text-primary">
+                {{ showAll ? 'Show Less Rooms' : 'View More Available Rooms' }}
+            </button>
+        </div>
+
+        <div v-if="openRoomDetailsModal" class="modal fade show d-block" tabindex="-1"
+            style="background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);">
             <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content shadow-lg rounded-4 overflow-hidden">
-
-
-                    <!-- Modal Header -->
-                    <div class="modal-header bg-info  text-white">
-                        <h5 class="modal-title">Room Details</h5>
-                        <button type="button" class="btn-close" @click="CloseRoomDetails()"></button>
+                <div
+                    class="modal-content border-0 shadow-lg rounded-5 overflow-hidden animate__animated animate__zoomIn">
+                    <div class="modal-header bg-dark text-white border-0 py-3 px-4">
+                        <h5 class="modal-title fw-bold">Room Information</h5>
+                        <button type="button" class="btn-close btn-close-white" @click="CloseRoomDetails()"></button>
                     </div>
                     <div class="modal-body p-4">
-                        <!-- Image Preview -->
                         <div class="text-center mb-4">
-                            <img :src="roomsDetail?.roomImages" class="img-fluid rounded-3 shadow w-100"
-                                style="max-height: 300px; object-fit: cover;"
-                                :alt="`Image of ${roomsDetail?.room_type || 'Room'}`" />
+                            <img :src="roomsDetail?.roomImages" class="img-fluid rounded-4 shadow w-100"
+                                style="max-height: 350px; object-fit: cover;" />
                         </div>
-
-
-                        <!-- Room Info -->
-                        <div class="row g-4">
-                            <!-- Left Column -->
-                            <div class="col-md-6">
-                                <div class="bg-light border rounded-3 p-3 shadow-sm mb-3">
-                                    <label class="form-label fw-semibold text-secondary">
-                                        <i class="bi bi-hash me-2 text-primary"></i> Room Number
-                                    </label>
-                                    <div class="text-dark fw-medium">{{ roomsDetail?.roomNumber || 'N/A' }}</div>
-                                </div>
-
-
-                                <div class="bg-light border rounded-3 p-3 shadow-sm mb-3">
-                                    <label class="form-label fw-semibold text-secondary">
-                                        <i class="bi bi-door-open-fill me-2 text-primary"></i> Room Type
-                                    </label>
-                                    <div class="text-dark fw-medium">{{ roomsDetail?.roomType || 'N/A' }}</div>
-                                </div>
-
-
-                                <div class="bg-light border rounded-3 p-3 shadow-sm mb-3">
-                                    <label class="form-label fw-semibold text-secondary">
-                                        <i class="bi bi-cash-coin me-2 text-primary"></i> Monthly Rate
-                                    </label>
-                                    <div class="text-dark fw-medium">₱{{ Number(roomsDetail?.price).toLocaleString() ||
-                                        '0' }}</div>
+                        <div class="row g-3">
+                            <div class="col-md-6"
+                                v-for="(val, label) in { 'Room Number': roomsDetail?.roomNumber, 'Room Type': roomsDetail?.roomType, 'Monthly Rate': '₱' + Number(roomsDetail?.price).toLocaleString() }"
+                                :key="label">
+                                <div class="p-3 bg-light rounded-4 border">
+                                    <small class="text-muted d-block text-uppercase fw-bold">{{ label }}</small>
+                                    <span class="fs-5 fw-bold text-dark">{{ val || 'N/A' }}</span>
                                 </div>
                             </div>
-
-
-                            <!-- Right Column -->
                             <div class="col-md-6">
-                                <div class="bg-light border rounded-3 p-3 shadow-sm mb-3">
-                                    <label class="form-label fw-semibold text-secondary">
-                                        <i class="bi bi-clipboard-check me-2 text-primary"></i> Availability
-                                    </label>
-                                    <div>
-                                        <span class="badge px-3 py-2 fs-6" :class="roomsDetail?.availability === 'Available' ? 'bg-success' :
-                                            roomsDetail?.availability === 'Occupied' ? 'bg-danger' :
-                                                'bg-warning text-dark'">
-                                            {{ roomsDetail?.availability || 'Unknown' }}
-                                        </span>
-                                    </div>
-                                </div>
-
-
-                                <div class="bg-light border rounded-3 p-3 shadow-sm mb-3">
-                                    <label class="form-label fw-semibold text-secondary">
-                                        <i class="bi bi-people-fill me-2 text-primary"></i>Current Tenant Name
-                                    </label>
-                                    <div class="text-dark fw-medium">
-                                        <template v-if="roomsDetail.latest_approved_tenant">
-                                            {{ roomsDetail.latest_approved_tenant.firstname }} {{
-                                                roomsDetail.latest_approved_tenant.lastname }}
-                                        </template>
-                                        <template v-else>
-                                            <span class="text-muted fst-italic">No tenant yet</span>
-                                        </template>
-                                    </div>
-                                </div>
-
-
-
-
-                                <div class="bg-light border rounded-3 p-3 shadow-sm mb-3">
-                                    <label class="form-label fw-semibold text-secondary">
-                                        <i class="bi bi-calendar-event-fill me-2 text-primary"></i> Lease Expiration
-                                        Date
-                                    </label>
-                                    <div class="text-dark fw-medium">
-                                        {{ formatDate(roomsDetail.latest_approved_tenant?.moveOutDate) }}
-                                    </div>
-
-
+                                <div
+                                    class="p-3 bg-light rounded-4 border h-100 d-flex flex-column justify-content-center">
+                                    <small class="text-muted d-block text-uppercase fw-bold">Status</small>
+                                    <span
+                                        :class="['badge rounded-pill mt-1 py-2 fs-6', roomsDetail?.availability === 'Available' ? 'bg-success' : 'bg-danger']">
+                                        {{ roomsDetail?.availability }}
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
-                    <!-- Modal Body -->
-                    <div class="modal-footer justify-content-center">
-                        <button type="button" class="button-costumize  px-4" @click="CloseRoomDetails()">OK</button>
+                    <div class="modal-footer border-0 justify-content-center pb-4">
+                        <button type="button" class="btn btn-dark rounded-pill px-5 fw-bold py-2"
+                            @click="CloseRoomDetails()">Got it!</button>
                     </div>
                 </div>
-                <!-- Modal Footer -->
-
-
             </div>
         </div>
-    </div>
-    <div v-if="reservationDetailsModal" class="modal fade show d-block w-100" tabindex="-1"
-        style="background-color: rgba(0,0,0,0.5);">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content shadow-lg rounded-4 overflow-hidden">
 
-
-                <!-- Modal Header -->
-                <div class="modal-header bg-info  text-white">
-                    <h5 class="modal-title">Room Details</h5>
-                    <button type="button" class="btn-close" @click="reservationDetailsModal = false"></button>
-                </div>
-
-
-                <!-- Modal Body -->
-                <div class="modal-body p-4">
-                    <!-- Image Preview -->
-                    <div class="text-center mb-4">
-                        <img :src="this.imageUrl" class="img-fluid rounded-3 shadow w-50" style="max-height: 300px; "
-                            :alt="`Image of ${roomsDetail?.room_type || 'Room'}`" />
+        <div v-if="reservationDetailsModal" class="modal fade show d-block" tabindex="-1"
+            style="background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div
+                    class="modal-content border-0 shadow-lg rounded-5 overflow-hidden animate__animated animate__fadeInDown">
+                    <div class="modal-header bg-primary text-white border-0 py-3 px-4">
+                        <h5 class="modal-title fw-bold">Confirm Reservation</h5>
+                        <button type="button" class="btn-close btn-close-white"
+                            @click="reservationDetailsModal = false"></button>
                     </div>
-
-
-                    <!-- Personal Information -->
-                    <div class="row g-4 mb-3">
-                        <div class="col-md-6">
-                            <div class="bg-light border rounded-3 p-3 h-100 shadow-sm">
-                                <label class="form-label fw-semibold text-secondary">
-                                    <i class="bi bi-person-circle me-2 text-primary"></i> Firstname
-                                </label>
-                                <div class="text-dark fw-medium">{{ this.firstname || 'N/A' }}</div>
+                    <div class="modal-body p-4">
+                        <div class="row g-4 align-items-center">
+                            <div class="col-md-4">
+                                <img :src="this.imageUrl" class="img-fluid rounded-4 shadow-sm" />
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="bg-light border rounded-3 p-3 h-100 shadow-sm">
-                                <label class="form-label fw-semibold text-secondary">
-                                    <i class="bi bi-person-circle me-2 text-primary"></i> Lastname
-                                </label>
-                                <div class="text-dark fw-medium">{{ this.lastname || 'N/A' }}</div>
+                            <div class="col-md-8">
+                                <div class="card border-0 bg-light rounded-4 p-4">
+                                    <h5 class="fw-bold mb-3 border-bottom pb-2">Customer Details</h5>
+                                    <div class="row g-3">
+                                        <div class="col-6"><small class="text-muted d-block">Name</small><strong
+                                                class="text-dark">{{ firstname }} {{ lastname }}</strong></div>
+                                        <div class="col-6"><small class="text-muted d-block">Gender</small><strong
+                                                class="text-dark">{{ sex }}</strong></div>
+                                        <div class="col-12"><small class="text-muted d-block">Email</small><strong
+                                                class="text-dark text-break">{{ email }}</strong></div>
+                                        <div class="col-6"><small class="text-muted d-block">Contact</small><strong
+                                                class="text-dark">{{ contactInfo }}</strong></div>
+                                        <div class="col-6"><small class="text-muted d-block">Age</small><strong
+                                                class="text-dark">{{ age }} yrs old</strong></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-
-                    <div class="row g-4 mb-3">
-                        <div class="col-md-6">
-                            <div class="bg-light border rounded-3 p-3 h-100 shadow-sm">
-                                <label class="form-label fw-semibold text-secondary">
-                                    <i class="bi bi-envelope me-2 text-primary"></i> Email
-                                </label>
-                                <div class="text-dark fw-medium text-break">{{ this.email || 'N/A' }}</div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="bg-light border rounded-3 p-3 h-100 shadow-sm">
-                                <label class="form-label fw-semibold text-secondary">
-                                    <i class="bi bi-telephone me-2 text-primary"></i> Contact Number
-                                </label>
-                                <div class="text-dark fw-medium text-break">{{ this.contactInfo || 'N/A' }}</div>
-                            </div>
-                        </div>
+                    <div class="modal-footer border-0 justify-content-center pb-4">
+                        <button type="button" class="btn btn-primary rounded-pill px-5 py-3 fw-bold shadow"
+                            @click="reserveRoom()">
+                            <i class="bi bi-check-circle-fill me-2"></i>Confirm Reservation
+                        </button>
                     </div>
-
-
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <div class="bg-light border rounded-3 p-3 h-100 shadow-sm">
-                                <label class="form-label fw-semibold text-secondary">
-                                    <i class="bi bi-calendar-check me-2 text-primary"></i> Age
-                                </label>
-                                <div class="text-dark fw-medium">{{ this.age || 'N/A' }}</div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="bg-light border rounded-3 p-3 h-100 shadow-sm">
-                                <label class="form-label fw-semibold text-secondary">
-                                    <i class="bi bi-gender-ambiguous me-2 text-primary"></i> Gender
-                                </label>
-                                <div class="text-dark fw-medium">{{ this.sex || 'N/A' }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Modal Footer -->
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="button-costumize  px-4" @click="reserveRoom()"> <i
-                            class="bi bi-check-circle-fill"></i>
-                        Reserved this room</button>
                 </div>
             </div>
-
-
         </div>
-        <Modalconfirmation ref="modal" />
-
 
     </div>
-
-
 </template>
+
+<style scoped src="../../../../../css/tenant/roomselection.css">
+
+</style>
 
 <script>
 import axios from 'axios'

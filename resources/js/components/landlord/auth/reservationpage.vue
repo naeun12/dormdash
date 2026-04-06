@@ -2,71 +2,53 @@
     <Loader ref="loader" />
     <NotificationList ref="toastRef" />
 
-    <div class="p-4 mt-2">
-        <div style="border:2px solid #4edce2;" class="input-group mb-2 w-100 shadow-sm rounded-pill overflow-hidden">
-            <span class="input-group-text bg-white border-0">
-                <i class="bi bi-search text-primary"></i>
-            </span>
-            <input type="text" class="form-control border-0 shadow-none" placeholder="Search Tenants name"
-                aria-label="Search Tenant " v-model="searchTerm" />
+    <div class="p-4 mt-2 filter-section">
+        <div class="p-4 filter-container d-flex flex-wrap flex-md-nowrap align-items-center gap-2">
+            <div
+                class="search-box d-flex align-items-center bg-white px-3 py-1 rounded-pill border shadow-sm flex-grow-1">
+                <i class="bi bi-search text-muted me-2"></i>
+                <input type="text" class="form-control border-0 shadow-none bg-transparent py-1"
+                    placeholder="Search Tenant..." v-model="searchTerm" />
+            </div>
+
+            <select class="form-select border shadow-sm rounded-3 custom-select" v-model="selectedDormId"
+                @change="filterDorms">
+                <option value="" disabled>Dorm</option>
+                <option value="all">All Dorms</option>
+                <option v-for="dorm in dorms" :key="dorm.dormID" :value="dorm.dormID">{{ dorm.dormName }}</option>
+            </select>
+
+            <select class="form-select border shadow-sm rounded-3 custom-select" v-model="selectedroomNumber"
+                @change="filterroomNumber">
+                <option value="" disabled>Room</option>
+                <option value="all">All Rooms</option>
+                <option v-for="room in uniqueRooms" :key="room.fkroomID" :value="room.room?.roomNumber">Rm {{
+                    room.room?.roomNumber }}</option>
+            </select>
+
+            <select class="form-select border shadow-sm rounded-3 custom-select" v-model="selectedapplicationStatus"
+                @change="filterApplicationStatus">
+                <option value="" disabled>Status</option>
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="paid">Paid</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+            </select>
         </div>
-        <div class="py-3 d-flex gap-3 align-items-center">
-            <!-- Dorm No Dropdown -->
-            <div class="mb-2 d-flex align-items-center gap-2">
-                <div class="w-100">
-                    <select id="dormSelect" style="border:2px solid #4edce2;"
-                        class="form-select form-select-sm rounded-3  shadow-sm" @change="filterDorms"
-                        v-model="selectedDormId">
-                        <option value="" disabled> Select Dorm</option>
-                        <option value="all"> All dorms</option>
-                        <option v-for="dorm in dorms" :key="dorm.dormID" :value="dorm.dormID">
-                            {{ dorm.dormName }} (ID: {{ dorm.dormID }})
-                        </option>
-                    </select>
-                </div>
+        <div v-if="!reservations.length"
+            class="empty-state-container d-flex flex-column justify-content-center align-items-center py-5 shadow-sm rounded-4 bg-white border mx-3 mt-3">
+            <div class="icon-wrapper mb-3">
+                <i class="bi bi-inbox-fill display-4 opacity-20"></i>
             </div>
-            <!-- Room No Dropdown -->
-            <div class="mb-2 d-flex align-items-center gap-2">
-                <div class="w-100">
-
-                    <select id="dormSelect" style="border:2px solid #4edce2;"
-                        class="form-select form-select-sm rounded-3 shadow-sm" v-model="selectedroomNumber"
-                        @change="filterroomNumber">
-                        <option value="" disabled>Select Room Number</option>
-                        <option value="all">All rooms</option>
-                        <option v-for="room in uniqueRooms" :key="room.fkroomID" :value="room.room?.roomNumber">
-                            Room {{ room.room?.roomNumber }}
-                        </option>
-                    </select>
-
-                </div>
-            </div>
-            <div class="mb-2 d-flex align-items-center gap-2">
-                <div class="w-100">
-
-                    <select id="dormSelect" style="border:2px solid #4edce2;"
-                        class="form-select w-100 form-select-sm rounded-3 shadow-sm" @change="filterApplicationStatus"
-                        v-model="selectedapplicationStatus">
-                        <option value="" disabled> Select Application Status</option>
-                        <option value="all"> All Application Status</option>
-                        <option value="pending"> Pending</option>
-                        <option value="confirmed"> Confirmed</option>
-                        <option value="rejected"> Rejected</option>
-                        <option value="paid"> Paid</option>
-                        <option value="approved"> Approved</option>
-                        <option value="cancelled"> Cancelled</option>
-                        <option value="expired"> Expired</option>
-
-                    </select>
-
-
-                </div>
-            </div>
-        </div>
-        <div v-if="!reservations.length" class="d-flex flex-column justify-content-center align-items-center"
-            style="height: 200px;">
-            <i class="bi bi-emoji-frown mb-2" style="font-size: 2rem; color: #6c757d;"></i>
-            <p class="text-muted fw-bold">No Reservation found.</p>
+            <h5 class="fw-bold text-dark mb-1">No Reservations Found</h5>
+            <p class="text-muted small px-4 text-center">It looks like there are no bookings matching your current
+                filters.</p>
+            <button v-if="searchTerm || selectedDormId !== 'all'" @click="resetFilters"
+                class="btn btn-sm btn-outline-primary rounded-pill px-4 mt-2">
+                Clear All Filters
+            </button>
         </div>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 rounded-3 g-4" style="">
 
@@ -735,31 +717,4 @@ export default {
     }
 }
 </script>
-<style>
-.overlay-message {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* dark semi-transparent overlay */
-    color: #fff;
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    z-index: 10;
-    border-radius: 12px;
-    /* kung gusto rounded ang modal body */
-    text-align: center;
-    pointer-events: none;
-    /* para dili clickable ang ubos */
-}
-
-.overlay-message span {
-    background: rgba(255, 0, 0, 0.8);
-    padding: 10px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-</style>
+<style scoped src="../../../../css/landlord/reservation.css"></style>

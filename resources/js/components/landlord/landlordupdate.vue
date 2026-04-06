@@ -1,224 +1,172 @@
 <template>
     <Loader ref="loader" />
     <NotificationList ref="toastRef" />
-    <div class="p-3">
-        <!-- Profile Section -->
+    <div class="p-4 bg-white rounded-4 shadow-sm">
         <div class="text-center mb-5">
             <div class="position-relative d-inline-block">
-                <img :src="landlord.previewPicUrl || (landlord.profilePicUrl ? '/' + landlord.profilePicUrl : '/default-avatar.png')"
-                    alt="Profile Preview" class="rounded-circle shadow-sm border border-3 border-light"
-                    style="width: 140px; height: 140px; object-fit: cover;">
+                <div class="profile-container p-1 rounded-circle shadow"
+                    style="background: linear-gradient(45deg, #003C87, #FC7D07);">
+                    <img :src="landlord.previewPicUrl || (landlord.profilePicUrl ? '/' + landlord.profilePicUrl : '/default-avatar.png')"
+                        alt="Profile Preview" class="rounded-circle border border-4 border-white"
+                        style="width: 140px; height: 140px; object-fit: cover;">
+                </div>
 
-
-                <!-- Upload Button -->
                 <label for="profilePic"
-                    class="btn btn-sm btn-light border position-absolute bottom-0 end-0 rounded-circle shadow-sm"
-                    style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                    <i class="bi bi-camera-fill text-primary"></i>
+                    class="btn btn-sm position-absolute bottom-0 end-0 rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+                    style="width: 42px; height: 42px; cursor: pointer; background-color: #FC7D07; border: 3px solid white; color: white;">
+                    <i class="bi bi-camera-fill"></i>
                 </label>
             </div>
             <input type="file" id="profilePic" name="profilePicUrl" accept="image/*" class="d-none"
                 @change="previewImage">
-            <p class="small mt-3 mb-0">
-                <span v-if="landlord.isVerified" class="badge bg-success rounded-pill px-3 py-2 shadow-sm">
-                    <i class="bi bi-patch-check-fill me-1"></i> Verified
-                </span>
 
+            <div class="mt-3">
+                <h4 class="fw-bold text-dark mb-1">{{ landlord.firstname }} {{ landlord.lastname }}</h4>
+                <span v-if="landlord.isVerified" class="badge rounded-pill px-3 py-2 shadow-sm"
+                    style="background-color: #003C87;">
+                    <i class="bi bi-patch-check-fill me-1 text-info"></i> Verified Landlord
+                </span>
                 <span v-else class="badge bg-danger rounded-pill px-3 py-2 shadow-sm">
                     <i class="bi bi-x-circle-fill me-1"></i> Not Verified
                 </span>
-            </p>
+            </div>
         </div>
 
-        <!-- Contact Form -->
         <div class="row g-4">
-            <!-- First Name -->
             <div class="col-md-6">
-                <label class="form-label fw-semibold required">First Name</label>
-                <input type="text" class="form-control rounded-3 border-info shadow-sm" id="firstname" name="firstname"
-                    placeholder="Enter your first name" v-model="landlord.firstname">
-                <p class="text-danger small fst-italic mt-1" v-if="error.firstname">
-                    <i class="bi bi-exclamation-circle"></i> {{ error.firstname[0] }}
-                </p>
-
-
+                <label class="form-label small fw-bold text-muted text-uppercase mb-1">First Name</label>
+                <div class="input-group shadow-sm">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                    <input type="text" class="form-control border-start-0 rounded-end-3" v-model="landlord.firstname"
+                        placeholder="First Name">
+                </div>
+                <p class="text-danger small fst-italic mt-1" v-if="error.firstname">{{ error.firstname[0] }}</p>
             </div>
 
-            <!-- Last Name -->
             <div class="col-md-6">
-                <label class="form-label fw-semibold required">Last Name</label>
-                <input type="text" class="form-control rounded-3 border-info shadow-sm" id="lastname" name="lastname"
-                    placeholder="Enter your last name" v-model="landlord.lastname">
-                <p class="text-danger small fst-italic mt-1" v-if="error.lastname">
-                    <i class="bi bi-exclamation-circle"></i> {{ error.lastname[0] }}
-                </p>
-
+                <label class="form-label small fw-bold text-muted text-uppercase mb-1">Last Name</label>
+                <div class="input-group shadow-sm">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                    <input type="text" class="form-control border-start-0 rounded-end-3" v-model="landlord.lastname"
+                        placeholder="Last Name">
+                </div>
+                <p class="text-danger small fst-italic mt-1" v-if="error.lastname">{{ error.lastname[0] }}</p>
             </div>
 
-            <!-- Email -->
             <div class="col-md-6">
-                <label class="form-label fw-semibold required">Email</label>
-                <input type="email" class="form-control rounded-3 border-info shadow-sm" id="email" name="email"
-                    v-model="landlord.email" readonly placeholder="Enter your email">
-                <p class="text-danger small fst-italic mt-1" v-if="error.email">
-                    <i class="bi bi-exclamation-circle"></i> {{ error.email[0] }}
-                </p>
-
+                <label class="form-label small fw-bold text-muted text-uppercase mb-1">Email Address</label>
+                <input type="email" class="form-control bg-light border-0 rounded-3 shadow-none p-2 ps-3"
+                    v-model="landlord.email" readonly>
             </div>
 
-            <!-- Phone -->
             <div class="col-md-6">
-                <label class="form-label fw-semibold required">Phone Number</label>
-                <input type="tel" class="form-control rounded-3 border-info shadow-sm" id="phone" name="phonenumber"
-                    v-model="landlord.phoneNumber" readonly placeholder="+63 912 345 6789" pattern="^\+?\d{7,15}$">
-                <p class="text-danger small fst-italic mt-1" v-if="error.phoneNumber">
-                    <i class="bi bi-exclamation-circle"></i> {{ error.phoneNumber[0] }}
-                </p>
-
+                <label class="form-label small fw-bold text-muted text-uppercase mb-1">Phone Number</label>
+                <input type="tel" class="form-control bg-light border-0 rounded-3 shadow-none p-2 ps-3"
+                    v-model="landlord.phoneNumber" readonly>
             </div>
 
-            <!-- Gender -->
             <div class="col-md-6">
-                <label for="gender" class="form-label fw-semibold required">Gender</label>
-                <select class="form-select rounded-3 border-info shadow-sm" id="gender" name="gender"
-                    v-model="landlord.gender"> <!-- ✅ Add this -->
+                <label class="form-label small fw-bold text-muted text-uppercase mb-1">Gender</label>
+                <select class="form-select rounded-3 shadow-sm border-light" v-model="landlord.gender">
                     <option disabled value="">Select gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                 </select>
-
-                <p class="text-danger small fst-italic mt-1" v-if="error.gender">
-                    <i class="bi bi-exclamation-circle"></i> {{ error.gender[0] }}
-                </p>
             </div>
 
             <div class="col-md-6 d-flex align-items-end">
-                <button @click="btnclickUpdateDocument()" class="btn btn-primary w-100">
-                    Update Documents
+                <button @click="btnclickUpdateDocument()"
+                    class="btn btn-outline-dark fw-bold w-100 rounded-3 py-2 border-2">
+                    <i class="bi bi-files me-2"></i> Update Documents
                 </button>
             </div>
-
         </div>
-        <div v-if="clickUpdateDocument" class="modal fade show d-block" tabindex="-1">
+
+        <div v-if="clickUpdateDocument" class="modal fade show d-block"
+            style="background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);" tabindex="-1">
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content shadow-lg rounded-4 border-0">
-
-                    <!-- Header -->
-                    <div class="modal-header bg-info text-white">
-                        <h5 class="modal-title fw-bold">
-                            <i class="bi bi-folder-check me-2"></i> Update Documents
+                    <div class="modal-header text-white py-3" style="background-color: #003C87;">
+                        <h5 class="modal-title fw-bold d-flex align-items-center">
+                            <i class="bi bi-shield-lock-fill me-2 text-warning"></i> Verification Documents
                         </h5>
                         <button type="button" class="btn-close btn-close-white"
                             @click="clickUpdateDocument = false"></button>
                     </div>
 
-                    <!-- Body -->
-                    <div class="modal-body">
-                        <div class="row g-4 text-center">
-
-                            <!-- Business Permit -->
+                    <div class="modal-body p-4 bg-light">
+                        <div class="row g-4">
                             <div class="col-md-6">
-                                <div class="card-body text-center">
-                                    <h6 class="fw-semibold mb-3">
-                                        <i class="bi bi-file-earmark-text me-2 text-primary"></i> Business Permit
-                                    </h6>
+                                <div class="card h-100 border-0 shadow-sm rounded-3">
+                                    <div class="card-body p-3">
+                                        <h6 class="fw-bold text-dark mb-3 small text-uppercase">Business Permit</h6>
+                                        <div class="position-relative overflow-hidden rounded-3 border-dashed border-2 p-2"
+                                            style="border-color: #dee2e6;">
+                                            <img :src="landlord.businessPermitPreview || (landlord.businessPermit ? '/' + landlord.businessPermit : '/images/no-file.png')"
+                                                class="img-fluid rounded shadow-sm w-100"
+                                                style="height: 180px; object-fit: cover;">
 
-                                    <!-- Preview Box -->
-                                    <div class="position-relative mb-3">
-                                        <img :src="landlord.businessPermitPreview || (landlord.businessPermit ? '/' + landlord.businessPermit : '/images/no-file.png')"
-                                            alt="Business Permit"
-                                            class="img-fluid rounded shadow-sm border border-2 border-light"
-                                            style="max-height: 200px; width: 100%; object-fit: cover;">
-
-                                        <!-- Overlay Upload Icon -->
-                                        <label for="businessPermit"
-                                            class="position-absolute bottom-0 end-0 bg-white rounded-circle shadow p-2 border border-primary"
-                                            style="cursor: pointer;" title="Upload Business Permit">
-                                            <i class="bi bi-upload text-primary fs-5"></i>
-                                        </label>
-                                    </div>
-
-                                    <!-- Hidden Input -->
-                                    <input type="file" id="businessPermit" class="d-none" accept="image/*"
-                                        @change="previewBusinessPermit">
-
-                                    <!-- Helper Text -->
-                                    <p class="text-muted small mb-0">
-                                        Allowed formats: <span class="fw-semibold">JPG, PNG</span> | Max size: <span
-                                            class="fw-semibold">2MB</span>
-                                    </p>
-                                </div>
-
-                            </div>
-
-                            <!-- Government ID -->
-                            <div class="col-md-6">
-                                <div class="card shadow-sm border-0 h-100">
-                                    <div class="card-body text-center">
-                                        <h6 class="fw-semibold mb-3">
-                                            <i class="bi bi-person-vcard me-2 text-success"></i> Government ID
-                                        </h6>
-
-                                        <!-- Preview Box -->
-                                        <div class="position-relative mb-3">
-                                            <img :src="landlord.governmentIDPreview || (landlord.govermentID ? '/' + landlord.govermentID : '/images/no-file.png')"
-                                                alt="Government ID"
-                                                class="img-fluid rounded shadow-sm border border-2 border-light"
-                                                style="max-height: 200px; width: 100%; object-fit: cover;">
-
-                                            <!-- Overlay Upload Icon -->
-                                            <label for="governmentID"
-                                                class="position-absolute bottom-0 end-0 bg-white rounded-circle shadow p-2 border border-success"
-                                                style="cursor: pointer;" title="Upload Government ID">
-                                                <i class="bi bi-upload text-success fs-5"></i>
+                                            <label for="businessPermit"
+                                                class="position-absolute top-50 start-50 translate-middle btn btn-light btn-sm shadow rounded-pill px-3 fw-bold border-0">
+                                                <i class="bi bi-cloud-upload me-1 text-primary"></i> Change Photo
                                             </label>
                                         </div>
-
-                                        <!-- Hidden Input -->
-                                        <input type="file" id="governmentID" class="d-none" accept="image/*"
-                                            @change="previewGovernmentID">
-
-                                        <!-- Helper Text -->
-                                        <p class="text-muted small mb-0">
-                                            Allowed formats: <span class="fw-semibold">JPG, PNG</span> | Max size: <span
-                                                class="fw-semibold">2MB</span>
-                                        </p>
+                                        <input type="file" id="businessPermit" class="d-none"
+                                            @change="previewBusinessPermit">
                                     </div>
                                 </div>
-
                             </div>
 
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 shadow-sm rounded-3">
+                                    <div class="card-body p-3">
+                                        <h6 class="fw-bold text-dark mb-3 small text-uppercase">Government ID</h6>
+                                        <div class="position-relative overflow-hidden rounded-3 border-dashed border-2 p-2"
+                                            style="border-color: #dee2e6;">
+                                            <img :src="landlord.governmentIDPreview || (landlord.govermentID ? '/' + landlord.govermentID : '/images/no-file.png')"
+                                                class="img-fluid rounded shadow-sm w-100"
+                                                style="height: 180px; object-fit: cover;">
+
+                                            <label for="governmentID"
+                                                class="position-absolute top-50 start-50 translate-middle btn btn-light btn-sm shadow rounded-pill px-3 fw-bold border-0">
+                                                <i class="bi bi-cloud-upload me-1 text-success"></i> Change Photo
+                                            </label>
+                                        </div>
+                                        <input type="file" id="governmentID" class="d-none"
+                                            @change="previewGovernmentID">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-warning mt-4 border-0 rounded-3 small py-2">
+                            <i class="bi bi-info-circle-fill me-2"></i> Only JPG and PNG formats are allowed. Maximum
+                            file size is 2MB.
                         </div>
                     </div>
 
-                    <!-- Footer -->
-                    <div class="modal-footer ">
-
-                        <button class="btn btn-primary" @click="updateDocuments">
-                            <i class="bi bi-save me-1"></i> Save Changes
+                    <div class="modal-footer border-0 p-3 bg-white">
+                        <button class="btn btn-lg w-100 text-white fw-bold rounded-3" style="background-color: #003C87;"
+                            @click="updateDocuments">
+                            <i class="bi bi-save2 me-2"></i> Save Verified Documents
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Backdrop -->
-        <div v-if="clickUpdateDocument" class="modal-backdrop fade show"></div>
-
-
-
-        <!-- Buttons -->
-        <div class="d-flex justify-content-center gap-3 mt-5">
-            <button type="submit" form="contactForm"
-                class="btn btn-primary fw-semibold px-4 rounded-pill shadow-sm w-100" @click="updateLandlordAccount">
-                <i class="bi bi-check-circle me-1"></i> Update
+        <div class="mt-5">
+            <button @click="updateLandlordAccount"
+                class="btn btn-lg fw-bold px-5 rounded-pill shadow w-100 transition-all hover-lift"
+                style="background-color: #FC7D07; color: white;">
+                <i class="bi bi-person-check-fill me-2"></i> Save Profile Updates
             </button>
-
         </div>
     </div>
     <Modalconfirmation ref="modal" />
     <Toastcomponents ref="toast" />
 </template>
+
+
 <script>
 import axios from 'axios';
 import Toastcomponents from '@/components/Toastcomponents.vue';
@@ -413,3 +361,17 @@ export default {
         }
 }
 </script>
+<style scoped>
+.hover-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(252, 125, 7, 0.3) !important;
+}
+
+.border-dashed {
+    border-style: dashed !important;
+}
+
+.transition-all {
+    transition: all 0.3s ease;
+}
+</style>
